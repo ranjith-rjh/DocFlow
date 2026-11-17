@@ -1,0 +1,48 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "docflow"
+version = "1.0.0"
+description = "DocFlow AI : extraction d'enseigne, date et total de tickets de caisse par trois microservices distribués."
+requires-python = ">=3.11"
+dependencies = [
+    "pydantic>=2.7,<3",
+]
+
+# Chaque microservice n'installe que ce dont il a besoin.
+[project.optional-dependencies]
+messagerie = ["pika>=1.3,<2"]
+base = ["sqlalchemy>=2.0,<3", "psycopg[binary]>=3.1,<4"]
+ms1 = ["docflow[messagerie]", "pymupdf>=1.24", "opencv-python-headless>=4.9", "pillow>=10", "numpy>=1.26"]
+ms2 = ["docflow[messagerie]", "pytesseract>=0.3.10", "pillow>=10"]
+ms3 = ["docflow[messagerie,base]", "scikit-learn==1.9.1", "joblib>=1.3", "numpy>=1.26"]
+api = ["docflow[messagerie,base]", "fastapi>=0.110", "uvicorn[standard]>=0.29", "python-multipart>=0.0.9"]
+entrainement = ["docflow[ms1,ms2,ms3]"]
+dev = ["docflow[ms1,ms2,ms3,api]", "pytest>=8", "httpx>=0.27", "ruff>=0.5"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+"docflow.api" = ["static/*"]
+"docflow.extraction" = ["schema.sql"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests", "src", "training"]
+pythonpath = ["src", "."]
+markers = ["integration: nécessite RabbitMQ et PostgreSQL lancés (docker compose)"]
+addopts = "-m 'not integration' --doctest-modules"
+
+[tool.ruff]
+line-length = 110
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP"]
+
+[tool.ruff.lint.per-file-ignores]
+# Tableaux Markdown générés : lignes longues assumées.
+"training/entrainement.py" = ["E501"]
+"src/docflow/extraction/modele.py" = ["E501"]

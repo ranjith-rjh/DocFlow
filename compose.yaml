@@ -1,0 +1,134 @@
+# DocFlow AI — nœud A (Mac, Docker Desktop).
+#
+# Mode distribué (cible du projet) : MS3 + PostgreSQL tournent sur la VM Fedora.
+#     docker compose up -d --build
+#
+# Mode « nœud B local » (développement, démo de secours sans VM) : MS3 et
+# PostgreSQL tournent aussi en conteneurs sur le Mac.
+#     docker compose --profile noeud-b-local up -d --build
+#
+# Le fichier .env est généré par : ./scripts/configurer_env.sh <local|distribue>
+
+name: docflow
+
+x-docflow: &docflow
+  build:
+    context: .
+    dockerfile: docker/Dockerfile
+  restart: unless-stopped
+  environment: &env-commun
+    RABBITMQ_URL: amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq:5672/
+    DOCFLOW_STORAGE: /app/storage
+    MAX_TENTATIVES: ${MAX_TENTATIVES:-3}
+  volumes:
+    - ./storage:/app/storage
+  depends_on:
+    rabbitmq:
+      condition: service_healthy
+
+services:
+  rabbitmq:
+    image: rabbitmq:3.13.7-management
+    hostname: docflow-rabbitmq  # le stockage RabbitMQ dépend du nom d'hôte
+    restart: unless-stopped
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
+    ports:
+      # 5672 exposé sur le réseau privé (192.168.56.1) pour MS3 sur Fedora,
+      # ou seulement en local (127.0.0.1) en mode nœud B local.
+      - "${RABBITMQ_BIND_IP:-127.0.0.1}:5672:5672"
+      - "127.0.0.1:15672:15672"  # console d'administration, Mac uniquement
+    volumes:
+      - rabbitmq-donnees:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 5s
+      timeout: 10s
+      retries: 20
+
+  api:
+    <<: *docflow
+    build: { context: ., dockerfile: docker/Dockerfile, target: api }
+    image: docflow-api:1.0.0
+    environment:
+      <<: *env-commun
+      DATABASE_URL: ${API_DATABASE_URL}
+      MAX_TAILLE_OCTETS: ${MAX_TAILLE_OCTETS:-10485760}
+    ports:
+      - "127.0.0.1:8000:8000"
+
+  ms1:
+    <<: *docflow
+    build: { context: ., dockerfile: docker/Dockerfile, target: ms1 }
+    image: docflow-ms1:1.0.0
+
+  ms2:
+    <<: *docflow
+    build: { context: ., dockerfile: docker/Dockerfile, target: ms2 }
+    image: docflow-ms2:1.0.0
+
+  # ------------------------------------------------ nœud B simulé (profil)
+  postgres:
+    profiles: ["noeud-b-local"]
+    image: postgres:17.2
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: docflow
+      POSTGRES_USER: docflow_admin
+      POSTGRES_PASSWORD: ${DB_ADMIN_PASSWORD}
+      DOCFLOW_API_DB_PASSWORD: ${DB_API_PASSWORD}
+      DOCFLOW_MS3_DB_PASSWORD: ${DB_MS3_PASSWORD}
+    ports:
+      - "127.0.0.1:5433:5432"
+    volumes:
+      - postgres-donnees:/var/lib/postgresql/data
+      - ./src/docflow/extraction/schema.sql:/docker-entrypoint-initdb.d/01_schema.sql:ro
+      - ./deploy/sql/02_roles.sh:/docker-entrypoint-initdb.d/02_roles.sh:ro
+      - ./deploy/sql/roles.sql:/docflow/roles.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U docflow_admin -d docflow"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  ms3:
+    <<: *docflow
+    profiles: ["noeud-b-local"]
+    build: { context: ., dockerfile: docker/Dockerfile, target: ms3 }
+    image: docflow-ms3:1.0.0
+    environment:
+      <<: *env-commun
+      DATABASE_URL: postgresql+psycopg://docflow_ms3:${DB_MS3_PASSWORD}@postgres:5432/docflow
+      EXTRACTION_MODE: ${EXTRACTION_MODE:-modele}
+      MODELE_CHEMIN: /app/models/docflow-extraction.joblib
+    volumes:
+      - ./models:/app/models:ro
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+
+  # ------------------------------------------------ outils hors ligne (profil)
+  outils:
+    profiles: ["outils"]
+    build: { context: ., dockerfile: docker/Dockerfile, target: outils }
+    image: docflow-outils:1.0.0
+    environment:
+      PYTHONPATH: /app/src:/app
+      NB_PROCESSUS: "8"
+    volumes:
+      - ./data:/app/data
+      - ./models:/app/models
+      - ./reports:/app/reports
+      - ./src:/app/src
+      - ./training:/app/training
+      - ./scripts:/app/scripts
+      - ./tests:/app/tests
+      - ./docs:/app/docs
+    network_mode: none  # l'entraînement n'a besoin d'aucun réseau
+
+volumes:
+  rabbitmq-donnees:
+  postgres-donnees:

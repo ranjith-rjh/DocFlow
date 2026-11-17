@@ -1,0 +1,2339 @@
+{
+  "resume": {
+    "libelle": "local-sequentiel",
+    "mode": "sequentiel",
+    "documents": 20,
+    "termines": 20,
+    "echecs": 0,
+    "bout_en_bout_ms": {
+      "moyenne": 1236,
+      "mediane": 1341,
+      "p95": 2248,
+      "max": 2248
+    },
+    "service_ms": {
+      "pretraitement": {
+        "moyenne": 141,
+        "mediane": 126,
+        "p95": 264,
+        "max": 264
+      },
+      "ocr": {
+        "moyenne": 1072,
+        "mediane": 1156,
+        "p95": 2029,
+        "max": 2029
+      },
+      "extraction": {
+        "moyenne": 3,
+        "mediane": 3,
+        "p95": 4,
+        "max": 4
+      }
+    },
+    "attente_file_ms": {
+      "pretraitement": {
+        "moyenne": 10,
+        "mediane": 11,
+        "p95": 15,
+        "max": 15
+      },
+      "ocr": {
+        "moyenne": 1,
+        "mediane": 1,
+        "p95": 1,
+        "max": 1
+      },
+      "extraction": {
+        "moyenne": 2,
+        "mediane": 2,
+        "p95": 2,
+        "max": 2
+      }
+    },
+    "duree_campagne_s": 34.0,
+    "debit_docs_par_min": 35.3
+  },
+  "documents": {
+    "DOC-F01BDB257008": {
+      "document_id": "DOC-F01BDB257008",
+      "correlation_id": "RUN-20A789C99610",
+      "status": "COMPLETED",
+      "erreur": null,
+      "format_source": "pdf",
+      "created_at": "2026-11-16T19:47:39.797497+00:00",
+      "updated_at": "2026-11-16T19:47:40.250674+00:00",
+      "resultat": {
+        "entity": "CARREFOUR",
+        "date": "2025-04-02",
+        "total_amount": "6.43",
+        "currency": "EUR",
+        "confidence": {
+          "date": 0.781,
+          "entity": 0.769,
+          "total_amount": 0.995
+        },
+        "methode": {
+          "date": "modele",
+          "entity": "modele",
+          "total_amount": "modele"
+        },
+        "champs_manquants": [],
+        "champs_incertains": [],
+        "version_modele": "docflow-extraction-1.0.0"
+      },
+      "duree_totale_ms": 454,
+      "etapes": [
+        {
+          "event_type": "document.received",
+          "service": "api",
+          "emis_le": "2026-11-16T19:47:39.798957+00:00",
+          "duree_ms": null,
+          "attente_ms": null,
+          "details": {
+            "format_source": "pdf",
+            "taille_octets": 16578
+          }
+        },
+        {
+          "event_type": "step.started",
+          "service": "ms1-pretraitement",
+          "emis_le": "2026-11-16T19:47:39.810772+00:00",
+          "duree_ms": null,
+          "attente_ms": 12,
+          "details": {
+            "etape": "pretraitement"
+          }
+        },
+        {
+          "event_type": "preprocessing.completed",
+          "service": "ms1-pretraitement",
+          "emis_le": "2026-11-16T19:47:39.886917+00:00",
+          "duree_ms": 72,
+          "attente_ms": null,
+          "details": {
+            "angles": [
+              0.0
+            ],
+            "nb_pages": 1,
+            "format_source": "pdf"
+          }
+        },
+        {
+          "event_type": "step.started",
+          "service": "ms2-ocr",
+          "emis_le": "2026-11-16T19:47:39.887588+00:00",
+          "duree_ms": null,
+          "attente_ms": 1,
+          "details": {
+            "etape": "ocr"
+          }
+        },
+        {
+          "event_type": "ocr.completed",
+          "service": "ms2-ocr",
+          "emis_le": "2026-11-16T19:47:40.246511+00:00",
+          "duree_ms": 358,
+          "attente_ms": null,
+          "details": {
+            "moteur": "tesseract-5.3.0",
+            "pages_vides": []
+          }
+        },
+        {
+          "event_type": "step.started",
+          "service": "ms3-extraction",
+          "emis_le": "2026-11-16T19:47:40.248448+00:00",
+          "duree_ms": null,
+          "attente_ms": 2,
+          "details": {
+            "etape": "extraction"
+          }
+        },
+        {
+          "event_type": "extraction.completed",
+          "service": "ms3-extraction",
+          "emis_le": "2026-11-16T19:47:40.251108+00:00",
+          "duree_ms": 2,
+          "attente_ms": null,
+          "details": {
+            "methode": {
+              "date": "modele",
+              "entity": "modele",
+              "total_amount": "modele"
+            },
+            "version_modele": "docflow-extraction-1.0.0",
+            "champs_manquants": [],
+            "champs_incertains": []
+          }
+        }
+      ]
+    },
+    "DOC-E1628B206D42": {
+      "document_id": "DOC-E1628B206D42",
+      "correlation_id": "RUN-20FAB19ED711",
+      "status": "COMPLETED",
+      "erreur": null,
+      "format_source": "jpeg",
+      "created_at": "2026-11-16T19:47:40.757233+00:00",
+      "updated_at": "2026-11-16T19:47:43.005008+00:00",
+      "resultat": {
+        "entity": "LIDL",
+        "date": "2023-10-03",
+        "total_amount": "42.14",
+        "currency": "EUR",
+        "confidence": {
+          "date": 0.953,
+          "entity": 0.704,
+          "total_amount": 0.999
+        },
+        "methode": {
+          "date": "modele",
+          "entity": "modele",
+          "total_amount": "modele"
+        },
+        "champs_manquants": [],
+        "champs_incertains": [],
+        "version_modele": "docflow-extraction-1.0.0"
+      },
+      "duree_totale_ms": 2248,
+      "etapes": [
+        {
+          "event_type": "document.received",
+          "service": "api",
+          "emis_le": "2026-11-16T19:47:40.759048+00:00",
+          "duree_ms": null,
+          "attente_ms": null,
+          "details": {
+            "format_source": "jpeg",
+            "taille_octets": 174683
+          }
+        },
+        {
+          "event_type": "step.started",
+          "service": "ms1-pretraitement",
+          "emis_le": "2026-11-16T19:47:40.768183+00:00",
+          "duree_ms": null,
+          "attente_ms": 9,
+          "details": {
+            "etape": "pretraitement"
+          }
+        },
+        {
+          "event_type": "preprocessing.completed",
+          "service": "ms1-pretraitement",
+          "emis_le": "2026-11-16T19:47:40.968008+00:00",
+          "duree_ms": 196,
+          "attente_ms": null,
+          "details": {
+            "angles": [
+              0.0
+            ],
+            "nb_pages": 1,
+            "format_source": "jpeg"
+          }
+        },
+        {
+          "event_type": "step.started",
+          "service": "ms2-ocr",
+          "emis_le": "2026-11-16T19:47:40.968706+00:00",
+          "duree_ms": null,
+          "attente_ms": 1,
+          "details": {
+            "etape": "ocr"
+          }
+        },
+        {
+          "event_type": "ocr.completed",
+          "service": "ms2-ocr",
+          "emis_le": "2026-11-16T19:47:42.999301+00:00",
+          "duree_ms": 2029,
+          "attente_ms": null,
+          "details": {
+            "moteur": "tesseract-5.3.0",
+            "pages_vides": []
+          }
+        },
+        {
+          "event_type": "step.started",
+          "service": "ms3-extraction",
+          "emis_le": "2026-11-16T19:47:43.001344+00:00",
+          "duree_ms": null,
+          "attente_ms": 2,
+          "details": {
+            "etape": "extraction"
+          }
+        },
+        {
+          "event_type": "extraction.completed",
+          "service": "ms3-extraction",
+          "emis_le": "2026-11-16T19:47:43.005539+00:00",
+          "duree_ms": 3,
+          "attente_ms": null,
+          "details": {
+            "methode": {
+              "date": "modele",
+              "entity": "modele",
+              "total_amount": "modele"
+            },
+            "version_modele": "docflow-extraction-1.0.0",
+            "champs_manquants": [],
+            "champs_incertains": []
+          }
+        }
+      ]
+    },
+    "DOC-8C23933D383A": {
+      "document_id": "DOC-8C23933D383A",
+      "correlation_id": "RUN-C08D544D803A",
+      "status": "COMPLETED",
+      "erreur": null,
+      "format_source": "pdf",
+      "created_at": "2026-11-16T19:47:43.552743+00:00",
+      "updated_at": "2026-11-16T19:47:44.920751+00:00",
+      "resultat": {
+        "entity": "INTERMARCHE",
+        "date": "2025-07-22",
+        "total_amount": "16.11",
+        "currency": "EUR",
+        "confidence": {
+          "date": 0.694,
+          "entity": 0.692,
+          "total_amount": 0.961
+        },
+        "methode": {
+          "date": "modele",
+          "entity": "modele",
+          "total_amount": "modele"
+        },
+        "champs_manquants": [],
+        "champs_incertains": [],
+        "version_modele": "docflow-extraction-1.0.0"
+      },
+      "duree_totale_ms": 1369,
+      "etapes": [
+        {
+          "event_type": "document.received",
+          "service": "api",
+          "emis_le": "2026-11-16T19:47:43.554605+00:00",
+          "duree_ms": null,
+          "attente_ms": null,
+          "details": {
+            "format_source": "pdf",
+            "taille_octets": 38089
+          }
+        },
+        {
+          "event_type": "step.started",
+          "service": "ms1-pretraitement",
+          "emis_le": "2026-11-16T19:47:43.565064+00:00",
+          "duree_ms": null,
+          "attente_ms": 10,
+          "details": {
+            "etape": "pretraitement"
+          }
+        },
+        {
+          "event_type": "preprocessing.completed",
+          "service": "ms1-pretraitement",
+          "emis_le": "2026-11-16T19:47:43.765275+00:00",
+          "duree_ms": 197,
+          "attente_ms": null,
+          "details": {
+            "angles": [
+              0.0
+            ],
+            "nb_pages": 1,
+            "format_source": "pdf"
+          }
+        },
+        {
+          "event_type": "step.started",
+          "service": "ms2-ocr",
+          "emis_le": "2026-11-16T19:47:43.765955+00:00",
+          "duree_ms": null,
+          "attente_ms": 1,
+          "details": {
+            "etape": "ocr"
+          }
+        },
+        {
+          "event_type": "ocr.completed",
+          "service": "ms2-ocr",
+          "emis_le": "2026-11-16T19:47:44.916411+00:00",
+          "duree_ms": 1148,
+          "attente_ms": null,
+          "details": {
+            "moteur": "tesseract-5.3.0",
+            "pages_vides": []
+          }
+        },
+        {
+          "event_type": "step.started",
+          "service": "ms3-extraction",
+          "emis_le": "2026-11-16T19:47:44.917090+00:00",
+          "duree_ms": null,
+          "attente_ms": 1,
+          "details": {
+            "etape": "extraction"
+          }
+        },
+        {
+          "event_type": "extraction.completed",
+          "service": "ms3-extraction",
+          "emis_le": "2026-11-16T19:47:44.921435+00:00",
+          "duree_ms": 3,
+          "attente_ms": null,
+          "details": {
+            "methode": {
+              "date": "modele",
+              "entity": "modele",
+              "total_amount": "modele"
+            },
+            "version_modele": "docflow-extraction-1.0.0",
+            "champs_manquants": [],
+            "champs_incertains": []
+          }
+        }
+      ]
+    },
+    "DOC-3E5AD206BD37": {
+      "document_id": "DOC-3E5AD206BD37",
+      "correlation_id": "RUN-CC6B24691D1D",
+      "status": "COMPLETED",
+      "erreur": null,
+      "format_source": "pdf",
+      "created_at": "2026-11-16T19:47:45.422519+00:00",
+      "updated_at": "2026-11-16T19:47:45.950678+00:00",
+      "resultat": {
+        "entity": "CARREFOUR",
+        "date": "2025-12-02",
+        "total_amount": "26.84",
+        "currency": "EUR",
+        "confidence": {
+          "date": 0.787,
+          "entity": 0.725,
+          "total_amount": 0.993
+        },
+        "methode": {
+          "date": "modele",
+          "entity": "modele",
+          "total_amount": "modele"
+        },
+        "champs_manquants": [],
+        "champs_incertains": [],
+        "version_modele": "docflow-extraction-1.0.0"
+      },
+      "duree_totale_ms": 529,
+      "etapes": [
+        {
+          "event_type": "document.received",
+          "service": "api",
+          "emis_le": "2026-11-16T19:47:45.424323+00:00",
+          "duree_ms": null,
+          "attente_ms": null,
+          "details": {
+            "format_source": "pdf",
+            "taille_octets": 16872
+          }
+        },
+        {
+          "event_type": "step.started",
+          "service": "ms1-pretraitement",
+          "emis_le": "2026-11-16T19:47:45.435734+00:00",
+          "duree_ms": null,
+          "attente_ms": 11,
+          "details": {
+            "etape": "pretraitement"
+          }
+        },
+        {
+          "event_type": "preprocessing.completed",
+          "service": "ms1-pretraitement",
+          "emis_le": "2026-11-16T19:47:45.513116+00:00",
+          "duree_ms": 74,
+          "attente_ms": null,
+          "details": {
+            "angles": [
+              0.0
+            ],
+            "nb_pages": 1,
+            "format_source": "pdf"
+          }
+        },
+        {
+          "event_type": "step.started",
+          "service": "ms2-ocr",
+          "emis_le": "2026-11-16T19:47:45.513891+00:00",
+          "duree_ms": null,
+          "attente_ms": 1,
+          "details": {
+            "etape": "ocr"
+          }
+        },
+        {
+          "event_type": "ocr.completed",
+          "service": "ms2-ocr",
+          "emis_le": "2026-11-16T19:47:45.946712+00:00",
+          "duree_ms": 431,
+          "attente_ms": null,
+          "details": {
+            "moteur": "tesseract-5.3.0",
+            "pages_vides": []
+          }
+        },
+        {
+          "event_type": "step.started",
+          "service": "ms3-extraction",
+          "emis_le": "2026-11-16T19:47:45.947396+00:00",
+          "duree_ms": null,
+          "attente_ms": 1,
+          "details": {
+            "etape": "extraction"
+          }
+        },
+        {
+          "event_type": "extraction.completed",
+          "service": "ms3-extraction",
+          "emis_le": "2026-11-16T19:47:45.951313+00:00",
+          "duree_ms": 2,
+          "attente_ms": null,
+          "details": {
+            "methode": {
+              "date": "modele",
+              "entity": "modele",
+              "total_amount": "modele"
+            },
+            "version_modele": "docflow-extraction-1.0.0",
+            "champs_manquants": [],
+            "champs_incertains": []
+          }
+        }
+      ]
+    },
+    "DOC-33891E114048": {
+      "document_id": "DOC-33891E114048",
+      "correlation_id": "RUN-5464C19DFA79",
+      "status": "COMPLETED",
+      "erreur": null,
+      "format_source": "jpeg",
+      "created_at": "2026-11-16T19:47:46.368627+00:00",
+      "updated_at": "2026-11-16T19:47:47.998705+00:00",
+      "resultat": {
+        "entity": "LIDL",
+        "date": "2023-10-03",
+        "total_amount": "52.54",
+        "currency": "EUR",
+        "confidence": {
+          "date": 0.827,
+          "entity": 0.685,
+          "total_amount": 0.999
+        },
+        "methode": {
+          "date": "modele",
+          "entity": "modele",
+          "total_amount": "modele"
+        },
+        "champs_manquants": [],
+        "champs_incertains": [],
+        "version_modele": "docflow-extraction-1.0.0"
+      },
+      "duree_totale_ms": 1631,
+      "etapes": [
+        {
+          "event_type": "document.received",
+          "service": "api",
+          "emis_le": "2026-11-16T19:47:46.369267+00:00",
+          "duree_ms": null,
+          "attente_ms": null,
+          "details": {
+            "format_source": "jpeg",
+            "taille_octets": 124585
+          }
+        },
+        {
+          "event_type": "step.started",
+          "service": "ms1-pretraitement",
+          "emis_le": "2026-11-16T19:47:46.374955+00:00",
+          "duree_ms": null,
+          "attente_ms": 6,
+          "details": {
+            "etape": "pretraitement"
+          }
+        },
+        {
+          "event_type": "preprocessing.completed",
+          "service": "ms1-pretraitement",
+          "emis_le": "2026-11-16T19:47:46.501660+00:00",
+          "duree_ms": 125,
+          "attente_ms": null,
+          "details": {
+            "angles": [
+              0.0
+            ],
+            "nb_pages": 1,
+            "format_source": "jpeg"
+          }
+        },
+        {
+          "event_type": "step.started",
+          "service": "ms2-ocr",
+          "emis_le": "2026-11-16T19:47:46.502330+00:00",
+          "duree_ms": null,
+          "attente_ms": 1,
+          "details": {
+            "etape": "ocr"
+          }
+        },
+        {
+          "event_type": "ocr.completed",
+          "service": "ms2-ocr",
+          "emis_le": "2026-11-16T19:47:47.992357+00:00",
+          "duree_ms": 1488,
+          "attente_ms": null,
+          "details": {
+            "moteur": "tesseract-5.3.0",
+            "pages_vides": []
+          }
+        },
+        {
+          "event_type": "step.started",
+          "service": "ms3-extraction",
+          "emis_le": "2026-11-16T19:47:47.993268+00:00",
+          "duree_ms": null,
+          "attente_ms": 1,
+          "details": {
+            "etape": "extraction"
+          }
+        },
+        {
+          "event_type": "extraction.completed",
+          "service": "ms3-extraction",
+          "emis_le": "2026-11-16T19:47:47.999495+00:00",
+          "duree_ms": 4,
+          "attente_ms": null,
+          "details": {
+            "methode": {
+              "date": "modele",
+              "entity": "modele",
+              "total_amount": "modele"
+            },
+            "version_modele": "docflow-extraction-1.0.0",
+            "champs_manquants": [],
+            "champs_incertains": []
+          }
+        }
+      ]
+    },
+    "DOC-B24B3AC47094": {
+      "document_id": "DOC-B24B3AC47094",
+      "correlation_id": "RUN-72AD79BAECC4",
+      "status": "COMPLETED",
+      "erreur": null,
+      "format_source": "pdf",
+      "created_at": "2026-11-16T19:47:48.537324+00:00",
+      "updated_at": "2026-11-16T19:47:50.394720+00:00",
+      "resultat": {
+        "entity": "INTERMARCHE",
+        "date": "2025-07-26",
+        "total_amount": "47.14",
+        "currency": "EUR",
+        "confidence": {
+          "date": 0.696,
+          "entity": 0.657,
+          "total_amount": 0.966
+        },
+        "methode": {
+          "date": "modele",
+          "entity": "modele",
+          "total_amount": "modele"
+        },
+        "champs_manquants": [],
+        "champs_incertains": [],
+        "version_modele": "docflow-extraction-1.0.0"
+      },
+      "duree_totale_ms": 1858,
+      "etapes": [
+        {
+          "event_type": "document.received",
+          "service": "api",
+          "emis_le": "2026-11-16T19:47:48.538795+00:00",
+          "duree_ms": null,
+          "attente_ms": null,
+          "details": {
+            "format_source": "pdf",
+            "taille_octets": 39666
+          }
+        },
+        {
+          "event_type": "step.started",
+          "service": "ms1-pretraitement",
+          "emis_le": "2026-11-16T19:47:48.551382+00:00",
+          "duree_ms": null,
+          "attente_ms": 13,
+          "details": {
+            "etape": "pretraitement"
+          }
+        },
+        {
+          "event_type": "preprocessing.completed",
+          "service": "ms1-pretraitement",
+          "emis_le": "2026-11-16T19:47:48.798234+00:00",
+          "duree_ms": 243,
+          "attente_ms": null,
+          "details": {
+            "angles": [
+              0.0
+            ],
+            "nb_pages": 1,
+            "format_source": "pdf"
+          }
+        },
+        {
+          "event_type": "step.started",
+          "service": "ms2-ocr",
+          "emis_le": "2026-11-16T19:47:48.798888+00:00",
+          "duree_ms": null,
+          "attente_ms": 1,
+          "details": {
+            "etape": "ocr"
+          }
+        },
+        {
+          "event_type": "ocr.completed",
+          "service": "ms2-ocr",
+          "emis_le": "2026-11-16T19:47:50.389206+00:00",
+          "duree_ms": 1589,
+          "attente_ms": null,
+          "details": {
+            "moteur": "tesseract-5.3.0",
+            "pages_vides": []
+          }
+        },
+        {
+          "event_type": "step.started",
+          "service": "ms3-extraction",
+          "emis_le": "2026-11-16T19:47:50.390489+00:00",
+          "duree_ms": null,
+          "attente_ms": 1,
+          "details": {
+            "etape": "extraction"
+          }
+        },
+        {
+          "event_type": "extraction.completed",
+          "service": "ms3-extraction",
+          "emis_le": "2026-11-16T19:47:50.395280+00:00",
+          "duree_ms": 3,
+          "attente_ms": null,
+          "details": {
+            "methode": {
+              "date": "modele",
+              "entity": "modele",
+              "total_amount": "modele"
+            },
+            "version_modele": "docflow-extraction-1.0.0",
+            "champs_manquants": [],
+            "champs_incertains": []
+          }
+        }
+      ]
+    },
+    "DOC-008A8D7AFBAE": {
+      "document_id": "DOC-008A8D7AFBAE",
+      "correlation_id": "RUN-407FFE344F96",
+      "status": "COMPLETED",
+      "erreur": null,
+      "format_source": "pdf",
+      "created_at": "2026-11-16T19:47:50.716525+00:00",
+      "updated_at": "2026-11-16T19:47:51.295296+00:00",
+      "resultat": {
+        "entity": "CARREFOUR",
+        "date": "2025-05-03",
+        "total_amount": "29.30",
+        "currency": "EUR",
+        "confidence": {
+          "date": 0.791,
+          "entity": 0.681,
+          "total_amount": 0.993
+        },
+        "methode": {
+          "date": "modele",
+          "entity": "modele",
+          "total_amount": "modele"
+        },
+        "champs_manquants": [],
+        "champs_incertains": [],
+        "version_modele": "docflow-extraction-1.0.0"
+      },
+      "duree_totale_ms": 579,
+      "etapes": [
+        {
+          "event_type": "document.received",
+          "service": "api",
+          "emis_le": "2026-11-16T19:47:50.717831+00:00",
+          "duree_ms": null,
+          "attente_ms": null,
+          "details": {
+            "format_source": "pdf",
+            "taille_octets": 16930
+          }
+        },
+        {
+          "event_type": "step.started",
+          "service": "ms1-pretraitement",
+          "emis_le": "2026-11-16T19:47:50.729307+00:00",
+          "duree_ms": null,
+          "attente_ms": 11,
+          "details": {
+            "etape": "pretraitement"
+          }
+        },
+        {
+          "event_type": "preprocessing.completed",
+          "service": "ms1-pretraitement",
+          "emis_le": "2026-11-16T19:47:50.802549+00:00",
+          "duree_ms": 70,
+          "attente_ms": null,
+          "details": {
+            "angles": [
+              0.0
+            ],
+            "nb_pages": 1,
+            "format_source": "pdf"
+          }
+        },
+        {
+          "event_type": "step.started",
+          "service": "ms2-ocr",
+          "emis_le": "2026-11-16T19:47:50.803203+00:00",
+          "duree_ms": null,
+          "attente_ms": 1,
+          "details": {
+            "etape": "ocr"
+          }
+        },
+        {
+          "event_type": "ocr.completed",
+          "service": "ms2-ocr",
+          "emis_le": "2026-11-16T19:47:51.290739+00:00",
+          "duree_ms": 486,
+          "attente_ms": null,
+          "details": {
+            "moteur": "tesseract-5.3.0",
+            "pages_vides": []
+          }
+        },
+        {
+          "event_type": "step.started",
+          "service": "ms3-extraction",
+          "emis_le": "2026-11-16T19:47:51.292586+00:00",
+          "duree_ms": null,
+          "attente_ms": 2,
+          "details": {
+            "etape": "extraction"
+          }
+        },
+        {
+          "event_type": "extraction.completed",
+          "service": "ms3-extraction",
+          "emis_le": "2026-11-16T19:47:51.295702+00:00",
+          "duree_ms": 2,
+          "attente_ms": null,
+          "details": {
+            "methode": {
+              "date": "modele",
+              "entity": "modele",
+              "total_amount": "modele"
+            },
+            "version_modele": "docflow-extraction-1.0.0",
+            "champs_manquants": [],
+            "champs_incertains": []
+          }
+        }
+      ]
+    },
+    "DOC-2768EC158B2D": {
+      "document_id": "DOC-2768EC158B2D",
+      "correlation_id": "RUN-EAEDE058E0B5",
+      "status": "COMPLETED",
+      "erreur": null,
+      "format_source": "jpeg",
+      "created_at": "2026-11-16T19:47:51.660599+00:00",
+      "updated_at": "2026-11-16T19:47:52.968383+00:00",
+      "resultat": {
+        "entity": "LIDL",
+        "date": "2023-10-06",
+        "total_amount": "22.97",
+        "currency": "EUR",
+        "confidence": {
+          "date": 0.824,
+          "entity": 0.713,
+          "total_amount": 0.997
+        },
+        "methode": {
+          "date": "modele",
+          "entity": "modele",
+          "total_amount": "modele"
+        },
+        "champs_manquants": [],
+        "champs_incertains": [],
+        "version_modele": "docflow-extraction-1.0.0"
+      },
+      "duree_totale_ms": 1308,
+      "etapes": [
+        {
+          "event_type": "document.received",
+          "service": "api",
+          "emis_le": "2026-11-16T19:47:51.661372+00:00",
+          "duree_ms": null,
+          "attente_ms": null,
+          "details": {
+            "format_source": "jpeg",
+            "taille_octets": 101857
+          }
+        },
+        {
+          "event_type": "step.started",
+          "service": "ms1-pretraitement",
+          "emis_le": "2026-11-16T19:47:51.669128+00:00",
+          "duree_ms": null,
+          "attente_ms": 8,
+          "details": {
+            "etape": "pretraitement"
+          }
+        },
+        {
+          "event_type": "preprocessing.completed",
+          "service": "ms1-pretraitement",
+          "emis_le": "2026-11-16T19:47:51.774165+00:00",
+          "duree_ms": 103,
+          "attente_ms": null,
+          "details": {
+            "angles": [
+              0.0
+            ],
+            "nb_pages": 1,
+            "format_source": "jpeg"
+          }
+        },
+        {
+          "event_type": "step.started",
+          "service": "ms2-ocr",
+          "emis_le": "2026-11-16T19:47:51.774827+00:00",
+          "duree_ms": null,
+          "attente_ms": 1,
+          "details": {
+            "etape": "ocr"
+          }
+        },
+        {
+          "event_type": "ocr.completed",
+          "service": "ms2-ocr",
+          "emis_le": "2026-11-16T19:47:52.963682+00:00",
+          "duree_ms": 1187,
+          "attente_ms": null,
+          "details": {
+            "moteur": "tesseract-5.3.0",
+            "pages_vides": []
+          }
+        },
+        {
+          "event_type": "step.started",
+          "service": "ms3-extraction",
+          "emis_le": "2026-11-16T19:47:52.964462+00:00",
+          "duree_ms": null,
+          "attente_ms": 1,
+          "details": {
+            "etape": "extraction"
+          }
+        },
+        {
+          "event_type": "extraction.completed",
+          "service": "ms3-extraction",
+          "emis_le": "2026-11-16T19:47:52.968914+00:00",
+          "duree_ms": 3,
+          "attente_ms": null,
+          "details": {
+            "methode": {
+              "date": "modele",
+              "entity": "modele",
+              "total_amount": "modele"
+            },
+            "version_modele": "docflow-extraction-1.0.0",
+            "champs_manquants": [],
+            "champs_incertains": []
+          }
+        }
+      ]
+    },
+    "DOC-FA3846224BAA": {
+      "document_id": "DOC-FA3846224BAA",
+      "correlation_id": "RUN-F97AAC4B6B4C",
+      "status": "COMPLETED",
+      "erreur": null,
+      "format_source": "pdf",
+      "created_at": "2026-11-16T19:47:53.527302+00:00",
+      "updated_at": "2026-11-16T19:47:55.397360+00:00",
+      "resultat": {
+        "entity": "INTERMARCHE",
+        "date": "2026-06-01",
+        "total_amount": "62.09",
+        "currency": "EUR",
+        "confidence": {
+          "date": 0.696,
+          "entity": 0.708,
+          "total_amount": 0.997
+        },
+        "methode": {
+          "date": "modele",
+          "entity": "modele",
+          "total_amount": "modele"
+        },
+        "champs_manquants": [],
+        "champs_incertains": [],
+        "version_modele": "docflow-extraction-1.0.0"
+      },
+      "duree_totale_ms": 1871,
+      "etapes": [
+        {
+          "event_type": "document.received",
+          "service": "api",
+          "emis_le": "2026-11-16T19:47:53.529320+00:00",
+          "duree_ms": null,
+          "attente_ms": null,
+          "details": {
+            "format_source": "pdf",
+            "taille_octets": 40111
+          }
+        },
+        {
+          "event_type": "step.started",
+          "service": "ms1-pretraitement",
+          "emis_le": "2026-11-16T19:47:53.543054+00:00",
+          "duree_ms": null,
+          "attente_ms": 14,
+          "details": {
+            "etape": "pretraitement"
+          }
+        },
+        {
+          "event_type": "preprocessing.completed",
+          "service": "ms1-pretraitement",
+          "emis_le": "2026-11-16T19:47:53.786825+00:00",
+          "duree_ms": 240,
+          "attente_ms": null,
+          "details": {
+            "angles": [
+              0.0
+            ],
+            "nb_pages": 1,
+            "format_source": "pdf"
+          }
+        },
+        {
+          "event_type": "step.started",
+          "service": "ms2-ocr",
+          "emis_le": "2026-11-16T19:47:53.787492+00:00",
+          "duree_ms": null,
+          "attente_ms": 1,
+          "details": {
+            "etape": "ocr"
+          }
+        },
+        {
+          "event_type": "ocr.completed",
+          "service": "ms2-ocr",
+          "emis_le": "2026-11-16T19:47:55.390980+00:00",
+          "duree_ms": 1602,
+          "attente_ms": null,
+          "details": {
+            "moteur": "tesseract-5.3.0",
+            "pages_vides": []
+          }
+        },
+        {
+          "event_type": "step.started",
+          "service": "ms3-extraction",
+          "emis_le": "2026-11-16T19:47:55.391862+00:00",
+          "duree_ms": null,
+          "attente_ms": 1,
+          "details": {
+            "etape": "extraction"
+          }
+        },
+        {
+          "event_type": "extraction.completed",
+          "service": "ms3-extraction",
+          "emis_le": "2026-11-16T19:47:55.398066+00:00",
+          "duree_ms": 4,
+          "attente_ms": null,
+          "details": {
+            "methode": {
+              "date": "modele",
+              "entity": "modele",
+              "total_amount": "modele"
+            },
+            "version_modele": "docflow-extraction-1.0.0",
+            "champs_manquants": [],
+            "champs_incertains": []
+          }
+        }
+      ]
+    },
+    "DOC-6366DE33D586": {
+      "document_id": "DOC-6366DE33D586",
+      "correlation_id": "RUN-F0F8CD3AC2D0",
+      "status": "COMPLETED",
+      "erreur": null,
+      "format_source": "pdf",
+      "created_at": "2026-11-16T19:47:56.019212+00:00",
+      "updated_at": "2026-11-16T19:47:56.447393+00:00",
+      "resultat": {
+        "entity": "CARREFOUR",
+        "date": "2025-06-03",
+        "total_amount": "9.90",
+        "currency": "EUR",
+        "confidence": {
+          "date": 0.779,
+          "entity": 0.733,
+          "total_amount": 0.999
+        },
+        "methode": {
+          "date": "modele",
+          "entity": "modele",
+          "total_amount": "modele"
+        },
+        "champs_manquants": [],
+        "champs_incertains": [],
+        "version_modele": "docflow-extraction-1.0.0"
+      },
+      "duree_totale_ms": 429,
+      "etapes": [
+        {
+          "event_type": "document.received",
+          "service": "api",
+          "emis_le": "2026-11-16T19:47:56.020858+00:00",
+          "duree_ms": null,
+          "attente_ms": null,
+          "details": {
+            "format_source": "pdf",
+            "taille_octets": 17129
+          }
+        },
+        {
+          "event_type": "step.started",
+          "service": "ms1-pretraitement",
+          "emis_le": "2026-11-16T19:47:56.035520+00:00",
+          "duree_ms": null,
+          "attente_ms": 15,
+          "details": {
+            "etape": "pretraitement"
+          }
+        },
+        {
+          "event_type": "preprocessing.completed",
+          "service": "ms1-pretraitement",
+          "emis_le": "2026-11-16T19:47:56.109679+00:00",
+          "duree_ms": 70,
+          "attente_ms": null,
+          "details": {
+            "angles": [
+              0.0
+            ],
+            "nb_pages": 1,
+            "format_source": "pdf"
+          }
+        },
+        {
+          "event_type": "step.started",
+          "service": "ms2-ocr",
+          "emis_le": "2026-11-16T19:47:56.110348+00:00",
+          "duree_ms": null,
+          "attente_ms": 1,
+          "details": {
+            "etape": "ocr"
+          }
+        },
+        {
+          "event_type": "ocr.completed",
+          "service": "ms2-ocr",
+          "emis_le": "2026-11-16T19:47:56.443578+00:00",
+          "duree_ms": 331,
+          "attente_ms": null,
+          "details": {
+            "moteur": "tesseract-5.3.0",
+            "pages_vides": []
+          }
+        },
+        {
+          "event_type": "step.started",
+          "service": "ms3-extraction",
+          "emis_le": "2026-11-16T19:47:56.445287+00:00",
+          "duree_ms": null,
+          "attente_ms": 2,
+          "details": {
+            "etape": "extraction"
+          }
+        },
+        {
+          "event_type": "extraction.completed",
+          "service": "ms3-extraction",
+          "emis_le": "2026-11-16T19:47:56.447865+00:00",
+          "duree_ms": 2,
+          "attente_ms": null,
+          "details": {
+            "methode": {
+              "date": "modele",
+              "entity": "modele",
+              "total_amount": "modele"
+            },
+            "version_modele": "docflow-extraction-1.0.0",
+            "champs_manquants": [],
+            "champs_incertains": []
+          }
+        }
+      ]
+    },
+    "DOC-061E47D81865": {
+      "document_id": "DOC-061E47D81865",
+      "correlation_id": "RUN-EFEEFFCBF9C5",
+      "status": "COMPLETED",
+      "erreur": null,
+      "format_source": "jpeg",
+      "created_at": "2026-11-16T19:47:56.975755+00:00",
+      "updated_at": "2026-11-16T19:47:58.246349+00:00",
+      "resultat": {
+        "entity": "LIDL",
+        "date": "2023-08-10",
+        "total_amount": "8.50",
+        "currency": "EUR",
+        "confidence": {
+          "date": 0.589,
+          "entity": 0.738,
+          "total_amount": 0.993
+        },
+        "methode": {
+          "date": "modele",
+          "entity": "modele",
+          "total_amount": "modele"
+        },
+        "champs_manquants": [],
+        "champs_incertains": [],
+        "version_modele": "docflow-extraction-1.0.0"
+      },
+      "duree_totale_ms": 1271,
+      "etapes": [
+        {
+          "event_type": "document.received",
+          "service": "api",
+          "emis_le": "2026-11-16T19:47:56.976371+00:00",
+          "duree_ms": null,
+          "attente_ms": null,
+          "details": {
+            "format_source": "jpeg",
+            "taille_octets": 99360
+          }
+        },
+        {
+          "event_type": "step.started",
+          "service": "ms1-pretraitement",
+          "emis_le": "2026-11-16T19:47:56.983305+00:00",
+          "duree_ms": null,
+          "attente_ms": 7,
+          "details": {
+            "etape": "pretraitement"
+          }
+        },
+        {
+          "event_type": "preprocessing.completed",
+          "service": "ms1-pretraitement",
+          "emis_le": "2026-11-16T19:47:57.095980+00:00",
+          "duree_ms": 110,
+          "attente_ms": null,
+          "details": {
+            "angles": [
+              0.0
+            ],
+            "nb_pages": 1,
+            "format_source": "jpeg"
+          }
+        },
+        {
+          "event_type": "step.started",
+          "service": "ms2-ocr",
+          "emis_le": "2026-11-16T19:47:57.096741+00:00",
+          "duree_ms": null,
+          "attente_ms": 1,
+          "details": {
+            "etape": "ocr"
+          }
+        },
+        {
+          "event_type": "ocr.completed",
+          "service": "ms2-ocr",
+          "emis_le": "2026-11-16T19:47:58.241033+00:00",
+          "duree_ms": 1143,
+          "attente_ms": null,
+          "details": {
+            "moteur": "tesseract-5.3.0",
+            "pages_vides": []
+          }
+        },
+        {
+          "event_type": "step.started",
+          "service": "ms3-extraction",
+          "emis_le": "2026-11-16T19:47:58.243159+00:00",
+          "duree_ms": null,
+          "attente_ms": 2,
+          "details": {
+            "etape": "extraction"
+          }
+        },
+        {
+          "event_type": "extraction.completed",
+          "service": "ms3-extraction",
+          "emis_le": "2026-11-16T19:47:58.246826+00:00",
+          "duree_ms": 3,
+          "attente_ms": null,
+          "details": {
+            "methode": {
+              "date": "modele",
+              "entity": "modele",
+              "total_amount": "modele"
+            },
+            "version_modele": "docflow-extraction-1.0.0",
+            "champs_manquants": [],
+            "champs_incertains": []
+          }
+        }
+      ]
+    },
+    "DOC-8968494D2577": {
+      "document_id": "DOC-8968494D2577",
+      "correlation_id": "RUN-E2B712360C00",
+      "status": "COMPLETED",
+      "erreur": null,
+      "format_source": "pdf",
+      "created_at": "2026-11-16T19:47:58.850347+00:00",
+      "updated_at": "2026-11-16T19:48:00.191126+00:00",
+      "resultat": {
+        "entity": "INTERMARCHE",
+        "date": "2026-02-03",
+        "total_amount": "9.34",
+        "currency": "EUR",
+        "confidence": {
+          "date": 0.636,
+          "entity": 0.711,
+          "total_amount": 0.971
+        },
+        "methode": {
+          "date": "modele",
+          "entity": "modele",
+          "total_amount": "modele"
+        },
+        "champs_manquants": [],
+        "champs_incertains": [],
+        "version_modele": "docflow-extraction-1.0.0"
+      },
+      "duree_totale_ms": 1341,
+      "etapes": [
+        {
+          "event_type": "document.received",
+          "service": "api",
+          "emis_le": "2026-11-16T19:47:58.851967+00:00",
+          "duree_ms": null,
+          "attente_ms": null,
+          "details": {
+            "format_source": "pdf",
+            "taille_octets": 37665
+          }
+        },
+        {
+          "event_type": "step.started",
+          "service": "ms1-pretraitement",
+          "emis_le": "2026-11-16T19:47:58.862208+00:00",
+          "duree_ms": null,
+          "attente_ms": 10,
+          "details": {
+            "etape": "pretraitement"
+          }
+        },
+        {
+          "event_type": "preprocessing.completed",
+          "service": "ms1-pretraitement",
+          "emis_le": "2026-11-16T19:47:59.058467+00:00",
+          "duree_ms": 193,
+          "attente_ms": null,
+          "details": {
+            "angles": [
+              0.0
+            ],
+            "nb_pages": 1,
+            "format_source": "pdf"
+          }
+        },
+        {
+          "event_type": "step.started",
+          "service": "ms2-ocr",
+          "emis_le": "2026-11-16T19:47:59.059122+00:00",
+          "duree_ms": null,
+          "attente_ms": 1,
+          "details": {
+            "etape": "ocr"
+          }
+        },
+        {
+          "event_type": "ocr.completed",
+          "service": "ms2-ocr",
+          "emis_le": "2026-11-16T19:48:00.185982+00:00",
+          "duree_ms": 1125,
+          "attente_ms": null,
+          "details": {
+            "moteur": "tesseract-5.3.0",
+            "pages_vides": []
+          }
+        },
+        {
+          "event_type": "step.started",
+          "service": "ms3-extraction",
+          "emis_le": "2026-11-16T19:48:00.188064+00:00",
+          "duree_ms": null,
+          "attente_ms": 2,
+          "details": {
+            "etape": "extraction"
+          }
+        },
+        {
+          "event_type": "extraction.completed",
+          "service": "ms3-extraction",
+          "emis_le": "2026-11-16T19:48:00.191661+00:00",
+          "duree_ms": 3,
+          "attente_ms": null,
+          "details": {
+            "methode": {
+              "date": "modele",
+              "entity": "modele",
+              "total_amount": "modele"
+            },
+            "version_modele": "docflow-extraction-1.0.0",
+            "champs_manquants": [],
+            "champs_incertains": []
+          }
+        }
+      ]
+    },
+    "DOC-784DBC1378D1": {
+      "document_id": "DOC-784DBC1378D1",
+      "correlation_id": "RUN-1C7D47CEDE4E",
+      "status": "COMPLETED",
+      "erreur": null,
+      "format_source": "pdf",
+      "created_at": "2026-11-16T19:48:00.730067+00:00",
+      "updated_at": "2026-11-16T19:48:01.169152+00:00",
+      "resultat": {
+        "entity": "CARREFOUR",
+        "date": "2025-12-03",
+        "total_amount": "17.02",
+        "currency": "EUR",
+        "confidence": {
+          "date": 0.78,
+          "entity": 0.776,
+          "total_amount": 0.993
+        },
+        "methode": {
+          "date": "modele",
+          "entity": "modele",
+          "total_amount": "modele"
+        },
+        "champs_manquants": [],
+        "champs_incertains": [],
+        "version_modele": "docflow-extraction-1.0.0"
+      },
+      "duree_totale_ms": 440,
+      "etapes": [
+        {
+          "event_type": "document.received",
+          "service": "api",
+          "emis_le": "2026-11-16T19:48:00.731585+00:00",
+          "duree_ms": null,
+          "attente_ms": null,
+          "details": {
+            "format_source": "pdf",
+            "taille_octets": 17266
+          }
+        },
+        {
+          "event_type": "step.started",
+          "service": "ms1-pretraitement",
+          "emis_le": "2026-11-16T19:48:00.742343+00:00",
+          "duree_ms": null,
+          "attente_ms": 11,
+          "details": {
+            "etape": "pretraitement"
+          }
+        },
+        {
+          "event_type": "preprocessing.completed",
+          "service": "ms1-pretraitement",
+          "emis_le": "2026-11-16T19:48:00.830420+00:00",
+          "duree_ms": 85,
+          "attente_ms": null,
+          "details": {
+            "angles": [
+              0.0
+            ],
+            "nb_pages": 1,
+            "format_source": "pdf"
+          }
+        },
+        {
+          "event_type": "step.started",
+          "service": "ms2-ocr",
+          "emis_le": "2026-11-16T19:48:00.831094+00:00",
+          "duree_ms": null,
+          "attente_ms": 1,
+          "details": {
+            "etape": "ocr"
+          }
+        },
+        {
+          "event_type": "ocr.completed",
+          "service": "ms2-ocr",
+          "emis_le": "2026-11-16T19:48:01.164617+00:00",
+          "duree_ms": 332,
+          "attente_ms": null,
+          "details": {
+            "moteur": "tesseract-5.3.0",
+            "pages_vides": []
+          }
+        },
+        {
+          "event_type": "step.started",
+          "service": "ms3-extraction",
+          "emis_le": "2026-11-16T19:48:01.166828+00:00",
+          "duree_ms": null,
+          "attente_ms": 2,
+          "details": {
+            "etape": "extraction"
+          }
+        },
+        {
+          "event_type": "extraction.completed",
+          "service": "ms3-extraction",
+          "emis_le": "2026-11-16T19:48:01.169658+00:00",
+          "duree_ms": 2,
+          "attente_ms": null,
+          "details": {
+            "methode": {
+              "date": "modele",
+              "entity": "modele",
+              "total_amount": "modele"
+            },
+            "version_modele": "docflow-extraction-1.0.0",
+            "champs_manquants": [],
+            "champs_incertains": []
+          }
+        }
+      ]
+    },
+    "DOC-AAE7BFC18A7E": {
+      "document_id": "DOC-AAE7BFC18A7E",
+      "correlation_id": "RUN-D8D33B50F8CC",
+      "status": "COMPLETED",
+      "erreur": null,
+      "format_source": "jpeg",
+      "created_at": "2026-11-16T19:48:01.682088+00:00",
+      "updated_at": "2026-11-16T19:48:03.473734+00:00",
+      "resultat": {
+        "entity": "LIDL",
+        "date": "2023-10-10",
+        "total_amount": "83.51",
+        "currency": "EUR",
+        "confidence": {
+          "date": 0.827,
+          "entity": 0.678,
+          "total_amount": 0.999
+        },
+        "methode": {
+          "date": "modele",
+          "entity": "modele",
+          "total_amount": "modele"
+        },
+        "champs_manquants": [],
+        "champs_incertains": [],
+        "version_modele": "docflow-extraction-1.0.0"
+      },
+      "duree_totale_ms": 1792,
+      "etapes": [
+        {
+          "event_type": "document.received",
+          "service": "api",
+          "emis_le": "2026-11-16T19:48:01.683380+00:00",
+          "duree_ms": null,
+          "attente_ms": null,
+          "details": {
+            "format_source": "jpeg",
+            "taille_octets": 134095
+          }
+        },
+        {
+          "event_type": "step.started",
+          "service": "ms1-pretraitement",
+          "emis_le": "2026-11-16T19:48:01.695602+00:00",
+          "duree_ms": null,
+          "attente_ms": 12,
+          "details": {
+            "etape": "pretraitement"
+          }
+        },
+        {
+          "event_type": "preprocessing.completed",
+          "service": "ms1-pretraitement",
+          "emis_le": "2026-11-16T19:48:01.847886+00:00",
+          "duree_ms": 149,
+          "attente_ms": null,
+          "details": {
+            "angles": [
+              0.0
+            ],
+            "nb_pages": 1,
+            "format_source": "jpeg"
+          }
+        },
+        {
+          "event_type": "step.started",
+          "service": "ms2-ocr",
+          "emis_le": "2026-11-16T19:48:01.848657+00:00",
+          "duree_ms": null,
+          "attente_ms": 1,
+          "details": {
+            "etape": "ocr"
+          }
+        },
+        {
+          "event_type": "ocr.completed",
+          "service": "ms2-ocr",
+          "emis_le": "2026-11-16T19:48:03.467979+00:00",
+          "duree_ms": 1618,
+          "attente_ms": null,
+          "details": {
+            "moteur": "tesseract-5.3.0",
+            "pages_vides": []
+          }
+        },
+        {
+          "event_type": "step.started",
+          "service": "ms3-extraction",
+          "emis_le": "2026-11-16T19:48:03.470173+00:00",
+          "duree_ms": null,
+          "attente_ms": 2,
+          "details": {
+            "etape": "extraction"
+          }
+        },
+        {
+          "event_type": "extraction.completed",
+          "service": "ms3-extraction",
+          "emis_le": "2026-11-16T19:48:03.474299+00:00",
+          "duree_ms": 3,
+          "attente_ms": null,
+          "details": {
+            "methode": {
+              "date": "modele",
+              "entity": "modele",
+              "total_amount": "modele"
+            },
+            "version_modele": "docflow-extraction-1.0.0",
+            "champs_manquants": [],
+            "champs_incertains": []
+          }
+        }
+      ]
+    },
+    "DOC-FB55E651AFC5": {
+      "document_id": "DOC-FB55E651AFC5",
+      "correlation_id": "RUN-3BE570D94ADF",
+      "status": "COMPLETED",
+      "erreur": null,
+      "format_source": "pdf",
+      "created_at": "2026-11-16T19:48:03.863518+00:00",
+      "updated_at": "2026-11-16T19:48:05.950960+00:00",
+      "resultat": {
+        "entity": "INTERMARCHE",
+        "date": "2026-01-05",
+        "total_amount": "34.51",
+        "currency": "EUR",
+        "confidence": {
+          "date": 0.639,
+          "entity": 0.746,
+          "total_amount": 0.993
+        },
+        "methode": {
+          "date": "modele",
+          "entity": "modele",
+          "total_amount": "modele"
+        },
+        "champs_manquants": [],
+        "champs_incertains": [],
+        "version_modele": "docflow-extraction-1.0.0"
+      },
+      "duree_totale_ms": 2088,
+      "etapes": [
+        {
+          "event_type": "document.received",
+          "service": "api",
+          "emis_le": "2026-11-16T19:48:03.865150+00:00",
+          "duree_ms": null,
+          "attente_ms": null,
+          "details": {
+            "format_source": "pdf",
+            "taille_octets": 40385
+          }
+        },
+        {
+          "event_type": "step.started",
+          "service": "ms1-pretraitement",
+          "emis_le": "2026-11-16T19:48:03.876972+00:00",
+          "duree_ms": null,
+          "attente_ms": 12,
+          "details": {
+            "etape": "pretraitement"
+          }
+        },
+        {
+          "event_type": "preprocessing.completed",
+          "service": "ms1-pretraitement",
+          "emis_le": "2026-11-16T19:48:04.144587+00:00",
+          "duree_ms": 264,
+          "attente_ms": null,
+          "details": {
+            "angles": [
+              0.0
+            ],
+            "nb_pages": 1,
+            "format_source": "pdf"
+          }
+        },
+        {
+          "event_type": "step.started",
+          "service": "ms2-ocr",
+          "emis_le": "2026-11-16T19:48:04.145600+00:00",
+          "duree_ms": null,
+          "attente_ms": 1,
+          "details": {
+            "etape": "ocr"
+          }
+        },
+        {
+          "event_type": "ocr.completed",
+          "service": "ms2-ocr",
+          "emis_le": "2026-11-16T19:48:05.945070+00:00",
+          "duree_ms": 1798,
+          "attente_ms": null,
+          "details": {
+            "moteur": "tesseract-5.3.0",
+            "pages_vides": []
+          }
+        },
+        {
+          "event_type": "step.started",
+          "service": "ms3-extraction",
+          "emis_le": "2026-11-16T19:48:05.946354+00:00",
+          "duree_ms": null,
+          "attente_ms": 1,
+          "details": {
+            "etape": "extraction"
+          }
+        },
+        {
+          "event_type": "extraction.completed",
+          "service": "ms3-extraction",
+          "emis_le": "2026-11-16T19:48:05.951733+00:00",
+          "duree_ms": 4,
+          "attente_ms": null,
+          "details": {
+            "methode": {
+              "date": "modele",
+              "entity": "modele",
+              "total_amount": "modele"
+            },
+            "version_modele": "docflow-extraction-1.0.0",
+            "champs_manquants": [],
+            "champs_incertains": []
+          }
+        }
+      ]
+    },
+    "DOC-8E90F04EBDD3": {
+      "document_id": "DOC-8E90F04EBDD3",
+      "correlation_id": "RUN-8E19BD7C4E80",
+      "status": "COMPLETED",
+      "erreur": null,
+      "format_source": "pdf",
+      "created_at": "2026-11-16T19:48:06.335374+00:00",
+      "updated_at": "2026-11-16T19:48:06.834557+00:00",
+      "resultat": {
+        "entity": "CARREFOUR",
+        "date": "2025-10-04",
+        "total_amount": "6.73",
+        "currency": "EUR",
+        "confidence": {
+          "date": 0.78,
+          "entity": 0.76,
+          "total_amount": 0.992
+        },
+        "methode": {
+          "date": "modele",
+          "entity": "modele",
+          "total_amount": "modele"
+        },
+        "champs_manquants": [],
+        "champs_incertains": [],
+        "version_modele": "docflow-extraction-1.0.0"
+      },
+      "duree_totale_ms": 500,
+      "etapes": [
+        {
+          "event_type": "document.received",
+          "service": "api",
+          "emis_le": "2026-11-16T19:48:06.336308+00:00",
+          "duree_ms": null,
+          "attente_ms": null,
+          "details": {
+            "format_source": "pdf",
+            "taille_octets": 17210
+          }
+        },
+        {
+          "event_type": "step.started",
+          "service": "ms1-pretraitement",
+          "emis_le": "2026-11-16T19:48:06.344575+00:00",
+          "duree_ms": null,
+          "attente_ms": 8,
+          "details": {
+            "etape": "pretraitement"
+          }
+        },
+        {
+          "event_type": "preprocessing.completed",
+          "service": "ms1-pretraitement",
+          "emis_le": "2026-11-16T19:48:06.418387+00:00",
+          "duree_ms": 71,
+          "attente_ms": null,
+          "details": {
+            "angles": [
+              0.0
+            ],
+            "nb_pages": 1,
+            "format_source": "pdf"
+          }
+        },
+        {
+          "event_type": "step.started",
+          "service": "ms2-ocr",
+          "emis_le": "2026-11-16T19:48:06.419433+00:00",
+          "duree_ms": null,
+          "attente_ms": 1,
+          "details": {
+            "etape": "ocr"
+          }
+        },
+        {
+          "event_type": "ocr.completed",
+          "service": "ms2-ocr",
+          "emis_le": "2026-11-16T19:48:06.828462+00:00",
+          "duree_ms": 407,
+          "attente_ms": null,
+          "details": {
+            "moteur": "tesseract-5.3.0",
+            "pages_vides": []
+          }
+        },
+        {
+          "event_type": "step.started",
+          "service": "ms3-extraction",
+          "emis_le": "2026-11-16T19:48:06.830990+00:00",
+          "duree_ms": null,
+          "attente_ms": 2,
+          "details": {
+            "etape": "extraction"
+          }
+        },
+        {
+          "event_type": "extraction.completed",
+          "service": "ms3-extraction",
+          "emis_le": "2026-11-16T19:48:06.835540+00:00",
+          "duree_ms": 3,
+          "attente_ms": null,
+          "details": {
+            "methode": {
+              "date": "modele",
+              "entity": "modele",
+              "total_amount": "modele"
+            },
+            "version_modele": "docflow-extraction-1.0.0",
+            "champs_manquants": [],
+            "champs_incertains": []
+          }
+        }
+      ]
+    },
+    "DOC-68AFF923E195": {
+      "document_id": "DOC-68AFF923E195",
+      "correlation_id": "RUN-C63CE6B4AF8F",
+      "status": "COMPLETED",
+      "erreur": null,
+      "format_source": "jpeg",
+      "created_at": "2026-11-16T19:48:07.289702+00:00",
+      "updated_at": "2026-11-16T19:48:08.588003+00:00",
+      "resultat": {
+        "entity": "LIDL",
+        "date": "2023-11-10",
+        "total_amount": "22.59",
+        "currency": "EUR",
+        "confidence": {
+          "date": 0.824,
+          "entity": 0.721,
+          "total_amount": 0.999
+        },
+        "methode": {
+          "date": "modele",
+          "entity": "modele",
+          "total_amount": "modele"
+        },
+        "champs_manquants": [],
+        "champs_incertains": [],
+        "version_modele": "docflow-extraction-1.0.0"
+      },
+      "duree_totale_ms": 1299,
+      "etapes": [
+        {
+          "event_type": "document.received",
+          "service": "api",
+          "emis_le": "2026-11-16T19:48:07.290370+00:00",
+          "duree_ms": null,
+          "attente_ms": null,
+          "details": {
+            "format_source": "jpeg",
+            "taille_octets": 96848
+          }
+        },
+        {
+          "event_type": "step.started",
+          "service": "ms1-pretraitement",
+          "emis_le": "2026-11-16T19:48:07.296835+00:00",
+          "duree_ms": null,
+          "attente_ms": 6,
+          "details": {
+            "etape": "pretraitement"
+          }
+        },
+        {
+          "event_type": "preprocessing.completed",
+          "service": "ms1-pretraitement",
+          "emis_le": "2026-11-16T19:48:07.424990+00:00",
+          "duree_ms": 126,
+          "attente_ms": null,
+          "details": {
+            "angles": [
+              0.0
+            ],
+            "nb_pages": 1,
+            "format_source": "jpeg"
+          }
+        },
+        {
+          "event_type": "step.started",
+          "service": "ms2-ocr",
+          "emis_le": "2026-11-16T19:48:07.425689+00:00",
+          "duree_ms": null,
+          "attente_ms": 1,
+          "details": {
+            "etape": "ocr"
+          }
+        },
+        {
+          "event_type": "ocr.completed",
+          "service": "ms2-ocr",
+          "emis_le": "2026-11-16T19:48:08.583678+00:00",
+          "duree_ms": 1156,
+          "attente_ms": null,
+          "details": {
+            "moteur": "tesseract-5.3.0",
+            "pages_vides": []
+          }
+        },
+        {
+          "event_type": "step.started",
+          "service": "ms3-extraction",
+          "emis_le": "2026-11-16T19:48:08.584476+00:00",
+          "duree_ms": null,
+          "attente_ms": 1,
+          "details": {
+            "etape": "extraction"
+          }
+        },
+        {
+          "event_type": "extraction.completed",
+          "service": "ms3-extraction",
+          "emis_le": "2026-11-16T19:48:08.588515+00:00",
+          "duree_ms": 3,
+          "attente_ms": null,
+          "details": {
+            "methode": {
+              "date": "modele",
+              "entity": "modele",
+              "total_amount": "modele"
+            },
+            "version_modele": "docflow-extraction-1.0.0",
+            "champs_manquants": [],
+            "champs_incertains": []
+          }
+        }
+      ]
+    },
+    "DOC-C995A15ECB83": {
+      "document_id": "DOC-C995A15ECB83",
+      "correlation_id": "RUN-9BA7E1F3ACAA",
+      "status": "COMPLETED",
+      "erreur": null,
+      "format_source": "pdf",
+      "created_at": "2026-11-16T19:48:09.159494+00:00",
+      "updated_at": "2026-11-16T19:48:10.927371+00:00",
+      "resultat": {
+        "entity": "INTERMARCHE",
+        "date": "2026-03-09",
+        "total_amount": "34.61",
+        "currency": "EUR",
+        "confidence": {
+          "date": 0.695,
+          "entity": 0.736,
+          "total_amount": 0.994
+        },
+        "methode": {
+          "date": "modele",
+          "entity": "modele",
+          "total_amount": "modele"
+        },
+        "champs_manquants": [],
+        "champs_incertains": [],
+        "version_modele": "docflow-extraction-1.0.0"
+      },
+      "duree_totale_ms": 1768,
+      "etapes": [
+        {
+          "event_type": "document.received",
+          "service": "api",
+          "emis_le": "2026-11-16T19:48:09.160770+00:00",
+          "duree_ms": null,
+          "attente_ms": null,
+          "details": {
+            "format_source": "pdf",
+            "taille_octets": 39405
+          }
+        },
+        {
+          "event_type": "step.started",
+          "service": "ms1-pretraitement",
+          "emis_le": "2026-11-16T19:48:09.172084+00:00",
+          "duree_ms": null,
+          "attente_ms": 11,
+          "details": {
+            "etape": "pretraitement"
+          }
+        },
+        {
+          "event_type": "preprocessing.completed",
+          "service": "ms1-pretraitement",
+          "emis_le": "2026-11-16T19:48:09.398122+00:00",
+          "duree_ms": 223,
+          "attente_ms": null,
+          "details": {
+            "angles": [
+              0.0
+            ],
+            "nb_pages": 1,
+            "format_source": "pdf"
+          }
+        },
+        {
+          "event_type": "step.started",
+          "service": "ms2-ocr",
+          "emis_le": "2026-11-16T19:48:09.398805+00:00",
+          "duree_ms": null,
+          "attente_ms": 1,
+          "details": {
+            "etape": "ocr"
+          }
+        },
+        {
+          "event_type": "ocr.completed",
+          "service": "ms2-ocr",
+          "emis_le": "2026-11-16T19:48:10.922196+00:00",
+          "duree_ms": 1522,
+          "attente_ms": null,
+          "details": {
+            "moteur": "tesseract-5.3.0",
+            "pages_vides": []
+          }
+        },
+        {
+          "event_type": "step.started",
+          "service": "ms3-extraction",
+          "emis_le": "2026-11-16T19:48:10.924197+00:00",
+          "duree_ms": null,
+          "attente_ms": 2,
+          "details": {
+            "etape": "extraction"
+          }
+        },
+        {
+          "event_type": "extraction.completed",
+          "service": "ms3-extraction",
+          "emis_le": "2026-11-16T19:48:10.927907+00:00",
+          "duree_ms": 3,
+          "attente_ms": null,
+          "details": {
+            "methode": {
+              "date": "modele",
+              "entity": "modele",
+              "total_amount": "modele"
+            },
+            "version_modele": "docflow-extraction-1.0.0",
+            "champs_manquants": [],
+            "champs_incertains": []
+          }
+        }
+      ]
+    },
+    "DOC-49528843316B": {
+      "document_id": "DOC-49528843316B",
+      "correlation_id": "RUN-03F783E0A3F0",
+      "status": "COMPLETED",
+      "erreur": null,
+      "format_source": "pdf",
+      "created_at": "2026-11-16T19:48:11.333877+00:00",
+      "updated_at": "2026-11-16T19:48:11.774666+00:00",
+      "resultat": {
+        "entity": "CARREFOUR",
+        "date": "2025-04-05",
+        "total_amount": "4.68",
+        "currency": "EUR",
+        "confidence": {
+          "date": 0.779,
+          "entity": 0.776,
+          "total_amount": 0.989
+        },
+        "methode": {
+          "date": "modele",
+          "entity": "modele",
+          "total_amount": "modele"
+        },
+        "champs_manquants": [],
+        "champs_incertains": [],
+        "version_modele": "docflow-extraction-1.0.0"
+      },
+      "duree_totale_ms": 441,
+      "etapes": [
+        {
+          "event_type": "document.received",
+          "service": "api",
+          "emis_le": "2026-11-16T19:48:11.335517+00:00",
+          "duree_ms": null,
+          "attente_ms": null,
+          "details": {
+            "format_source": "pdf",
+            "taille_octets": 17181
+          }
+        },
+        {
+          "event_type": "step.started",
+          "service": "ms1-pretraitement",
+          "emis_le": "2026-11-16T19:48:11.346519+00:00",
+          "duree_ms": null,
+          "attente_ms": 11,
+          "details": {
+            "etape": "pretraitement"
+          }
+        },
+        {
+          "event_type": "preprocessing.completed",
+          "service": "ms1-pretraitement",
+          "emis_le": "2026-11-16T19:48:11.421572+00:00",
+          "duree_ms": 71,
+          "attente_ms": null,
+          "details": {
+            "angles": [
+              0.0
+            ],
+            "nb_pages": 1,
+            "format_source": "pdf"
+          }
+        },
+        {
+          "event_type": "step.started",
+          "service": "ms2-ocr",
+          "emis_le": "2026-11-16T19:48:11.422241+00:00",
+          "duree_ms": null,
+          "attente_ms": 1,
+          "details": {
+            "etape": "ocr"
+          }
+        },
+        {
+          "event_type": "ocr.completed",
+          "service": "ms2-ocr",
+          "emis_le": "2026-11-16T19:48:11.770460+00:00",
+          "duree_ms": 346,
+          "attente_ms": null,
+          "details": {
+            "moteur": "tesseract-5.3.0",
+            "pages_vides": []
+          }
+        },
+        {
+          "event_type": "step.started",
+          "service": "ms3-extraction",
+          "emis_le": "2026-11-16T19:48:11.772332+00:00",
+          "duree_ms": null,
+          "attente_ms": 2,
+          "details": {
+            "etape": "extraction"
+          }
+        },
+        {
+          "event_type": "extraction.completed",
+          "service": "ms3-extraction",
+          "emis_le": "2026-11-16T19:48:11.775075+00:00",
+          "duree_ms": 2,
+          "attente_ms": null,
+          "details": {
+            "methode": {
+              "date": "modele",
+              "entity": "modele",
+              "total_amount": "modele"
+            },
+            "version_modele": "docflow-extraction-1.0.0",
+            "champs_manquants": [],
+            "champs_incertains": []
+          }
+        }
+      ]
+    },
+    "DOC-3DE942B760FB": {
+      "document_id": "DOC-3DE942B760FB",
+      "correlation_id": "RUN-70AF67C55B17",
+      "status": "COMPLETED",
+      "erreur": null,
+      "format_source": "jpeg",
+      "created_at": "2026-11-16T19:48:12.299231+00:00",
+      "updated_at": "2026-11-16T19:48:13.801730+00:00",
+      "resultat": {
+        "entity": "LIDL",
+        "date": "2023-08-11",
+        "total_amount": "27.64",
+        "currency": "EUR",
+        "confidence": {
+          "date": 0.826,
+          "entity": 0.72,
+          "total_amount": 0.999
+        },
+        "methode": {
+          "date": "modele",
+          "entity": "modele",
+          "total_amount": "modele"
+        },
+        "champs_manquants": [],
+        "champs_incertains": [],
+        "version_modele": "docflow-extraction-1.0.0"
+      },
+      "duree_totale_ms": 1503,
+      "etapes": [
+        {
+          "event_type": "document.received",
+          "service": "api",
+          "emis_le": "2026-11-16T19:48:12.300837+00:00",
+          "duree_ms": null,
+          "attente_ms": null,
+          "details": {
+            "format_source": "jpeg",
+            "taille_octets": 114809
+          }
+        },
+        {
+          "event_type": "step.started",
+          "service": "ms1-pretraitement",
+          "emis_le": "2026-11-16T19:48:12.312276+00:00",
+          "duree_ms": null,
+          "attente_ms": 11,
+          "details": {
+            "etape": "pretraitement"
+          }
+        },
+        {
+          "event_type": "preprocessing.completed",
+          "service": "ms1-pretraitement",
+          "emis_le": "2026-11-16T19:48:12.448441+00:00",
+          "duree_ms": 133,
+          "attente_ms": null,
+          "details": {
+            "angles": [
+              0.0
+            ],
+            "nb_pages": 1,
+            "format_source": "jpeg"
+          }
+        },
+        {
+          "event_type": "step.started",
+          "service": "ms2-ocr",
+          "emis_le": "2026-11-16T19:48:12.449210+00:00",
+          "duree_ms": null,
+          "attente_ms": 1,
+          "details": {
+            "etape": "ocr"
+          }
+        },
+        {
+          "event_type": "ocr.completed",
+          "service": "ms2-ocr",
+          "emis_le": "2026-11-16T19:48:13.796539+00:00",
+          "duree_ms": 1345,
+          "attente_ms": null,
+          "details": {
+            "moteur": "tesseract-5.3.0",
+            "pages_vides": []
+          }
+        },
+        {
+          "event_type": "step.started",
+          "service": "ms3-extraction",
+          "emis_le": "2026-11-16T19:48:13.798543+00:00",
+          "duree_ms": null,
+          "attente_ms": 2,
+          "details": {
+            "etape": "extraction"
+          }
+        },
+        {
+          "event_type": "extraction.completed",
+          "service": "ms3-extraction",
+          "emis_le": "2026-11-16T19:48:13.802174+00:00",
+          "duree_ms": 3,
+          "attente_ms": null,
+          "details": {
+            "methode": {
+              "date": "modele",
+              "entity": "modele",
+              "total_amount": "modele"
+            },
+            "version_modele": "docflow-extraction-1.0.0",
+            "champs_manquants": [],
+            "champs_incertains": []
+          }
+        }
+      ]
+    }
+  }
+}

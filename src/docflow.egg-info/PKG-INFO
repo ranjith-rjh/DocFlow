@@ -1,0 +1,38 @@
+Metadata-Version: 2.4
+Name: docflow
+Version: 1.0.0
+Summary: DocFlow AI : extraction d'enseigne, date et total de tickets de caisse par trois microservices distribués.
+Requires-Python: >=3.11
+Requires-Dist: pydantic<3,>=2.7
+Provides-Extra: messagerie
+Requires-Dist: pika<2,>=1.3; extra == "messagerie"
+Provides-Extra: base
+Requires-Dist: sqlalchemy<3,>=2.0; extra == "base"
+Requires-Dist: psycopg[binary]<4,>=3.1; extra == "base"
+Provides-Extra: ms1
+Requires-Dist: docflow[messagerie]; extra == "ms1"
+Requires-Dist: pymupdf>=1.24; extra == "ms1"
+Requires-Dist: opencv-python-headless>=4.9; extra == "ms1"
+Requires-Dist: pillow>=10; extra == "ms1"
+Requires-Dist: numpy>=1.26; extra == "ms1"
+Provides-Extra: ms2
+Requires-Dist: docflow[messagerie]; extra == "ms2"
+Requires-Dist: pytesseract>=0.3.10; extra == "ms2"
+Requires-Dist: pillow>=10; extra == "ms2"
+Provides-Extra: ms3
+Requires-Dist: docflow[base,messagerie]; extra == "ms3"
+Requires-Dist: scikit-learn==1.9.1; extra == "ms3"
+Requires-Dist: joblib>=1.3; extra == "ms3"
+Requires-Dist: numpy>=1.26; extra == "ms3"
+Provides-Extra: api
+Requires-Dist: docflow[base,messagerie]; extra == "api"
+Requires-Dist: fastapi>=0.110; extra == "api"
+Requires-Dist: uvicorn[standard]>=0.29; extra == "api"
+Requires-Dist: python-multipart>=0.0.9; extra == "api"
+Provides-Extra: entrainement
+Requires-Dist: docflow[ms1,ms2,ms3]; extra == "entrainement"
+Provides-Extra: dev
+Requires-Dist: docflow[api,ms1,ms2,ms3]; extra == "dev"
+Requires-Dist: pytest>=8; extra == "dev"
+Requires-Dist: httpx>=0.27; extra == "dev"
+Requires-Dist: ruff>=0.5; extra == "dev"
