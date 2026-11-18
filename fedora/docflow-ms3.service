@@ -1,0 +1,17 @@
+# Service systemd de MS3 : démarre avec la VM et redémarre tout seul en cas d'arrêt.
+[Unit]
+Description=DocFlow MS3 - extraction et insertion
+After=network-online.target postgresql.service
+Wants=network-online.target
+
+[Service]
+EnvironmentFile=/opt/docflow/ms3.env
+WorkingDirectory=/opt/docflow
+ExecStart=/opt/docflow/venv/bin/python ms3_extraction.py
+Restart=always
+RestartSec=3
+# Utilisateur temporaire sans privilèges, créé par systemd
+DynamicUser=yes
+
+[Install]
+WantedBy=multi-user.target

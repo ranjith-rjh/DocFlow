@@ -1,0 +1,1146 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{color-scheme:light}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<title>DocFlow V2 Guide</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout : sommaire collant à gauche + sections « slide » empilées qu'on lit en scrollant ; schémas animés en continu, lisibles au repos. */
+:root{
+  --bg:#FFF4FA; --surface:#FFFFFF; --ink:#26163F; --muted:#6A5C84; --line:#EEDDF1;
+  --pink:#FF4F9A; --mint:#12B985; --lemon:#F2A900; --grape:#7F5CFF; --sky:#1C9BE6; --peach:#FF7A45;
+  --code-bg:#221438; --code-fg:#EDE3FF; --tile:#FFFFFF;
+  --shadow:0 10px 30px -14px rgba(90,30,120,.30);
+  --f-display:"Bricolage Grotesque","Avenir Next","Segoe UI",system-ui,sans-serif;
+  --f-body:"DM Sans","Helvetica Neue",system-ui,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#150E24; --surface:#211735; --ink:#F8EEFF; --muted:#B9A9D6; --line:#3A2B57;
+  --pink:#FF6BAE; --mint:#3BE0A8; --lemon:#FFCA45; --grape:#9C82FF; --sky:#4CBEFF; --peach:#FF915F;
+  --code-bg:#0E0819; --code-fg:#EDE3FF; --tile:#FFFFFF; --shadow:0 10px 30px -14px rgba(0,0,0,.7); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#150E24; --surface:#211735; --ink:#F8EEFF; --muted:#B9A9D6; --line:#3A2B57;
+  --pink:#FF6BAE; --mint:#3BE0A8; --lemon:#FFCA45; --grape:#9C82FF; --sky:#4CBEFF; --peach:#FF915F;
+  --code-bg:#0E0819; --code-fg:#EDE3FF; --tile:#FFFFFF; --shadow:0 10px 30px -14px rgba(0,0,0,.7); color-scheme:dark}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:20px}
+body{background:var(--bg);color:var(--ink);font:16px/1.55 var(--f-body);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+.soft-pink{--c:var(--pink)}.soft-mint{--c:var(--mint)}.soft-lemon{--c:var(--lemon)}.soft-grape{--c:var(--grape)}.soft-sky{--c:var(--sky)}.soft-peach{--c:var(--peach)}
+.blobs{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0}
+.blobs i{position:absolute;border-radius:50%;filter:blur(80px);opacity:.28;animation:float 20s ease-in-out infinite alternate}
+.blobs i:nth-child(1){width:44vw;height:44vw;background:var(--pink);left:-14vw;top:-14vw}
+.blobs i:nth-child(2){width:36vw;height:36vw;background:var(--sky);right:-12vw;top:30vh;animation-delay:-7s}
+.blobs i:nth-child(3){width:30vw;height:30vw;background:var(--lemon);left:30vw;bottom:-16vw;animation-delay:-12s}
+@keyframes float{to{transform:translate(4vw,4vh) scale(1.08)}}
+
+.shell{position:relative;z-index:1;display:grid;grid-template-columns:250px minmax(0,1fr);gap:36px;max-width:1340px;margin:0 auto;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 80px}
+.toc{position:sticky;top:calc(20px + env(safe-area-inset-top,0px));align-self:start;max-height:calc(100vh - 40px);overflow:auto;display:flex;flex-direction:column;gap:2px;padding:18px 14px;border-radius:22px;background:color-mix(in srgb,var(--surface) 80%,transparent);border:1.5px solid var(--line);backdrop-filter:blur(10px)}
+.toc .brand{font:800 22px/1 var(--f-display);letter-spacing:-.03em;padding:4px 8px 12px}
+.toc .brand span{background:linear-gradient(95deg,var(--pink),var(--grape));-webkit-background-clip:text;background-clip:text;color:transparent}
+.toc a{display:flex;gap:10px;align-items:center;padding:7px 9px;border-radius:12px;color:var(--muted);text-decoration:none;font-size:14px;font-weight:500;line-height:1.25}
+.toc a b{font:700 11px var(--f-mono);min-width:22px;height:22px;border-radius:8px;display:grid;place-items:center;background:color-mix(in srgb,var(--c,var(--grape)) 16%,transparent);color:color-mix(in srgb,var(--c,var(--grape)) 75%,var(--ink))}
+.toc a:hover{color:var(--ink);background:color-mix(in srgb,var(--ink) 5%,transparent)}
+.toc a.on{color:var(--ink);background:var(--surface);box-shadow:var(--shadow)}
+.toc .hint{margin-top:10px;padding:8px 9px;font:500 12px var(--f-mono);color:var(--muted)}
+
+main{display:flex;flex-direction:column;gap:34px;min-width:0}
+section.sl{background:color-mix(in srgb,var(--surface) 72%,transparent);border:1.5px solid var(--line);border-radius:30px;padding:38px 40px;display:flex;flex-direction:column;gap:20px;box-shadow:var(--shadow);backdrop-filter:blur(6px);min-width:0}
+.kicker{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font:600 12.5px/1 var(--f-mono);letter-spacing:.13em;text-transform:uppercase;color:var(--muted)}
+.kicker b{padding:6px 11px;border-radius:999px;background:var(--c,var(--pink));color:#fff;letter-spacing:.08em}
+h1,h2,h3,h4{font-family:var(--f-display);margin:0;text-wrap:balance;letter-spacing:-.02em}
+h1{font-size:clamp(48px,7vw,92px);line-height:.92;font-weight:800;letter-spacing:-.045em}
+h2{font-size:clamp(28px,3.4vw,40px);line-height:1.06;font-weight:800}
+h2 em,h1 em{font-style:normal;background:linear-gradient(100deg,var(--pink),var(--grape) 55%,var(--sky));-webkit-background-clip:text;background-clip:text;color:transparent}
+h3{font-size:20px;font-weight:700}
+h4{font-size:16px;font-weight:700}
+p{margin:0}
+.lead{font-size:18px;line-height:1.5;color:var(--muted);max-width:70ch}
+.muted{color:var(--muted)}
+code,.mono{font-family:var(--f-mono);font-size:.88em}
+p code,li code,td code,dd code{padding:1px 6px;border-radius:6px;background:color-mix(in srgb,var(--grape) 11%,transparent);color:color-mix(in srgb,var(--grape) 60%,var(--ink));white-space:nowrap}
+.card{background:var(--surface);border:1.5px solid var(--line);border-radius:20px}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:4px 11px;border-radius:999px;font:600 12px/1.3 var(--f-mono);white-space:nowrap;
+  background:color-mix(in srgb,var(--c,var(--grape)) 15%,var(--surface));color:color-mix(in srgb,var(--c,var(--grape)) 68%,var(--ink));border:1px solid color-mix(in srgb,var(--c,var(--grape)) 35%,transparent)}
+.ico{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.bubble{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;flex:none;background:color-mix(in srgb,var(--c) 18%,var(--surface));color:color-mix(in srgb,var(--c) 80%,var(--ink))}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.grid4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.callout{display:flex;gap:14px;align-items:flex-start;padding:16px 18px;border-radius:18px;background:color-mix(in srgb,var(--c) 11%,var(--surface));border:1.5px solid color-mix(in srgb,var(--c) 38%,transparent);font-size:15px;line-height:1.5}
+.callout .ico{color:color-mix(in srgb,var(--c) 80%,var(--ink));margin-top:2px}
+.scroll-x{overflow-x:auto;min-width:0}
+svg text{font-family:var(--f-mono)}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:13px;color:var(--muted)}
+.legend span{display:flex;align-items:center;gap:6px}
+.legend i{width:22px;height:4px;border-radius:3px;background:var(--c)}
+.legend i.dash{background:repeating-linear-gradient(90deg,var(--c) 0 5px,transparent 5px 9px)}
+
+/* code */
+pre.code{margin:0;padding:16px 18px;border-radius:16px;background:var(--code-bg);color:var(--code-fg);font:500 13px/1.65 var(--f-mono);overflow-x:auto;white-space:pre}
+pre.code .k{color:#FF8CC4}.code .s{color:#7CF2C8}.code .n{color:#FFD36B}.code .c{color:#9C8BBF}.code .new{background:rgba(255,211,107,.22);border-radius:4px;animation:glow 2.4s ease-in-out infinite}
+@keyframes glow{50%{background:rgba(255,211,107,.42)}}
+.cmd{display:flex;align-items:center;gap:10px;padding:10px 10px 10px 14px;border-radius:14px;background:var(--code-bg);color:#7CF2C8;font:600 13px/1.4 var(--f-mono);min-width:0}
+.cmd span{flex:1;min-width:0;overflow-x:auto;white-space:nowrap}
+.cmd span::before{content:"$ ";color:#9C8BBF}
+.copy{border:0;border-radius:9px;padding:6px 9px;background:rgba(255,255,255,.1);color:#EDE3FF;cursor:pointer;font:600 11px var(--f-mono);flex:none}
+.copy:hover{background:rgba(255,255,255,.2)}
+button:focus-visible,a:focus-visible{outline:3px solid var(--sky);outline-offset:2px}
+
+/* hero */
+.hero{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:30px;align-items:center}
+.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.stat{padding:16px 18px;border-radius:20px;background:color-mix(in srgb,var(--c) 12%,var(--surface));border:1.5px solid color-mix(in srgb,var(--c) 35%,transparent)}
+.stat strong{display:block;font:800 36px/1 var(--f-display);letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.stat small{font-size:13.5px;color:var(--muted)}
+.vs{width:100%;border-collapse:collapse;font-size:14.5px}
+.vs th,.vs td{padding:9px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+.vs th{font:600 12px var(--f-mono);text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.vs td:first-child{font-weight:700;font-family:var(--f-display)}
+.vs td.v2{color:color-mix(in srgb,var(--mint) 60%,var(--ink));font-weight:600}
+
+/* pipeline */
+.pipe{display:flex;align-items:flex-start;min-width:760px;padding:8px 4px}
+.node{width:118px;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;flex:none}
+.node .bubble{width:70px;height:70px;border-radius:22px;box-shadow:var(--shadow);border:2px solid color-mix(in srgb,var(--c) 40%,transparent)}
+.node .bubble .ico{width:30px;height:30px}
+.node strong{font:800 16px var(--f-display)}
+.node small{font:500 11.5px/1.3 var(--f-mono);color:var(--muted)}
+.wire{flex:1;position:relative;height:70px;min-width:60px}
+.wire::before{content:"";position:absolute;left:0;right:0;top:33px;height:4px;border-radius:4px;background:repeating-linear-gradient(90deg,color-mix(in srgb,var(--ink) 22%,transparent) 0 8px,transparent 8px 14px)}
+.wire .dot{position:absolute;top:28px;left:0;width:14px;height:14px;border-radius:50%;background:var(--c);box-shadow:0 0 12px var(--c);animation:travel 2.4s cubic-bezier(.6,0,.4,1) infinite;animation-delay:calc(var(--d) * .4s)}
+@keyframes travel{0%{left:0;opacity:0}12%,88%{opacity:1}100%{left:calc(100% - 14px);opacity:0}}
+.wire .q{position:absolute;left:50%;top:0;transform:translateX(-50%);white-space:nowrap;font:700 11px var(--f-mono);padding:2px 8px;border-radius:999px;background:color-mix(in srgb,var(--peach) 16%,var(--surface));color:color-mix(in srgb,var(--peach) 70%,var(--ink));border:1px solid color-mix(in srgb,var(--peach) 40%,transparent)}
+.wire .p{position:absolute;left:50%;top:48px;transform:translateX(-50%);white-space:nowrap;font:500 10.5px var(--f-mono);color:var(--muted)}
+
+/* message qui grossit */
+.msgs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.msgs .step{display:flex;flex-direction:column;gap:8px;min-width:0}
+.msgs .step h4{display:flex;align-items:center;gap:8px;font-size:15px}
+.msgs .step h4 .pill{font-size:11px}
+.msgs pre.code{font-size:12px;padding:12px 14px;min-height:150px}
+
+/* diagrammes svg */
+.diagram{width:100%;height:auto;display:block}
+.dg .box{fill:var(--surface);stroke:var(--line);stroke-width:2}
+.dg .t{font:700 14px var(--f-display);fill:var(--ink)}
+.dg .m{font:500 11px var(--f-mono);fill:var(--muted)}
+.dg .lbl{font:600 10.5px var(--f-mono)}
+.dg .edge{fill:none;stroke-width:2.5}
+.dg .dash{stroke-dasharray:6 6}
+.dg .zone{stroke-width:2;stroke-dasharray:7 6}
+
+/* déploiement */
+.deploy{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:18px}
+.host{padding:20px;border-radius:24px;border:2.5px solid var(--c);background:color-mix(in srgb,var(--c) 6%,var(--surface));display:flex;flex-direction:column;gap:12px;position:relative;min-width:0}
+.host .hh{display:flex;align-items:center;gap:12px}
+.host .hh img{width:40px;height:40px;padding:6px;border-radius:12px;background:var(--tile);border:1px solid var(--line)}
+.host .hh strong{font:800 19px/1.1 var(--f-display);display:block}
+.host .hh small{font:500 12.5px var(--f-mono);color:var(--muted)}
+.ip{position:absolute;top:-14px;right:18px;padding:4px 12px;border-radius:999px;background:var(--c);color:#fff;font:700 12.5px var(--f-mono)}
+.ctn{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:14px;border:2px dashed color-mix(in srgb,var(--sky) 55%,transparent);border-radius:18px;position:relative;margin-top:6px}
+.ctn .lbl{position:absolute;top:-11px;left:12px;padding:0 8px;background:color-mix(in srgb,var(--sky) 6%,var(--surface));display:flex;gap:6px;align-items:center;font:600 11.5px var(--f-mono);color:var(--sky)}
+.ctn .lbl img{width:18px;height:18px}
+.chip{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:14px;background:var(--surface);border:1.5px solid var(--line);font-size:13px;line-height:1.35;min-width:0}
+.chip img{width:22px;height:22px;flex:none;margin-top:1px}
+.chip b{display:block;font:700 14.5px var(--f-display)}
+.chip code{font-size:11.5px;white-space:normal;word-break:break-all}
+.chip .bubble{width:28px;height:28px;border-radius:9px}.chip .bubble .ico{width:16px;height:16px}
+.tree{font:500 12.5px/1.7 var(--f-mono);padding:12px 14px;border-radius:14px;background:var(--code-bg);color:var(--code-fg);white-space:pre;overflow-x:auto}
+.tree .d{color:#7CF2C8}.tree .c{color:#9C8BBF}
+.ports{width:100%;border-collapse:collapse;font-size:14px}
+.ports th,.ports td{padding:9px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+.ports th{font:600 11.5px var(--f-mono);text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.ports td:first-child{font-family:var(--f-mono);font-weight:600;white-space:nowrap}
+
+/* structure du code */
+.files{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
+.file{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:center;padding:11px 14px;border-radius:16px;background:var(--surface);border:1.5px solid var(--line);text-decoration:none;color:inherit;transition:transform .2s,border-color .2s}
+.file:hover{transform:translateY(-2px);border-color:var(--c)}
+.file .dotc{width:12px;height:12px;border-radius:4px;background:var(--c)}
+.file b{font:700 14px var(--f-mono);display:block}
+.file small{font-size:13px;color:var(--muted);line-height:1.35;display:block}
+.file .ln{font:600 12px var(--f-mono);color:var(--muted);font-variant-numeric:tabular-nums}
+.where{display:flex;flex-wrap:wrap;gap:10px}
+
+/* fiches scripts */
+.script{padding:24px;display:flex;flex-direction:column;gap:14px;border-left:8px solid var(--c);scroll-margin-top:20px}
+.script .top{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px}
+.script .top h3{font:800 22px var(--f-mono);letter-spacing:-.02em}
+.script .top .pill{margin-left:0}
+.facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.fact{padding:12px 14px;border-radius:14px;background:color-mix(in srgb,var(--c) 8%,var(--surface));border:1px solid color-mix(in srgb,var(--c) 25%,transparent);font-size:14px;line-height:1.45;min-width:0}
+.fact h4{font:600 11px var(--f-mono);text-transform:uppercase;letter-spacing:.09em;color:var(--muted);margin-bottom:4px}
+.fns{display:flex;flex-direction:column;gap:8px}
+.fn{display:grid;grid-template-columns:210px minmax(0,1fr);gap:14px;padding:10px 12px;border-radius:12px;background:color-mix(in srgb,var(--ink) 3%,transparent);font-size:14.5px;line-height:1.45}
+.fn code{font-weight:700;align-self:start;white-space:normal;word-break:break-word}
+.why{display:flex;flex-direction:column;gap:6px;margin:0;padding:0;list-style:none}
+.why li{display:flex;gap:10px;font-size:14.5px;line-height:1.5}
+.why li::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--c);flex:none;margin-top:8px}
+
+/* boucle lancer_service */
+.loop-wrap{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:18px;align-items:center}
+
+/* redressement */
+.deskew{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;align-items:end}
+.paper{height:170px;border-radius:14px;background:#fff;border:1.5px solid var(--line);position:relative;overflow:hidden;display:grid;place-items:center}
+.paper .lines{width:70%;display:flex;flex-direction:column;gap:9px;animation:deskew 4s ease-in-out infinite}
+.paper .lines i{height:7px;border-radius:4px;background:#3b2d55;display:block}
+@keyframes deskew{0%,25%{transform:rotate(-7deg)}55%,100%{transform:rotate(0)}}
+.hist{height:170px;display:flex;flex-direction:column;justify-content:center;gap:3px;padding:10px 12px;border-radius:14px;background:var(--surface);border:1.5px solid var(--line)}
+.hist i{height:6px;border-radius:3px;background:var(--grape);display:block;transform-origin:left;animation:sharpen 4s ease-in-out infinite}
+.hist i:nth-child(odd){animation-name:sharpen-gap}
+@keyframes sharpen{0%,25%{transform:scaleX(.55)}55%,100%{transform:scaleX(1)}}
+@keyframes sharpen-gap{0%,25%{transform:scaleX(.45)}55%,100%{transform:scaleX(.04)}}
+.cap{font:500 12px var(--f-mono);color:var(--muted);text-align:center;margin-top:6px}
+
+/* règle du total */
+.receipt{padding:14px 16px;border-radius:14px;background:#fff;color:#2b2b2b;font:500 13px/1.9 var(--f-mono);border:1.5px solid var(--line)}
+.receipt div{display:flex;justify-content:space-between;gap:10px;padding:0 6px;border-radius:6px;position:relative}
+.receipt .trap{animation:trap 5s infinite}
+.receipt .trap::after{content:"";position:absolute;left:4px;right:4px;top:50%;height:2px;background:#e0306f;transform:scaleX(0);transform-origin:left;animation:strike 5s infinite}
+.receipt .pick{animation:pick 5s infinite}
+@keyframes strike{0%,20%{transform:scaleX(0)}35%,90%{transform:scaleX(1)}100%{transform:scaleX(0)}}
+@keyframes trap{0%,20%{opacity:1}35%,90%{opacity:.45}100%{opacity:1}}
+@keyframes pick{0%,45%{background:transparent}55%,90%{background:#9ff0cf}100%{background:transparent}}
+.prio{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.prio .pill{font-size:11.5px}
+
+/* flux modèle */
+.flow{display:flex;align-items:stretch;gap:8px;min-width:720px}
+.fstep{flex:1;min-width:0;padding:12px;border-radius:14px;background:color-mix(in srgb,var(--c) 12%,var(--surface));border:1.5px solid color-mix(in srgb,var(--c) 38%,transparent);font-size:13px;line-height:1.35}
+.fstep b{display:block;font:800 14.5px var(--f-display);color:color-mix(in srgb,var(--c) 72%,var(--ink));margin-bottom:3px}
+.fstep code{font-size:11px;white-space:normal;overflow-wrap:anywhere}
+.fstep{overflow-wrap:anywhere}
+.chev{align-self:center;color:var(--muted)}
+
+/* états */
+.states{display:flex;align-items:center;gap:0;min-width:760px;position:relative;padding:28px 0 6px}
+.state{padding:12px 16px;border-radius:16px;font:800 15px var(--f-mono);background:color-mix(in srgb,var(--c) 15%,var(--surface));border:2px solid var(--c);color:color-mix(in srgb,var(--c) 75%,var(--ink));text-align:center;flex:none}
+.state small{display:block;font:500 11.5px/1.3 var(--f-body);color:var(--muted);margin-top:3px}
+.sarrow{flex:1;height:4px;background:color-mix(in srgb,var(--ink) 20%,transparent);position:relative;border-radius:4px;margin:0 8px;min-width:70px}
+.sarrow::after{content:"";position:absolute;right:-2px;top:-6px;border:8px solid transparent;border-left:12px solid color-mix(in srgb,var(--ink) 32%,transparent);border-right:0}
+.sarrow span{position:absolute;left:50%;top:-26px;transform:translateX(-50%);font:600 10.5px var(--f-mono);color:var(--muted);white-space:nowrap}
+.fork{display:flex;flex-direction:column;gap:10px}
+.token{position:absolute;width:18px;height:18px;border-radius:50%;background:var(--pink);box-shadow:0 0 0 6px color-mix(in srgb,var(--pink) 25%,transparent);top:calc(50% + 11px);margin-top:-9px;left:0;animation:tok 6s cubic-bezier(.6,0,.3,1) infinite}
+@keyframes tok{0%{left:6%;opacity:0}6%{opacity:1}22%,30%{left:22%}50%,58%{left:52%}80%,94%{left:74%;opacity:1}100%{left:74%;opacity:0}}
+.scen{width:100%;border-collapse:separate;border-spacing:0 8px;font-size:14.5px}
+.scen td{padding:12px 14px;background:var(--surface);border-block:1.5px solid var(--line);vertical-align:top;line-height:1.45}
+.scen td:first-child{border-left:1.5px solid var(--line);border-radius:14px 0 0 14px;font-weight:700;font-family:var(--f-display);width:28%}
+.scen td:last-child{border-right:1.5px solid var(--line);border-radius:0 14px 14px 0;width:14%}
+.ok{color:color-mix(in srgb,var(--mint) 70%,var(--ink));font-weight:700}.ko{color:color-mix(in srgb,var(--peach) 75%,var(--ink));font-weight:700}
+
+/* techs */
+.techs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.tech{padding:20px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.tech .th{display:flex;align-items:center;gap:14px}
+.tech .logo{width:50px;height:50px;border-radius:15px;background:var(--tile);display:grid;place-items:center;border:1.5px solid var(--line);flex:none}
+.tech .logo img{width:32px;height:32px}
+.tech .logo.txt{font:800 17px var(--f-display);color:#fff;background:var(--c);border:0}
+.tech .th strong{font:800 18px var(--f-display);display:block}
+.tech .th small{font:500 12px var(--f-mono);color:var(--muted)}
+.tech dl{margin:0;display:grid;grid-template-columns:110px minmax(0,1fr);gap:6px 12px;font-size:14px;line-height:1.45}
+.tech dt{font:600 11px var(--f-mono);text-transform:uppercase;letter-spacing:.08em;color:var(--muted);padding-top:3px}
+.tech dd{margin:0}
+.prereq{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.prereq .card{padding:16px;display:flex;flex-direction:column;gap:8px;font-size:14px;line-height:1.45}
+
+/* lancer */
+.steps{display:flex;flex-direction:column;gap:12px;counter-reset:s}
+.st{display:grid;grid-template-columns:44px minmax(0,1fr);gap:14px;align-items:start}
+.st .n{width:44px;height:44px;border-radius:14px;background:var(--c);color:#fff;display:grid;place-items:center;font:800 18px var(--f-display);box-shadow:var(--shadow)}
+.st .body{display:flex;flex-direction:column;gap:8px;min-width:0;padding-top:2px}
+.st .body p{font-size:14.5px;line-height:1.5}
+.trouble{width:100%;border-collapse:collapse;font-size:14px}
+.trouble td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top;line-height:1.45}
+.trouble td:first-child{font-family:var(--f-mono);font-size:12.5px;width:40%}
+
+/* données */
+.cols{width:100%;border-collapse:collapse;font-size:13.5px}
+.cols td{padding:7px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+.cols td:first-child{font-family:var(--f-mono);font-weight:600;white-space:nowrap}
+.cols td:nth-child(2){font-family:var(--f-mono);color:var(--muted);white-space:nowrap}
+
+/* résultats */
+.bars{display:flex;flex-direction:column;gap:12px}
+.brow{display:grid;grid-template-columns:150px minmax(0,1fr);gap:6px 14px;align-items:center}
+.brow>span{font:700 14.5px var(--f-display);grid-row:span 2}
+.bar{height:20px;border-radius:7px;background:color-mix(in srgb,var(--ink) 7%,transparent);position:relative;overflow:hidden}
+.bar i{position:absolute;inset:0 auto 0 0;width:var(--v);border-radius:7px;background:var(--c);transform-origin:left;animation:grow 1.4s cubic-bezier(.2,.8,.2,1) both}
+.bar em{position:absolute;left:8px;top:1px;font:700 12px var(--f-mono);font-style:normal;color:var(--ink);font-variant-numeric:tabular-nums}
+.bar.full em{color:#fff}
+@keyframes grow{from{transform:scaleX(0)}}
+
+/* faq */
+details{border-radius:16px;background:var(--surface);border:1.5px solid var(--line);padding:0}
+summary{cursor:pointer;padding:14px 18px;font:700 16px var(--f-display);list-style:none;display:flex;gap:12px;align-items:center}
+summary::-webkit-details-marker{display:none}
+summary::before{content:"+";width:24px;height:24px;border-radius:8px;display:grid;place-items:center;flex:none;background:color-mix(in srgb,var(--grape) 15%,transparent);color:var(--grape);font:800 16px var(--f-mono)}
+details[open] summary::before{content:"–"}
+details .ans{padding:0 18px 16px 54px;font-size:15px;line-height:1.55;color:var(--muted)}
+details .ans b{color:var(--ink)}
+.faq{display:flex;flex-direction:column;gap:10px}
+
+@media (max-width:1000px){
+  .shell{grid-template-columns:minmax(0,1fr)}
+  .toc{position:relative;top:0;flex-direction:row;flex-wrap:wrap;max-height:none}
+  .toc .brand{width:100%}.toc .hint{display:none}
+  .hero,.deploy,.loop-wrap,.grid2,.files,.techs{grid-template-columns:minmax(0,1fr)}
+  .grid3,.prereq,.facts,.grid4{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .msgs{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:620px){
+  section.sl{padding:24px 18px;border-radius:22px}
+  .grid3,.prereq,.facts,.grid4,.msgs,.stats,.deskew,.ctn{grid-template-columns:minmax(0,1fr)}
+  .fn{grid-template-columns:minmax(0,1fr);gap:4px}
+  .tech dl{grid-template-columns:minmax(0,1fr)}
+  .brow{grid-template-columns:minmax(0,1fr)}.brow>span{grid-row:auto}
+  .scen td:first-child{width:auto}
+}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}html{scroll-behavior:auto}}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-file" viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></symbol>
+    <symbol id="i-wand" viewBox="0 0 24 24"><path d="m15 4 1.5 3L20 8.5 16.5 10 15 13l-1.5-3L10 8.5 13.5 7zM4 20l9-9"/></symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+    <symbol id="i-brain" viewBox="0 0 24 24"><path d="M9 4a3 3 0 0 0-3 3 3 3 0 0 0-2 5 3 3 0 0 0 2 5 3 3 0 0 0 6 0V7a3 3 0 0 0-3-3zM15 4a3 3 0 0 1 3 3 3 3 0 0 1 2 5 3 3 0 0 1-2 5 3 3 0 0 1-6 0"/></symbol>
+    <symbol id="i-db" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></symbol>
+    <symbol id="i-api" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="m8 10-2 2 2 2M16 10l2 2-2 2M13 9l-2 6"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 5 5L20 7"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+    <symbol id="i-wifi" viewBox="0 0 24 24"><path d="M2 8.5a15 15 0 0 1 20 0M5 12a10 10 0 0 1 14 0M8.5 15.5a5 5 0 0 1 7 0"/><circle cx="12" cy="19" r="1"/><path d="M3 3l18 18"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z"/><path d="m9 12 2 2 4-4"/></symbol>
+    <symbol id="i-repeat" viewBox="0 0 24 24"><path d="M17 2l3 3-3 3M3 11V9a4 4 0 0 1 4-4h13M7 22l-3-3 3-3M21 13v2a4 4 0 0 1-4 4H4"/></symbol>
+    <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></symbol>
+    <symbol id="i-layers" viewBox="0 0 24 24"><path d="m12 2 10 5-10 5L2 7z"/><path d="m2 12 10 5 10-5M2 17l10 5 10-5"/></symbol>
+    <symbol id="i-split" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="8.5" y="14" width="7" height="7" rx="2"/></symbol>
+    <symbol id="i-net" viewBox="0 0 24 24"><rect x="2" y="3" width="8" height="6" rx="1.5"/><rect x="14" y="15" width="8" height="6" rx="1.5"/><path d="M6 9v4h12v2"/></symbol>
+    <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></symbol>
+    <symbol id="i-leaf" viewBox="0 0 24 24"><path d="M5 21c0-9 5-15 16-16-1 11-7 16-16 16zM5 21l7-7"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="11" rx="2.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="13" height="13" rx="2.5"/><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 3 2 20h20z"/><path d="M12 10v4M12 17v.5"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z"/></symbol>
+    <symbol id="i-left" viewBox="0 0 24 24"><path d="m15 5-7 7 7 7"/></symbol>
+    <symbol id="i-right" viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"/></symbol>
+    <symbol id="i-chev" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+    <symbol id="i-box" viewBox="0 0 24 24"><path d="M3 7l9-4 9 4v10l-9 4-9-4z"/><path d="M3 7l9 4 9-4M12 11v10"/></symbol>
+    <symbol id="i-ticket" viewBox="0 0 24 24"><path d="M6 2h12v20l-2-1.5-2 1.5-2-1.5-2 1.5-2-1.5L6 22z"/><path d="M9 7h6M9 11h6M9 15h3"/></symbol>
+  </defs>
+</svg>
+
+<div class="blobs" aria-hidden="true"><i></i><i></i><i></i></div>
+
+<div class="shell">
+<nav class="toc" id="toc" aria-label="Sommaire">
+  <div class="brand">DocFlow <span>V2</span></div>
+  <a href="#accueil" class="soft-pink"><b>00</b>En bref</a>
+  <a href="#chaine" class="soft-pink"><b>01</b>La chaîne</a>
+  <a href="#applicatif" class="soft-sky"><b>02</b>Architecture applicative</a>
+  <a href="#deploiement" class="soft-sky"><b>03</b>Déploiement</a>
+  <a href="#structure" class="soft-grape"><b>04</b>Structure du code</a>
+  <a href="#scripts" class="soft-grape"><b>05</b>Chaque script</a>
+  <a href="#robustesse" class="soft-peach"><b>06</b>Statuts et pannes</a>
+  <a href="#technos" class="soft-mint"><b>07</b>Technologies</a>
+  <a href="#lancer" class="soft-lemon"><b>08</b>Lancer l'appli</a>
+  <a href="#donnees" class="soft-sky"><b>09</b>Données</a>
+  <a href="#resultats" class="soft-mint"><b>10</b>Résultats</a>
+  <a href="#questions" class="soft-pink"><b>11</b>Questions du jury</a>
+  <div class="hint">← → : section précédente / suivante</div>
+</nav>
+
+<main>
+
+<!-- ============================================================ 00 -->
+<section class="sl" id="accueil">
+  <div class="kicker soft-pink"><b>Guide interne</b> Branche v2 · à lire avant la soutenance</div>
+  <div class="hero">
+    <div style="display:flex;flex-direction:column;gap:18px">
+      <h1>DocFlow <em>V2</em></h1>
+      <p class="lead">Le même cahier des charges que la V1, réécrit pour qu'on puisse lire et expliquer chaque ligne. Ce guide dit ce que fait chaque fichier, où il tourne, pourquoi il est là, et comment tout lancer.</p>
+      <div class="where">
+        <span class="pill soft-sky">Mac · Docker</span><span class="pill soft-mint">Fedora · VirtualBox</span><span class="pill soft-grape">Hors ligne (entraînement)</span><span class="pill soft-peach">Doc / config</span>
+      </div>
+    </div>
+    <div class="stats">
+      <div class="stat soft-pink"><strong>≈ 900</strong><small>lignes de code (≈ 5 000 en V1)</small></div>
+      <div class="stat soft-sky"><strong>4</strong><small>programmes : API, MS1, MS2, MS3</small></div>
+      <div class="stat soft-peach"><strong>4</strong><small>files RabbitMQ, sans exchange spécial</small></div>
+      <div class="stat soft-mint"><strong>1</strong><small>table PostgreSQL : <code>documents</code></small></div>
+    </div>
+  </div>
+  <div class="scroll-x">
+  <table class="vs">
+    <thead><tr><th>Sujet</th><th>V1 (branche main)</th><th>V2 (branche v2)</th></tr></thead>
+    <tbody>
+      <tr><td>Organisation</td><td>Paquet <code>src/docflow/</code> en sous-modules, <code>training/</code>, <code>tests/</code>, <code>scripts/</code></td><td class="v2">Un fichier par service à la racine + <code>commun.py</code></td></tr>
+      <tr><td>Messagerie</td><td>Exchange topic, 5 événements, file d'erreur DLX, 3 tentatives</td><td class="v2">4 files simples, messages JSON, une file <code>erreurs</code></td></tr>
+      <tr><td>Contrats</td><td>Modèles Pydantic stricts versionnés</td><td class="v2">Dictionnaire JSON qui s'enrichit à chaque étape</td></tr>
+      <tr><td>Base</td><td>3 tables, 2 comptes à droits séparés, journal d'événements</td><td class="v2">1 table, 1 compte <code>docflow</code>, durées stockées en JSONB</td></tr>
+      <tr><td>Modèle</td><td>Enseigne apprise + choix appris de la date et du total</td><td class="v2">Enseigne apprise ; date et total par règles</td></tr>
+      <tr><td>Images Docker</td><td>Une cible par service</td><td class="v2">Une seule image <code>docflow:2</code>, une commande par conteneur</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<!-- ============================================================ 01 -->
+<section class="sl" id="chaine">
+  <div class="kicker soft-pink"><b>01</b> La chaîne de traitement</div>
+  <h2>Un ticket, <em>quatre files</em>, trois microservices</h2>
+  <p class="lead">Chaque service lit sa file, fait un seul travail, puis dépose le résultat dans la file suivante. Le fichier ne voyage jamais : seuls son chemin, puis le texte lu, passent dans les messages.</p>
+  <div class="scroll-x">
+  <div class="pipe">
+    <div class="node soft-pink"><div class="bubble"><svg class="ico"><use href="#i-file"/></svg></div><strong>Page web</strong><small>index.html<br>glisser-déposer</small></div>
+    <div class="wire soft-pink" style="--d:0"><span class="q">HTTP</span><i class="dot"></i><span class="p">POST /documents</span></div>
+    <div class="node soft-grape"><div class="bubble"><svg class="ico"><use href="#i-api"/></svg></div><strong>API</strong><small>api.py<br>202 + DOC-…</small></div>
+    <div class="wire soft-grape" style="--d:1"><span class="q">pretraitement</span><i class="dot"></i><span class="p">fichier</span></div>
+    <div class="node soft-sky"><div class="bubble"><svg class="ico"><use href="#i-wand"/></svg></div><strong>MS1</strong><small>ms1_pretraitement.py<br>images propres</small></div>
+    <div class="wire soft-sky" style="--d:2"><span class="q">ocr</span><i class="dot"></i><span class="p">pages</span></div>
+    <div class="node soft-lemon"><div class="bubble"><svg class="ico"><use href="#i-eye"/></svg></div><strong>MS2</strong><small>ms2_ocr.py<br>Tesseract fra</small></div>
+    <div class="wire soft-lemon" style="--d:3"><span class="q">extraction</span><i class="dot"></i><span class="p">texte</span></div>
+    <div class="node soft-mint"><div class="bubble"><svg class="ico"><use href="#i-brain"/></svg></div><strong>MS3</strong><small>ms3_extraction.py<br>sur Fedora</small></div>
+    <div class="wire soft-mint" style="--d:4"><span class="q">SQL</span><i class="dot"></i><span class="p">UPDATE</span></div>
+    <div class="node soft-peach"><div class="bubble"><svg class="ico"><use href="#i-db"/></svg></div><strong>PostgreSQL</strong><small>table documents<br>sur Fedora</small></div>
+  </div>
+  </div>
+  <h3>Le message s'enrichit à chaque étape</h3>
+  <p class="muted" style="font-size:15px">Chaque service recopie le message reçu (<code>{**message, …}</code>) et ajoute sa contribution, surlignée ci-dessous. <code>lancer_service</code> ajoute la durée de l'étape dans <code>durees</code>.</p>
+  <div class="msgs">
+    <div class="step"><h4>API <span class="pill soft-peach">→ pretraitement</span></h4>
+<pre class="code">{
+  <span class="k">"document_id"</span>: <span class="s new">"DOC-1A2B3C4D"</span>,
+  <span class="k">"fichier"</span>: <span class="s new">"originaux/
+     DOC-1A2B3C4D.pdf"</span>
+}</pre></div>
+    <div class="step"><h4>MS1 <span class="pill soft-peach">→ ocr</span></h4>
+<pre class="code">{
+  <span class="k">"document_id"</span>: …,
+  <span class="k">"fichier"</span>: …,
+  <span class="k new">"pages"</span>: [<span class="s new">"pretraite/
+     DOC-…/page_1.png"</span>],
+  <span class="k new">"durees"</span>: {<span class="k">"ms1"</span>: <span class="n">140</span>}
+}</pre></div>
+    <div class="step"><h4>MS2 <span class="pill soft-peach">→ extraction</span></h4>
+<pre class="code">{
+  …,
+  <span class="k new">"texte"</span>: <span class="s new">"CARREFOUR\n…
+     TOTAL 42,90"</span>,
+  <span class="k">"durees"</span>: {<span class="k">"ms1"</span>: <span class="n">140</span>,
+             <span class="k new">"ms2"</span>: <span class="n new">1070</span>}
+}</pre></div>
+    <div class="step"><h4>MS3 <span class="pill soft-mint">→ base</span></h4>
+<pre class="code"><span class="c">-- fin de chaîne : rien
+-- n'est republié</span>
+<span class="k">UPDATE</span> documents <span class="k">SET</span>
+  status=<span class="s">'COMPLETED'</span>,
+  entity, date, total_amount,
+  currency, methode_enseigne,
+  durees
+<span class="k">WHERE</span> document_id = …</pre></div>
+  </div>
+  <div class="callout soft-lemon"><svg class="ico"><use href="#i-alert"/></svg><div><b>Pourquoi le texte voyage dans le message, et pas l'image ?</b> MS3 tourne sur la VM Fedora et n'a pas accès au dossier <code>storage/</code> du Mac. Le texte OCR pèse quelques Ko : on envoie au bureau la transcription, pas le carton. Les valeurs de l'exemple sont fictives.</div></div>
+</section>
+
+<!-- ============================================================ 02 -->
+<section class="sl" id="applicatif">
+  <div class="kicker soft-sky"><b>02</b> Architecture applicative</div>
+  <h2>Qui parle à qui, <em>et par quel canal</em></h2>
+  <p class="lead">Trois canaux seulement : HTTP entre le navigateur et l'API, AMQP (RabbitMQ) entre les étapes, SQL vers PostgreSQL. Les fichiers restent sur le disque du Mac.</p>
+  <div class="scroll-x">
+  <svg class="diagram dg" viewBox="0 0 1000 470" style="min-width:760px" role="img" aria-label="Schéma des composants et des flux">
+    <defs>
+      <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--muted)"/></marker>
+      <path id="p-nav" d="M120 225 H170"/>
+      <path id="p-api-q" d="M240 190 V70 H320"/>
+      <path id="p-q1-ms1" d="M390 92 V190"/>
+      <path id="p-ms1-q2" d="M440 190 V120 H550 V92"/>
+      <path id="p-q2-ms2" d="M580 92 V190"/>
+      <path id="p-ms2-q3" d="M630 190 V120 H740 V92"/>
+      <path id="p-q3-ms3" d="M770 92 V200"/>
+      <path id="p-q4-ms3" d="M900 92 V160 H830 V200"/>
+      <path id="p-ms3-db" d="M800 262 V330"/>
+      <path id="p-api-db" d="M240 262 V440 H800 V396"/>
+    </defs>
+    <!-- zones -->
+    <rect class="zone" x="150" y="12" width="555" height="400" rx="22" fill="color-mix(in srgb, var(--sky) 6%, transparent)" stroke="var(--sky)"/>
+    <text class="lbl" x="166" y="400" fill="var(--sky)">MAC · DOCKER DESKTOP · 192.168.56.1</text>
+    <rect class="zone" x="715" y="150" width="275" height="262" rx="22" fill="color-mix(in srgb, var(--mint) 7%, transparent)" stroke="var(--mint)"/>
+    <text class="lbl" x="730" y="400" fill="var(--mint)">FEDORA · 192.168.56.10</text>
+    <!-- RabbitMQ -->
+    <rect x="300" y="28" width="680" height="76" rx="18" fill="color-mix(in srgb, var(--peach) 12%, var(--surface))" stroke="var(--peach)" stroke-width="2"/>
+    <text class="lbl" x="316" y="46" fill="var(--peach)">RABBITMQ (conteneur sur le Mac, port 5672 ouvert au réseau privé)</text>
+    <g>
+      <rect class="box" x="320" y="54" width="140" height="38" rx="11"/><text class="t" x="390" y="78" text-anchor="middle" style="font-size:13px">pretraitement</text>
+      <rect class="box" x="510" y="54" width="140" height="38" rx="11"/><text class="t" x="580" y="78" text-anchor="middle" style="font-size:13px">ocr</text>
+      <rect class="box" x="700" y="54" width="140" height="38" rx="11"/><text class="t" x="770" y="78" text-anchor="middle" style="font-size:13px">extraction</text>
+      <rect class="box" x="850" y="54" width="120" height="38" rx="11" style="stroke:var(--pink)"/><text class="t" x="910" y="78" text-anchor="middle" style="font-size:13px;fill:var(--pink)">erreurs</text>
+    </g>
+    <!-- nodes -->
+    <rect class="box" x="10" y="190" width="110" height="72" rx="16"/><text class="t" x="65" y="222" text-anchor="middle">Navigateur</text><text class="m" x="65" y="242" text-anchor="middle">localhost:8000</text>
+    <rect class="box" x="170" y="190" width="140" height="72" rx="16" style="stroke:var(--grape)"/><text class="t" x="240" y="222" text-anchor="middle">API</text><text class="m" x="240" y="242" text-anchor="middle">api.py · FastAPI</text>
+    <rect class="box" x="330" y="190" width="140" height="72" rx="16" style="stroke:var(--sky)"/><text class="t" x="400" y="222" text-anchor="middle">MS1</text><text class="m" x="400" y="242" text-anchor="middle">prétraitement</text>
+    <rect class="box" x="520" y="190" width="140" height="72" rx="16" style="stroke:var(--lemon)"/><text class="t" x="590" y="222" text-anchor="middle">MS2 ×N</text><text class="m" x="590" y="242" text-anchor="middle">OCR</text>
+    <rect class="box" x="730" y="200" width="140" height="62" rx="16" style="stroke:var(--mint)"/><text class="t" x="800" y="228" text-anchor="middle">MS3</text><text class="m" x="800" y="246" text-anchor="middle">systemd</text>
+    <rect class="box" x="730" y="330" width="140" height="66" rx="16" style="stroke:var(--mint)"/><text class="t" x="800" y="358" text-anchor="middle">PostgreSQL</text><text class="m" x="800" y="377" text-anchor="middle">documents</text>
+    <!-- storage -->
+    <rect x="330" y="310" width="330" height="62" rx="16" fill="color-mix(in srgb, var(--pink) 9%, var(--surface))" stroke="var(--pink)" stroke-width="2" stroke-dasharray="6 5"/>
+    <text class="t" x="346" y="336">storage/ (volume partagé)</text><text class="m" x="346" y="356">originaux/DOC-….pdf · pretraite/DOC-…/</text>
+    <!-- edges -->
+    <use href="#p-nav" class="edge" stroke="var(--pink)" marker-end="url(#ar)"/>
+    <use href="#p-api-q" class="edge" stroke="var(--grape)" marker-end="url(#ar)"/>
+    <use href="#p-q1-ms1" class="edge" stroke="var(--sky)" marker-end="url(#ar)"/>
+    <use href="#p-ms1-q2" class="edge" stroke="var(--sky)" marker-end="url(#ar)"/>
+    <use href="#p-q2-ms2" class="edge" stroke="var(--lemon)" marker-end="url(#ar)"/>
+    <use href="#p-ms2-q3" class="edge" stroke="var(--lemon)" marker-end="url(#ar)"/>
+    <use href="#p-q3-ms3" class="edge" stroke="var(--mint)" marker-end="url(#ar)"/>
+    <use href="#p-q4-ms3" class="edge dash" stroke="var(--pink)" marker-end="url(#ar)"/>
+    <use href="#p-ms3-db" class="edge" stroke="var(--mint)" marker-end="url(#ar)"/>
+    <use href="#p-api-db" class="edge" stroke="var(--grape)" marker-end="url(#ar)" style="stroke-dasharray:3 5"/>
+    <path d="M240 262 V341 H330" class="edge dash" stroke="var(--pink)" marker-end="url(#ar)"/>
+    <path d="M400 262 V310" class="edge dash" stroke="var(--pink)"/>
+    <path d="M590 262 V310" class="edge dash" stroke="var(--pink)"/>
+    <text class="lbl" x="250" y="456" fill="var(--grape)">SQL : INSERT au dépôt, SELECT pour la page et /documents/{id}</text>
+    <text class="lbl" x="134" y="215" fill="var(--pink)">HTTP</text>
+    <text class="lbl" x="782" y="140" fill="var(--mint)">AMQP via réseau privé</text>
+    <text class="lbl" x="258" y="300" fill="var(--pink)">fichiers</text>
+    <!-- dots -->
+    <circle r="6" fill="var(--pink)"><animateMotion dur="1.2s" repeatCount="indefinite"><mpath href="#p-nav"/></animateMotion></circle>
+    <circle r="6" fill="var(--grape)"><animateMotion dur="2s" begin=".3s" repeatCount="indefinite"><mpath href="#p-api-q"/></animateMotion></circle>
+    <circle r="6" fill="var(--sky)"><animateMotion dur="1.4s" begin=".6s" repeatCount="indefinite"><mpath href="#p-q1-ms1"/></animateMotion></circle>
+    <circle r="6" fill="var(--sky)"><animateMotion dur="2s" begin=".9s" repeatCount="indefinite"><mpath href="#p-ms1-q2"/></animateMotion></circle>
+    <circle r="6" fill="var(--lemon)"><animateMotion dur="1.4s" begin="1.2s" repeatCount="indefinite"><mpath href="#p-q2-ms2"/></animateMotion></circle>
+    <circle r="6" fill="var(--lemon)"><animateMotion dur="2s" begin="1.5s" repeatCount="indefinite"><mpath href="#p-ms2-q3"/></animateMotion></circle>
+    <circle r="6" fill="var(--mint)"><animateMotion dur="1.4s" begin="1.8s" repeatCount="indefinite"><mpath href="#p-q3-ms3"/></animateMotion></circle>
+    <circle r="6" fill="var(--mint)"><animateMotion dur="1.2s" begin="2.1s" repeatCount="indefinite"><mpath href="#p-ms3-db"/></animateMotion></circle>
+    <circle r="5" fill="var(--grape)"><animateMotion dur="3.6s" begin=".2s" repeatCount="indefinite"><mpath href="#p-api-db"/></animateMotion></circle>
+  </svg>
+  </div>
+  <div class="legend"><span class="soft-pink"><i></i>HTTP</span><span class="soft-sky"><i></i>AMQP (une couleur par étape)</span><span class="soft-pink"><i class="dash"></i>fichiers ou erreurs</span><span class="soft-grape"><i class="dash"></i>SQL depuis l'API</span></div>
+  <div class="grid3">
+    <div class="card" style="padding:18px;display:flex;flex-direction:column;gap:8px"><div class="bubble soft-pink"><svg class="ico"><use href="#i-api"/></svg></div><h3>Présentation</h3><p class="muted" style="font-size:14.5px"><code>index.html</code> servie par l'API, <code>/docs</code> de FastAPI, ou <code>curl</code>. La page se rafraîchit chaque seconde.</p></div>
+    <div class="card" style="padding:18px;display:flex;flex-direction:column;gap:8px"><div class="bubble soft-sky"><svg class="ico"><use href="#i-split"/></svg></div><h3>Logique applicative</h3><p class="muted" style="font-size:14.5px">API + MS1 + MS2 sur le Mac, MS3 sur Fedora, reliés par RabbitMQ. Elle s'étale donc sur les deux nœuds.</p></div>
+    <div class="card" style="padding:18px;display:flex;flex-direction:column;gap:8px"><div class="bubble soft-mint"><svg class="ico"><use href="#i-db"/></svg></div><h3>Données</h3><p class="muted" style="font-size:14.5px">Fichiers dans <code>storage/</code> côté Mac, résultats dans PostgreSQL côté Fedora. Deux lieux, deux natures de données.</p></div>
+  </div>
+  <div class="callout soft-sky"><svg class="ico"><use href="#i-net"/></svg><div><b>L'API lit directement la base sur Fedora</b> (port 5432 ouvert au seul réseau <code>192.168.56.0/24</code> par <code>pg_hba.conf</code>). Elle écrit la ligne <code>PENDING</code> puis <code>PROCESSING</code> ; MS3 seul écrit le résultat ou l'échec.</div></div>
+</section>
+
+<!-- ============================================================ 03 -->
+<section class="sl" id="deploiement">
+  <div class="kicker soft-sky"><b>03</b> Architecture de déploiement</div>
+  <h2>Deux nœuds sur un seul Mac, <em>un réseau privé fixe</em></h2>
+  <p class="lead">Le Mac fait tourner Docker Desktop ; VirtualBox fait tourner une VM Fedora. Ils se parlent par le réseau « hôte uniquement » <code>HostNetwork</code>, qui ne dépend pas du Wi-Fi du lieu.</p>
+  <div class="deploy">
+    <div class="host soft-sky">
+      <span class="ip">192.168.56.1</span>
+      <div class="hh"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4Ij48cGF0aCBkPSJNOTcuOTA1IDY3Ljg4NWMuMTc0IDE4LjggMTYuNDk0IDI1LjA1NyAxNi42NzQgMjUuMTM3LS4xMzguNDQtMi42MDcgOC45MTYtOC41OTcgMTcuNjY5LTUuMTc4IDcuNTY4LTEwLjU1MyAxNS4xMDgtMTkuMDE4IDE1LjI2Ni04LjMxOC4xNTItMTAuOTkzLTQuOTM0LTIwLjUwNC00LjkzNC05LjUwOCAwLTEyLjQ3OSA0Ljc3Ni0yMC4zNTQgNS4wODYtOC4xNzIuMzEtMTQuMzk1LTguMTg1LTE5LjYxNi0xNS43MjRDMTUuODIyIDk0Ljk2MSA3LjY2OSA2Ni44IDE4LjYxNiA0Ny43OTFjNS40MzgtOS40NCAxNS4xNTgtMTUuNDE3IDI1LjcwNy0xNS41NzEgOC4wMjQtLjE1MyAxNS41OTggNS4zOTggMjAuNTAzIDUuMzk4IDQuOTAyIDAgMTQuMTA2LTYuNjc2IDIzLjc4Mi01LjY5NiA0LjA1MS4xNjkgMTUuNDIxIDEuNjM2IDIyLjcyMiAxMi4zMjQtLjU4Ny4zNjUtMTMuNTY2IDcuOTIxLTEzLjQyNSAyMy42MzlNODIuMjcyIDIxLjcxOWM0LjMzOC01LjI1MSA3LjI1OC0xMi41NjMgNi40NjItMTkuODM2LTYuMjU0LjI1MS0xMy44MTYgNC4xNjctMTguMzAxIDkuNDE2LTQuMDIgNC42NDctNy41NCAxMi4wODctNi41OTEgMTkuMjE2IDYuOTcxLjU0IDE0LjA5MS0zLjU0MiAxOC40My04Ljc5NiIvPjwvc3ZnPg==" alt="Apple"><div><strong>Nœud A · MacBook Pro M4 Pro</strong><small>macOS · dossier du projet · Docker Desktop</small></div></div>
+      <div class="ctn">
+        <div class="lbl"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4Ij48cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZmlsbD0iIzNBNEQ1NCIgZD0iTTczLjggNTAuOGgxMS4zdjExLjVoNS43YzIuNiAwIDUuMy0uNSA3LjgtMS4zIDEuMi0uNCAyLjYtMSAzLjgtMS43LTEuNi0yLjEtMi40LTQuNy0yLjYtNy4zLS4zLTMuNS40LTguMSAyLjgtMTAuOGwxLjItMS40IDEuNCAxLjFjMy42IDIuOSA2LjUgNi44IDcuMSAxMS40IDQuMy0xLjMgOS4zLTEgMTMuMSAxLjJsMS41LjktLjggMS42Yy0zLjIgNi4yLTkuOSA4LjItMTYuNCA3LjgtOS44IDI0LjMtMzEgMzUuOC01Ni44IDM1LjgtMTMuMyAwLTI1LjUtNS0zMi41LTE2LjhsLS4xLS4yLTEtMi4xYy0yLjQtNS4yLTMuMS0xMC45LTIuNi0xNi42bC4yLTEuN2g5LjZWNTAuOGgxMS4zVjM5LjZoMjIuNVYyOC4zaDEzLjV2MjIuNXoiLz48cGF0aCBmaWxsPSIjMDBBQURBIiBkPSJNMTEwLjQgNTUuMWMuOC01LjktMy42LTEwLjUtNi40LTEyLjctMy4xIDMuNi0zLjYgMTMuMiAxLjMgMTcuMi0yLjggMi40LTguNSA0LjctMTQuNSA0LjdIMTguNmMtLjYgNi4yLjUgMTEuOSAzIDE2LjhsLjggMS41Yy41LjkgMS4xIDEuNyAxLjcgMi42IDMgLjIgNS43LjMgOC4yLjIgNC45LS4xIDguOS0uNyAxMi0xLjcuNS0uMi45LjEgMS4xLjUuMi41LS4xLjktLjUgMS4xLS40LjEtLjguMy0xLjMuNC0yLjQuNy01IDEuMS04LjMgMS4zaC0uNmMtMS4zLjEtMi43LjEtNC4yLjEtMS42IDAtMy4xIDAtNC45LS4xIDYgNi44IDE1LjQgMTAuOCAyNy4yIDEwLjggMjUgMCA0Ni4yLTExLjEgNTUuNS0zNS45IDYuNy43IDEzLjEtMSAxNi02LjctNC41LTIuNy0xMC41LTEuOC0xMy45LS4xeiIvPjxwYXRoIGZpbGw9IiMyOEI4RUIiIGQ9Ik0xMTAuNCA1NS4xYy44LTUuOS0zLjYtMTAuNS02LjQtMTIuNy0zLjEgMy42LTMuNiAxMy4yIDEuMyAxNy4yLTIuOCAyLjQtOC41IDQuNy0xNC41IDQuN2gtNjhjLS4zIDkuNSAzLjIgMTYuNyA5LjUgMjEgNC45LS4xIDguOS0uNyAxMi0xLjcuNS0uMi45LjEgMS4xLjUuMi41LS4xLjktLjUgMS4xLS40LjEtLjguMy0xLjMuNC0yLjQuNy01LjIgMS4yLTguNSAxLjRsLS4xLS4xYzguNSA0LjQgMjAuOCA0LjMgMzUtMS4xIDE1LjgtNi4xIDMwLjYtMTcuNyA0MC45LTMwLjktLjIuMS0uNC4xLS41LjJ6Ii8+PHBhdGggZmlsbD0iIzAyOEJCOCIgZD0iTTE4LjcgNzEuOGMuNCAzLjMgMS40IDYuNCAyLjkgOS4zbC44IDEuNWMuNS45IDEuMSAxLjcgMS43IDIuNiAzIC4yIDUuNy4zIDguMi4yIDQuOS0uMSA4LjktLjcgMTItMS43LjUtLjIuOS4xIDEuMS41LjIuNS0uMS45LS41IDEuMS0uNC4xLS44LjMtMS4zLjQtMi40LjctNS4yIDEuMi04LjUgMS40aC0uNGMtMS4zLjEtMi43LjEtNC4xLjEtMS42IDAtMy4yIDAtNC45LS4xIDYgNi44IDE1LjUgMTAuOCAyNy4zIDEwLjggMjEuNCAwIDQwLTguMSA1MC44LTI2SDE4Ljd2LS4xeiIvPjxwYXRoIGZpbGw9IiMwMTlCQzYiIGQ9Ik0yMy41IDcxLjhjMS4zIDUuOCA0LjMgMTAuNCA4LjggMTMuNSA0LjktLjEgOC45LS43IDEyLTEuNy41LS4yLjkuMSAxLjEuNS4yLjUtLjEuOS0uNSAxLjEtLjQuMS0uOC4zLTEuMy40LTIuNC43LTUuMiAxLjItOC42IDEuNCA4LjUgNC40IDIwLjggNC4zIDM0LjktMS4xIDguNS0zLjMgMTYuOC04LjIgMjQuMi0xNC4xSDIzLjV6Ii8+PHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGZpbGw9IiMwMEFDRDMiIGQ9Ik0yOC40IDUyLjdoOS44djkuOGgtOS44di05Ljh6bS44LjhoLjh2OC4xaC0uOHYtOC4xem0xLjQgMGguOHY4LjFoLS44di04LjF6bTEuNSAwaC44djguMWgtLjh2LTguMXptMS41IDBoLjh2OC4xaC0uOHYtOC4xem0xLjUgMGguOHY4LjFoLS44di04LjF6bTEuNSAwaC44djguMWgtLjh2LTguMXptMy0xMmg5Ljh2OS44aC05Ljh2LTkuOHptLjkuOGguOHY4LjFoLS44di04LjF6bTEuNCAwaC44djguMWgtLjh2LTguMXptMS41IDBoLjh2OC4xaC0uOHYtOC4xem0xLjUgMGguOHY4LjFoLS44di04LjF6bTEuNCAwaC44djguMWgtLjh2LTguMXptMS41IDBoLjh2OC4xaC0uOHYtOC4xeiIvPjxwYXRoIGZpbGwtcnVsZT0iZXZlbm9kZCIgY2xpcC1ydWxlPSJldmVub2RkIiBmaWxsPSIjMjNDMkVFIiBkPSJNMzkuNiA1Mi43aDkuOHY5LjhoLTkuOHYtOS44em0uOS44aC44djguMWgtLjh2LTguMXptMS40IDBoLjh2OC4xaC0uOHYtOC4xem0xLjUgMGguOHY4LjFoLS44di04LjF6bTEuNSAwaC44djguMWgtLjh2LTguMXptMS40IDBoLjh2OC4xaC0uOHYtOC4xem0xLjUgMGguOHY4LjFoLS44di04LjF6Ii8+PHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGZpbGw9IiMwMEFDRDMiIGQ9Ik01MC45IDUyLjdoOS44djkuOGgtOS44di05Ljh6bS44LjhoLjh2OC4xaC0uOHYtOC4xem0xLjUgMGguOHY4LjFoLS44di04LjF6bTEuNSAwaC44djguMWgtLjh2LTguMXptMS40IDBoLjh2OC4xaC0uOHYtOC4xem0xLjUgMGguOHY4LjFoLS44di04LjF6bTEuNSAwaC44djguMWgtLjh2LTguMXoiLz48cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZmlsbD0iIzIzQzJFRSIgZD0iTTUwLjkgNDEuNWg5Ljh2OS44aC05Ljh2LTkuOHptLjguOGguOHY4LjFoLS44di04LjF6bTEuNSAwaC44djguMWgtLjh2LTguMXptMS41IDBoLjh2OC4xaC0uOHYtOC4xem0xLjQgMGguOHY4LjFoLS44di04LjF6bTEuNSAwaC44djguMWgtLjh2LTguMXptMS41IDBoLjh2OC4xaC0uOHYtOC4xem0zLjEgMTAuNEg3MnY5LjhoLTkuOHYtOS44em0uOC44aC44djguMUg2M3YtOC4xem0xLjUgMGguOHY4LjFoLS44di04LjF6bTEuNCAwaC44djguMWgtLjh2LTguMXptMS41IDBoLjh2OC4xaC0uOHYtOC4xem0xLjUgMGguOHY4LjFoLS44di04LjF6bTEuNSAwaC44djguMWgtLjh2LTguMXoiLz48cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZmlsbD0iIzAwQUNEMyIgZD0iTTYyLjIgNDEuNUg3MnY5LjhoLTkuOHYtOS44em0uOC44aC44djguMUg2M3YtOC4xem0xLjUgMGguOHY4LjFoLS44di04LjF6bTEuNCAwaC44djguMWgtLjh2LTguMXptMS41IDBoLjh2OC4xaC0uOHYtOC4xem0xLjUgMGguOHY4LjFoLS44di04LjF6bTEuNSAwaC44djguMWgtLjh2LTguMXoiLz48cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZmlsbD0iIzIzQzJFRSIgZD0iTTYyLjIgMzAuMkg3MlY0MGgtOS44di05Ljh6bS44LjhoLjh2OC4xSDYzVjMxem0xLjUgMGguOHY4LjFoLS44VjMxem0xLjQgMGguOHY4LjFoLS44VjMxem0xLjUgMGguOHY4LjFoLS44VjMxem0xLjUgMGguOHY4LjFoLS44VjMxem0xLjUgMGguOHY4LjFoLS44VjMxeiIvPjxwYXRoIGZpbGwtcnVsZT0iZXZlbm9kZCIgY2xpcC1ydWxlPSJldmVub2RkIiBmaWxsPSIjMDBBQ0QzIiBkPSJNNzMuNSA1Mi43aDkuOHY5LjhoLTkuOHYtOS44em0uOC44aC44djguMWgtLjh2LTguMXptMS40IDBoLjh2OC4xaC0uOHYtOC4xem0xLjUgMGguOHY4LjFoLS44di04LjF6bTEuNSAwaC44djguMWgtLjh2LTguMXptMS41IDBoLjh2OC4xaC0uOHYtOC4xem0xLjUgMGguOHY4LjFoLS44di04LjF6Ii8+PHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGZpbGw9IiNENEVFRjEiIGQ9Ik00OC44IDc4LjNjMS41IDAgMi43IDEuMiAyLjcgMi43IDAgMS41LTEuMiAyLjctMi43IDIuNy0xLjUgMC0yLjctMS4yLTIuNy0yLjcgMC0xLjUgMS4yLTIuNyAyLjctMi43Ii8+PHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGZpbGw9IiMzQTRENTQiIGQ9Ik00OC44IDc5LjFjLjIgMCAuNSAwIC43LjEtLjIuMS0uNC40LS40LjcgMCAuNC40LjguOC44LjMgMCAuNi0uMi43LS40LjEuMi4xLjUuMS43IDAgMS4xLS45IDEuOS0xLjkgMS45LTEuMSAwLTEuOS0uOS0xLjktMS45IDAtMSAuOC0xLjkgMS45LTEuOU0xLjEgNzIuOGgxMjUuNGMtMi43LS43LTguNi0xLjYtNy43LTUuMi01IDUuNy0xNi45IDQtMjAgMS4yLTMuNCA0LjktMjMgMy0yNC4zLS44LTQuMiA1LTE3LjMgNS0yMS41IDAtMS40IDMuOC0yMSA1LjctMjQuMy44LTMgMi44LTE1IDQuNS0yMC0xLjIgMS4xIDMuNS00LjkgNC41LTcuNiA1LjIiLz48cGF0aCBmaWxsPSIjQkZEQkUwIiBkPSJNNTYgOTcuOGMtNi43LTMuMi0xMC4zLTcuNS0xMi40LTEyLjItMi41LjctNS41IDEuMi04LjkgMS40LTEuMy4xLTIuNy4xLTQuMS4xLTEuNyAwLTMuNCAwLTUuMi0uMSA2IDYgMTMuNiAxMC43IDI3LjUgMTAuOEg1NnoiLz48cGF0aCBmaWxsPSIjRDRFRUYxIiBkPSJNNDYuMSA4OS45Yy0uOS0xLjMtMS44LTIuOC0yLjUtNC4zLTIuNS43LTUuNSAxLjItOC45IDEuNCAyLjMgMS4yIDUuNyAyLjQgMTEuNCAyLjl6Ii8+PC9zdmc+" alt="">docker-compose.yml · image docflow:2</div>
+        <div class="chip"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4Ij48cGF0aCBmaWxsPSIjZmY2NjAwIiBkPSJNMTE5LjUxNyA1MS4xODhINzkuMjkxYTMuNjQxIDMuNjQxIDAgMCAxLTMuNjQtMy42NDJWNS42MkE1LjYwNSA1LjYwNSAwIDAgMCA3MC4wMjggMEg1NS42NmE1LjYwNiA1LjYwNiAwIDAgMC01LjYyNyA1LjYydjQxLjY0NmEzLjkxMyAzLjkxMyAwIDAgMS0zLjkyIDMuOTI1bC0xMy4xODguMDQ3Yy0yLjE3NiAwLTMuOTcyLTEuNzUtMy45MjYtMy45MjZsLjA5NC00MS42ODdBNS42MDYgNS42MDYgMCAwIDAgMjMuNDY3IDBIOS4xYTUuNjEgNS42MSAwIDAgMC01LjYyNiA1LjYyNVYxMjIuOTljMCAyLjczNyAyLjIyIDUuMDEgNS4wMSA1LjAxaDExMS4wMzNhNS4wMTQgNS4wMTQgMCAwIDAgNS4wMDgtNS4wMTFWNTYuMTk1YTQuOTc1IDQuOTc1IDAgMCAwLTUuMDA4LTUuMDA3ek0xMDAuNjYgOTUuMjQyYTYuNTQ1IDYuNTQ1IDAgMCAxLTYuNTI1IDYuNTI0SDgyLjc5MWE2LjU0NSA2LjU0NSAwIDAgMS02LjUyMy02LjUyNFY4My45YTYuNTQ1IDYuNTQ1IDAgMCAxIDYuNTIzLTYuNTI0aDExLjM0M2E2LjU0NSA2LjU0NSAwIDAgMSA2LjUyNSA2LjUyM3ptMCAwIi8+PC9zdmc+Cg==" alt="RabbitMQ"><div><b>rabbitmq</b>image officielle 3.13-management · volume <code>rabbitmq</code></div></div>
+        <div class="chip"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4Ij48cGF0aCBkPSJNNTYuODEzIDEyNy41ODZjLTEuOTAzLS4yMjctMy44OTktLjUyLTQuNDM0LS42NTJhNDguMDc4IDQ4LjA3OCAwIDAwLTIuMzc1LS41IDM2LjA0MiAzNi4wNDIgMCAwMS0yLjcwMy0uNjMzYy00LjE0NS0xLjE4OC00LjQ0Mi0xLjI4NS03LjU2Ny0yLjU2My0yLjg3NS0xLjE3Mi04LjE3Mi0zLjkxLTkuOTg0LTUuMTU2LS40OTYtLjM0NC0uOTYtLjYyMS0xLjAzMS0uNjIxLS4wNyAwLTEuMjMtLjgxNi0yLjU3OC0xLjgxMy04LjU3LTYuMzQzLTE1LjAwNC0xNC4wNDMtMTkuNjUzLTIzLjUyNy0uOC0xLjYyOS0xLjQ1My0zLjA3NC0xLjQ1My0zLjIxIDAtLjEzNC0uMTQ0LS41MDUtLjMyLS44MTctLjM2My0uNjQ5LS44OC0yLjA0Ny0xLjI5Ny0zLjQ5MmEyMC4wNDcgMjAuMDQ3IDAgMDAtLjYyNS0xLjgxM2MtLjE5NS0uNDYtLjM1Mi0xLjAyLS4zNTItMS4yNDYgMC0uMjI3LS4xOTUtLjk2NS0uNDMzLTEuNjQ1LS4yMzgtLjY3NS0uNDMtMS40NzItLjQzLTEuNzcgMC0uMjk2LS4xODctMS4zMi0uNDE4LTIuMjc2Qy41OTggNzMuNDkyIDAgNjcuMzc5IDAgNjMuOTUzYzAtMy40MjIuNTk4LTkuNTM1IDEuMTYtMTEuODk0LjIzLS45NTcuNDE4LTIgLjQxOC0yLjMyIDAtLjMyMS4xNDUtLjk1LjMyLTEuNC4xOC0uNDQ4LjQxLTEuMjUzLjUxNi0xLjc4OC4xMS0uNTM1LjM2LTEuNDU3LjU2My0yLjA1NWwuNTktMS43MjZjLjQzMy0xLjI5My44MzUtMi4zODcgMS4wMjctMi44MTMuMTEtLjIzOC41MzktMS4yMS45NTctMi4xNi42NzYtMS41MzUgMi4xMjUtNC40MyAyLjk3Mi01Ljk0NS4zMDktLjU1NS40MjYtLjczOSAyLjA5OC0zLjM1MiAyLjY0OS00LjE0OCA3LjE3Ni05LjMwOSAxMS4zOS0xMi45ODggMS40ODUtMS4yOTcgNi40NDYtNS4wNjMgNi42NjktNS4wNjMuMDYyIDAgLjUzLS4yODEgMS4wNDMtLjYyNSAxLjM0Ny0uOTAyIDIuNjY4LTEuNjY4IDQuMzktMi41MzFhNTMuMDYgNTMuMDYgMCAwMDEuODM2LS45NTNjLjI4NS0uMTY0LjgyLS40MSAzLjU2Ny0xLjY0LjYwNS0uMjcgMS4yNTctLjUxNiAzLjEzNi0xLjE3My40MTQtLjE0NCAxLjI0Ni0uNDQ5IDEuODQtLjY3Mi41OTgtLjIyMiAxLjMwMS0uNDA2IDEuNTYzLS40MDYuMjU4IDAgLjkzNy0uMTggMS41MDgtLjQwMi41Ny0uMjIzIDEuNjA1LS40NzcgMi4zMDQtLjU2My42OTYtLjA4MiAxLjYyMS0uMjc3IDIuMDU1LS40My40My0uMTQ4IDEuNjEtLjM0IDIuNjIxLS40MjVhNzIuNTcyIDcyLjU3MiAwIDAwMy45NDEtLjQ2NWMyLjY4OC0uMzk0IDguNTMyLS4zOTQgMTEuMTkyIDBhNzUuMDIgNzUuMDIgMCAwMDMuNzgxLjQ0NWMuOTUzLjA3OSAyLjE2OC4yNzggMi43MDMuNDQyLjUzNS4xNiAxLjQ2MS4zNiAyLjA1NS40MzMuNTk0LjA3OSAxLjU5NC4zMjUgMi4yMjIuNTUxLjYzLjIzIDEuMzQ0LjQxNCAxLjU5LjQxNHMuNzU0LjEzNyAxLjEyNS4zMDljLjM3NS4xNjggMS4xNjguNDQ5IDEuNzY2LjYyNS41OTQuMTggMS42MTMuNTM1IDIuMjcuNzk3LjY1Mi4yNjEgMS41MjcuNjA1IDEuOTQ1Ljc2MS43Ny4yOSA2LjQ2IDMuMTM3IDcuMjM0IDMuNjIyIDYuMjgxIDMuOTE3IDkuNTEyIDYuNDc2IDEzLjg1NiAxMC45NjQgNS4yMzggNS40MTQgOC43MTUgMTAuNTcgMTIuMjU0IDE4LjE2LjI1LjUzNi42MzIgMS4zMjkuODUxIDEuNzU4LjIxNS40MzQuMzk1Ljk0Mi4zOTUgMS4xMyAwIC4xOS4xOC43Ni40MDIgMS4yNjkuNjAyIDEuMzgzIDEuMTE3IDIuOTU3IDEuMzYgNC4xNi4xMi41OS4zNDMgMS4zMi40OTUgMS42MjEuMTUzLjMuMzMyIDEuMDYzLjQwMyAxLjY4OC4wNy42MjQuMjc3IDEuNjQ4LjQ1MyAyLjI2OSAxLjAyIDMuNTMxIDEuNTI3IDEzLjkzNC45MSAxOC41MzUtLjE4MyAxLjM2Ny0uMzkgMy4wMi0uNDYgMy42NzItLjExOCAxLjExNy0uNzA4IDQuMDA0LTEuMjEyIDUuOTQ1bC0uNTIgMi4wNTVjLS45OCAzLjk1Ny0zLjQwMiA5LjU5NC02LjM1OSAxNC44MDktMS4xNzIgMi4wNy01LjEwMSA3LjY2OC01Ljg0MyA4LjMyNC0uMDY3LjA1OC0uMzk5LjQ1LS43MzUuODYzLS4zMzYuNDE4LTEuNDE0IDEuNTg2LTIuMzkgMi41OTQtNC4zMDEgNC40NDEtNy43NyA3LjE4Ny0xMy44NiAxMC45NjktLjcyMi40NDktNi44NDcgMy40NDEtNy45OTIgMy45MDYtLjU5NC4yMzgtMS41ODYuNjQtMi4yMDMuODktLjYxMy4yNDctMS4yOTcuNDU0LTEuNTEyLjQ1OC0uMjE1LjAwMy0uNzgxLjE5NS0xLjI1OC40MjUtLjQ3Ni4yMy0xLjA4Mi40MjItMS4zNTEuNDI2LS4yNjYuMDA0LTEuMDQzLjE5Mi0xLjcyNy40MTgtLjY4My4yMy0xLjYzMy40NzctMi4xMS41NS0uNDc2LjA3NS0xLjQ5NS4yNzgtMi4yNjkuNDUtLjc3My4xNzItMy4xMS41MDgtNS4xODcuNzQ2YTU5LjA2IDU5LjA2IDAgMDEtMTMuOTQ1LS4wMzF6bTQuNzAzLTEyLjVjLjMtLjIzNC42MDktLjcuNjkxLTEuMDI3LjE4LS43MjMgMjkuMjM0LTU4Ljk3IDI5Ljc4MS01OS43LjQ2MS0uNjE3LjUwNC0xLjYwNS4wODItMS45NTMtLjIyMi0uMTg3LTMuMDA0LS4yNDYtMTAuNDMtLjIzNC01LjU3LjAxMi0xMC4yNTMuMDE2LTEwLjQwNi4wMTItLjIyNi0uMDA4LS4yNzMtMy43My0uMjUtMTkuNjcyLjAxNi0xMC44MTctLjAzNS0xOS43NjYtLjExMy0xOS44OS0uMDc4LS4xMjYtLjM4My0uMjI3LS42OC0uMjI3LS40MTggMC0uNjEzLjE4LS44Ny44MDgtLjQ4NSAxLjE2OC0xLjgyNSAzLjgyLTguMzQ4IDE2LjQ4NWEzNTU0LjU2OSAzNTU0LjU2OSAwIDAwLTQuMDU1IDcuODljLTEuMTU2IDIuMjYyLTIuOTggNS44MTMtNC4wNDcgNy44OWE4NzUxLjI0OCA4NzUxLjI0OCAwIDAwLTguNTk4IDE2Ljc1OWMtNC45MzMgOS42MzYtNS41MyAxMC43ODUtNS43NDIgMTEuMDM5LS40MS40OTYtLjYzMyAxLjY0LS40MDIgMi4wNy4yMS4zOTQuNjI5LjQxIDExLjA0My4zOTQgNS45NTMtLjAwNyAxMC44NjMuMDI0IDEwLjkxNC4wNy4xMzcuMTQxLjA4NiAzNy4zMS0uMDU1IDM4LjE5Ni0uMDkzLjU4Mi0uMDMxLjg5LjIzNSAxLjE1Ni40Ni40NjEuNTg2LjQ1NyAxLjI1LS4wNjZ6bTAgMCIgZmlsbD0iIzA0OTY4OCIvPjwvc3ZnPgo=" alt="FastAPI"><div><b>api</b><code>uvicorn api:app</code> · port 8000</div></div>
+        <div class="chip soft-sky"><span class="bubble"><svg class="ico"><use href="#i-wand"/></svg></span><div><b>ms1</b><code>python ms1_pretraitement.py</code></div></div>
+        <div class="chip soft-lemon"><span class="bubble"><svg class="ico"><use href="#i-eye"/></svg></span><div><b>ms2</b><code>python ms2_ocr.py</code> · <code>--scale ms2=3</code></div></div>
+        <div class="chip soft-grape" style="grid-column:1/-1"><span class="bubble"><svg class="ico"><use href="#i-box"/></svg></span><div><b>outils (profil, à la demande)</b><code>entrainement.py</code>, <code>mesures.py</code> · monte <code>data/ models/ reports/ storage/</code></div></div>
+      </div>
+      <div class="chip soft-pink"><span class="bubble"><svg class="ico"><use href="#i-file"/></svg></span><div><b>./storage (dossier du Mac monté dans api, ms1, ms2)</b>originaux déposés et pages prétraitées</div></div>
+    </div>
+    <div class="host soft-mint">
+      <span class="ip">192.168.56.10</span>
+      <div class="hh"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4Ij48cGF0aCBkPSJNMTI3LjgyIDY0LjAwNEMxMjcuODIgMjguNzU0IDk5LjI0Ni4xOCA2NCAuMTggMjguNzY2LjE4LjIwMyAyOC43My4xOCA2My45NTd2NDkuMzljLjAyIDcuOTk3IDYuNTA0IDE0LjQ3MyAxNC41MDggMTQuNDczaDQ5LjMzNWMzNS4yMzktLjAxNSA2My43OTctMjguNTc4IDYzLjc5Ny02My44MTYiIGZpbGw9IiMyOTQxNzIiLz48cGF0aCBkPSJNMzYuOTczIDY4LjEySDU5LjkxVjkxLjA2YzAgMTIuNjYtMTAuMjczIDIyLjkzNy0yMi45MzcgMjIuOTM3LTEyLjY2IDAtMjIuOTM0LTEwLjI3Ny0yMi45MzQtMjIuOTM3IDAtMTIuNjYgMTAuMjc0LTIyLjkzOCAyMi45MzQtMjIuOTM4em0wIDAiIGZpbGw9Im5vbmUiIHN0cm9rZS13aWR0aD0iMTQuMDAzMjc0IiBzdHJva2U9IiMzYzZlYjQiLz48cGF0aCBkPSJNODIuNzM4IDY4LjE2NEg1OS44MDFWNDUuMjMxYzAtMTIuNjYgMTAuMjc3LTIyLjkzOCAyMi45MzctMjIuOTM4IDEyLjY2IDAgMjIuOTM4IDEwLjI3NCAyMi45MzggMjIuOTM4IDAgMTIuNjYtMTAuMjc4IDIyLjkzMy0yMi45MzggMjIuOTMzem0wIDAiIGZpbGw9Im5vbmUiIHN0cm9rZS13aWR0aD0iMTQuMDAzMjc0IiBzdHJva2U9IiMzYzZlYjQiLz48cGF0aCBkPSJNNjYuOTI2IDYxLjEzN3YyOS44OWMwIDE2LjU0LTEzLjQxIDI5Ljk1My0yOS45NSAyOS45NTMtMi41MTEgMC00LjI5Ni0uMjg1LTYuNjE3LS44OS0zLjM5LS44ODctNi4xNTYtMy42NjQtNi4xNi02Ljg5NSAwLTMuOTA2IDIuODM2LTYuNzQ2IDcuMDc0LTYuNzQ2IDIuMDE2IDAgMi43NDcuMzg3IDUuNzA0LjM4NyA4LjcxOCAwIDE1Ljc5My03LjA2MyAxNS44MDgtMTUuNzg1Vjc3LjMxMmMwLTEuMjMtMS0yLjIzLTIuMjM0LTIuMjI2bC0xMC4zODctLjAwNGMtMy44NjcgMC02Ljk5Ni0zLjA4Ni02Ljk5Ni02Ljk2NSAwLTMuOTA2IDMuMTYtNi45OCA3LjA3LTYuOTgiIGZpbGw9IiNmZmYiLz48cGF0aCBkPSJNNTIuNzg1IDc1LjE0OFY0NS4yNjJjMC0xNi41NDMgMTMuNDEtMjkuOTUzIDI5Ljk1My0yOS45NTMgMi41MDggMCA0LjI5My4yOCA2LjYxNy44OSAzLjM4Ny44ODcgNi4xNTcgMy42NjQgNi4xNTcgNi44OTUgMCAzLjkwNi0yLjgzNiA2Ljc0Ni03LjA3IDYuNzQ2LTIuMDIgMC0yLjc1LS4zODctNS43MDQtLjM4Ny04LjcyMiAwLTE1Ljc5NyA3LjA2My0xNS44MTIgMTUuNzgxdjEzLjc0M2EyLjIzNSAyLjIzNSAwIDAwMi4yMzQgMi4yMjZsMTAuMzg3LjAwNGMzLjg3MSAwIDYuOTk2IDMuMDg2IDYuOTk2IDYuOTY1LjAwNCAzLjkwNi0zLjE2IDYuOTgtNy4wNyA2Ljk4IiBmaWxsPSIjZmZmIi8+PHBhdGggZD0iTTExNi44MDkgMTE2Ljc3M3YtMi42NTJsLTEuMjExIDIuNzgxLTEuMTgtMi43OHYyLjY1MWgtLjY4di00LjE4N2guNzExbDEuMTY4IDIuNjc2IDEuMTQ5LTIuNjc2aC43MjJ2NC4xODd6bS00Ljk1NC0zLjQ4NHYzLjQ4NGgtLjcxdi0zLjQ4NGgtMS4xOTJ2LS43MDNoMy4wOXYuNzAzIiBmaWxsPSIjM2M2ZWI0Ii8+PC9zdmc+Cg==" alt="Fedora"><div><strong>Nœud B · VM Fedora 45 aarch64</strong><small>VirtualBox 7.2 · 4 vCPU · 8 Go · sans Docker</small></div></div>
+      <div class="chip soft-mint"><span class="bubble"><svg class="ico"><use href="#i-brain"/></svg></span><div><b>docflow-ms3 (service systemd)</b>venv Python dans <code>/opt/docflow</code> · <code>Restart=always</code> · <code>DynamicUser=yes</code></div></div>
+      <div class="chip"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4Ij48cGF0aCBkPSJNOTMuODA5IDkyLjExMmMuNzg1LTYuNTMzLjU1LTcuNDkyIDUuNDE2LTYuNDMzbDEuMjM1LjEwOGMzLjc0Mi4xNyA4LjYzNy0uNjAyIDExLjUxMy0xLjkzOCA2LjE5MS0yLjg3MyA5Ljg2MS03LjY2OCAzLjc1OC02LjQwOS0xMy45MjQgMi44NzMtMTQuODgxLTEuODQyLTE0Ljg4MS0xLjg0MiAxNC43MDMtMjEuODE1IDIwLjg0OS00OS41MDggMTUuNTQzLTU2LjI4Ny0xNC40Ny0xOC40ODktMzkuNTE3LTkuNzQ2LTM5LjkzNi05LjUybC0uMTM0LjAyNWMtMi43NTEtLjU3MS01LjgzLS45MTItOS4yODktLjk2OC02LjMwMS0uMTA0LTExLjA4MiAxLjY1Mi0xNC43MDkgNC40MDIgMCAwLTQ0LjY4My0xOC40MDktNDIuNjA0IDIzLjE1MS40NDIgOC44NDEgMTIuNjcyIDY2Ljg5OCAyNy4yNiA0OS4zNjIgNS4zMzItNi40MTIgMTAuNDg0LTExLjgzNCAxMC40ODQtMTEuODM0IDIuNTU4IDEuNjk5IDUuNjIyIDIuNTY3IDguODM0IDIuMjU1bC4yNDktLjIxMmMtLjA3OC43OTYtLjA0NCAxLjU3NS4wOTkgMi40OTctMy43NTcgNC4xOTktMi42NTMgNC45MzYtMTAuMTY2IDYuNDgyLTcuNjAyIDEuNTY2LTMuMTM2IDQuMzU1LS4yMjEgNS4wODQgMy41MzUuODg0IDExLjcxMiAyLjEzNiAxNy4yMzgtNS41OThsLS4yMi44ODJjMS40NzQgMS4xOCAxLjM3NSA4LjQ3NyAxLjU4MyAxMy42OS4yMDkgNS4yMTQuNTU4IDEwLjA3OSAxLjYyMSAxMi45NDggMS4wNjMgMi44NjggMi4zMTcgMTAuMjU2IDEyLjE5MSA4LjE0IDguMjUyLTEuNzY0IDE0LjU2MS00LjMwOSAxNS4xMzYtMjcuOTg1Ii8+PHBhdGggZD0iTTc1LjQ1OCAxMjUuMjU2Yy00LjM2NyAwLTcuMjExLTEuNjg5LTguOTM4LTMuMzItMi42MDctMi40Ni0zLjY0MS01LjYyOS00LjI1OS03LjUyMmwtLjI2Ny0uNzljLTEuMjQ0LTMuMzU4LTEuNjY2LTguMTkzLTEuOTE2LTE0LjQxOS0uMDM4LS45MzUtLjA2NC0xLjg5OC0uMDkzLTIuOTE5LS4wMjEtLjc0Ny0uMDQ3LTEuNjg0LS4wODUtMi42NjRhMTguOCAxOC44IDAgMDEtNC45NjIgMS41NjhjLTMuMDc5LjUyNi02LjM4OS4zNTYtOS44NC0uNTA3LTIuNDM1LS42MDktNC45NjUtMS44NzEtNi40MDctMy44Mi00LjIwMyAzLjY4MS04LjIxMiAzLjE4Mi0xMC4zOTYgMi40NTMtMy44NTMtMS4yODUtNy4zMDEtNC44OTYtMTAuNTQyLTExLjAzNy0yLjMwOS00LjM3NS00LjU0Mi0xMC4wNzUtNi42MzgtMTYuOTQzLTMuNjUtMTEuOTYtNS45NjktMjQuNTU3LTYuMTc1LTI4LjY5M0M0LjI5MiAyMy42OTggNy43NzcgMTQuNDQgMTUuMjk2IDkuMTI5IDI3LjE1Ny43NTEgNDUuMTI4IDUuNjc4IDUxLjY4IDcuOTE1YzQuNDAyLTIuNjUzIDkuNTgxLTMuOTQ0IDE1LjQzMy0zLjg1MSAzLjE0My4wNTEgNi4xMzYuMzI3IDguOTE2LjgyMyAyLjktLjkxMiA4LjYyOC0yLjIyMSAxNS4xODUtMi4xMzkgMTIuMDgxLjE0NCAyMi4wOTIgNC44NTIgMjguOTQ5IDEzLjYxNSA0Ljg5NCA2LjI1MiAyLjQ3NCAxOS4zODEuNTk3IDI2LjY1MS0yLjY0MiAxMC4yMjYtNy4yNzEgMjEuMTAyLTEyLjk1NyAzMC41NyAxLjU0NC4wMTEgMy43ODEtLjE3NCA2Ljk2MS0uODMxIDYuMjc0LTEuMjk1IDguMTA5IDIuMDY5IDguNjA3IDMuNTc1IDEuOTk1IDYuMDQyLTYuNjc3IDEwLjYwOC05LjM4MiAxMS44NjQtMy40NjYgMS42MDktOS4xMTcgMi41ODktMTMuNzQ1IDIuMzc3bC0uMjAyLS4wMTMtMS4yMTYtLjEwNy0uMTIgMS4wMTQtLjExNi45OTFjLS4zMTEgMTEuOTk5LTIuMDI1IDE5LjU5OC01LjU1MiAyNC42MTktMy42OTcgNS4yNjQtOC44MzUgNi43MzktMTMuMzYxIDcuNzA5LTEuNTQ0LjMzLTIuOTQ3LjQ3NC00LjIxOS40NzR6bS05LjE5LTQzLjY3MWMyLjgxOSAyLjI1NiAzLjA2NiA2LjUwMSAzLjI4NyAxNC40MzQuMDI4Ljk5LjA1NCAxLjkyNy4wODkgMi44MDIuMTA2IDIuNjUuMzU1IDguODU1IDEuMzI3IDExLjQ3Ny4xMzcuMzcxLjI2Ljc0Ny4zOSAxLjE0NiAxLjA4MyAzLjMxNiAxLjYyNiA0Ljk3OSA2LjMwOSAzLjk3OCAzLjkzMS0uODQzIDUuOTUyLTEuNTk5IDcuNTM0LTMuODUxIDIuMjk5LTMuMjc0IDMuNTg1LTkuODYgMy44MjEtMTkuNTc1bDQuNzgzLjExNi00Ljc1LS41Ny4xNC0xLjE4NmMuNDU1LTMuOTEuNzgzLTYuNzM0IDMuMzk2LTguNjAyIDIuMDk3LTEuNDk4IDQuNDg2LTEuMzUzIDYuMzg5LTEuMDEtMi4wOTEtMS41OC0yLjY2OS0zLjQzMy0yLjgyMy00LjE5M2wtLjM5OS0xLjk2NSAxLjEyMS0xLjY2M2M2LjQ1Ny05LjU4IDExLjc4MS0yMS4zNTQgMTQuNjA5LTMyLjMwNCAyLjkwNi0xMS4yNTEgMi4wMi0xNy4yMjYgMS4xMzQtMTguMzU2LTExLjcyOS0xNC45ODctMzIuMDY4LTguNzk5LTM0LjE5Mi04LjA5N2wtLjM1OS4xOTQtMS44LjMzNS0uOTIyLS4xOTFjLTIuNTQyLS41MjgtNS4zNjYtLjgyLTguMzkzLS44NjktNC43NTYtLjA4LTguNTkzIDEuMDQ0LTExLjczOSAzLjQzMWwtMi4xODMgMS42NTUtMi41MzMtMS4wNDNjLTUuNDEyLTIuMjEzLTIxLjMwOC02LjY2Mi0yOS42OTYtLjcyMS00LjY1NiAzLjI5OC02Ljc3NyA5Ljc2LTYuMzA1IDE5LjIwNy4xNTYgMy4xMTkgMi4yNzUgMTQuOTI2IDUuNzcxIDI2LjM3NyA0LjgzMSAxNS44MjUgOS4yMjEgMjEuMDgyIDExLjA1NCAyMS42OTMuMzIuMTA4IDEuMTUtLjUzNyAxLjk3Ni0xLjUyOWEyNzAuNzA4IDI3MC43MDggMCAwMTEwLjY5NC0xMi4wN2wyLjc3LTIuOTE1IDMuMzQ5IDIuMjI1YzEuMzUuODk3IDIuODM5IDEuNDA2IDQuMzY4IDEuNTAybDcuOTg3LTYuODEyLTEuMTU3IDExLjgwOGMtLjAyNi4yNjUtLjAzOS42MjYuMDY1IDEuMjk2bC4zNDggMi4yMzgtMS41MSAxLjY4OC0uMTc0LjE5NiA0LjM4OCAyLjAyNSAxLjgzNi0yLjMwMXoiLz48cGF0aCBmaWxsPSIjMzM2NzkxIiBkPSJNMTE1LjczMSA3Ny40NGMtMTMuOTI1IDIuODczLTE0Ljg4Mi0xLjg0Mi0xNC44ODItMS44NDIgMTQuNzAzLTIxLjgxNiAyMC44NDktNDkuNTEgMTUuNTQ1LTU2LjI4N0MxMDEuOTI0LjgyMyA3Ni44NzUgOS41NjYgNzYuNDU3IDkuNzkzbC0uMTM1LjAyNGMtMi43NTEtLjU3MS01LjgzLS45MTEtOS4yOTEtLjk2Ny02LjMwMS0uMTAzLTExLjA4IDEuNjUyLTE0LjcwNyA0LjQwMiAwIDAtNDQuNjg0LTE4LjQwOC00Mi42MDYgMjMuMTUxLjQ0MiA4Ljg0MiAxMi42NzIgNjYuODk5IDI3LjI2IDQ5LjM2MyA1LjMzMi02LjQxMiAxMC40ODMtMTEuODM0IDEwLjQ4My0xMS44MzQgMi41NTkgMS42OTkgNS42MjIgMi41NjcgOC44MzMgMi4yNTVsLjI1LS4yMTJjLS4wNzguNzk2LS4wNDIgMS41NzUuMSAyLjQ5Ny0zLjc1OCA0LjE5OS0yLjY1NCA0LjkzNi0xMC4xNjcgNi40ODItNy42MDIgMS41NjYtMy4xMzYgNC4zNTUtLjIyIDUuMDg0IDMuNTM0Ljg4NCAxMS43MTIgMi4xMzYgMTcuMjM3LTUuNTk4bC0uMjIxLjg4MmMxLjQ3MyAxLjE4IDIuNTA3IDcuNjcyIDIuMzM0IDEzLjU1Ny0uMTc0IDUuODg1LS4yOSA5LjkyNi44NzEgMTMuMDgyIDEuMTYgMy4xNTYgMi4zMTYgMTAuMjU2IDEyLjE5MiA4LjE0IDguMjUyLTEuNzY4IDEyLjUyOC02LjM1MSAxMy4xMjQtMTMuOTk1LjQyMi01LjQzNSAxLjM3Ny00LjYzMSAxLjQzOC05LjQ5bC43NjctMi4zYy44ODQtNy4zNjcuMTQtOS43NDMgNS4yMjUtOC42MzhsMS4yMzUuMTA4YzMuNzQyLjE3IDguNjM5LS42MDIgMTEuNTE0LTEuOTM4IDYuMTktMi44NzEgOS44NjEtNy42NjcgMy43NTgtNi40MDh6Ii8+PHBhdGggZmlsbD0iI2ZmZiIgZD0iTTc1Ljk1NyAxMjIuMzA3Yy04LjIzMiAwLTEwLjg0LTYuNTE5LTExLjkwNy05LjE4NS0xLjU2Mi0zLjkwNy0xLjg5OS0xOS4wNjktMS41NTEtMzEuNTAzYTEuNTkgMS41OSAwIDAxMS42NC0xLjU1IDEuNTk0IDEuNTk0IDAgMDExLjU1IDEuNjM5Yy0uNDAxIDE0LjM0MS4xNjggMjcuMzM3IDEuMzI0IDMwLjIyOSAxLjgwNCA0LjUwOSA0LjU0IDguNDUzIDEyLjI3NSA2Ljc5NiA3LjM0My0xLjU3NSAxMC4wOTMtNC4zNTkgMTEuMzE4LTExLjQ2Ljk0LTUuNDQ5IDIuNzk5LTIwLjk1MSAzLjAyOC0yNC4wMWExLjU5MyAxLjU5MyAwIDAxMS43MS0xLjQ3MiAxLjU5NyAxLjU5NyAwIDAxMS40NzIgMS43MWMtLjIzOSAzLjE4NS0yLjA4OSAxOC42NTctMy4wNjUgMjQuMzE1LTEuNDQ2IDguMzg3LTUuMTg1IDEyLjE5MS0xMy43OTQgMTQuMDM3LTEuNDYzLjMxMy0yLjc5Mi40NTMtNCAuNDU0ek0zMS4zMjEgOTAuNDY2YTYuNzEgNi43MSAwIDAxLTIuMTE2LS4zNWMtNS4zNDctMS43ODQtMTAuNDQtMTAuNDkyLTE1LjEzOC0yNS44ODUtMy41NzYtMTEuNzE3LTUuODQyLTIzLjk0Ny02LjA0MS0yNy45MjItLjU4OS0xMS43ODQgMi40NDUtMjAuMTIxIDkuMDItMjQuNzc4IDEzLjAwNy05LjIxNiAzNC44ODgtLjQ0IDM1LjgxMy0uMDYyYTEuNTk2IDEuNTk2IDAgMDEtMS4yMDcgMi45NTVjLS4yMTEtLjA4Ni0yMS4xOTMtOC40OTItMzIuNzY4LS4yODUtNS42MjIgMy45ODYtOC4yMDMgMTEuMzkyLTcuNjcyIDIyLjAxMS4xNjcgMy4zNDkgMi4yODQgMTUuMjg1IDUuOTA2IDI3LjE0OSA0LjE5NCAxMy43NDIgOC45NjcgMjIuNDEzIDEzLjA5NiAyMy43OS42NDguMjE2IDIuNjIuODczIDUuNDM5LTIuNTE3QTI0NS4yNzIgMjQ1LjI3MiAwIDAxNDUuODggNzMuMDQ2YTEuNTk2IDEuNTk2IDAgMDEyLjMwNCAyLjIwOGMtLjA0OC4wNS00Ljg0NyA1LjA2Ny0xMC4wNzcgMTEuMzU5LTIuNDc3IDIuOTc5LTQuODUxIDMuODUzLTYuNzg2IDMuODUzem02OS40MjktMTMuNDQ1YTEuNTk2IDEuNTk2IDAgMDEtMS4zMjItMi40ODdjMTQuODYzLTIyLjA1NSAyMC4wOC00OC43MDQgMTUuNjEyLTU0LjQxNC01LjYyNC03LjE4Ni0xMy41NjUtMTAuOTM5LTIzLjYwNC0xMS4xNTYtNy40MzMtLjE2LTEzLjM0MSAxLjczOC0xNC4zMDcgMi4wNjlsLS4yNDMuMDk5Yy0uOTcxLjMwNS0xLjcxNi0uMjI3LTEuOTk3LS44NDlhMS42IDEuNiAwIDAxLjYzMS0yLjAyNWMuMDQ2LS4wMjcuMTkyLS4wODkuNDI5LS4xNzZsLS4wMjEuMDA2LjAyMS0uMDA3YzEuNjQxLS42MDEgNy42MzktMi40IDE1LjA2OC0yLjMxNSAxMS4xMDguMTE4IDIwLjI4NCA0LjQwMSAyNi41MzQgMTIuMzg4IDIuOTU3IDMuNzc5IDIuOTY0IDEyLjQ4NS4wMTkgMjMuODg3LTMuMDAyIDExLjYyNS04LjY1MSAyNC4xMTgtMTUuNDk3IDM0LjI3Ny0uMzA2LjQ1Ny0uODEuNzAzLTEuMzIzLjcwM3ptLjc2IDEwLjIxYy0yLjUzOCAwLTQuODEzLS4zNTgtNi4xNzUtMS4xNzQtMS40LS44MzktMS42NjctMS45NzktMS43MDItMi41ODQtLjM4Mi02LjcxIDMuMzItNy44NzggNS4yMDgtOC40MTEtLjI2My0uMzk4LS42MzctLjg2Ni0xLjAyNC0xLjM0OS0xLjEwMS0xLjM3Ni0yLjYwOS0zLjI2LTMuNzcxLTYuMDc4LS4xODItLjQ0LS43NTItMS40NjMtMS40MTItMi42NDgtMy41NzktNi40MTgtMTEuMDI2LTE5Ljc3My02LjI0Mi0yNi42MTIgMi4yMTQtMy4xNjUgNi42MjMtNC40MTEgMTMuMTE5LTMuNzE2Qzk3LjYgMjguODM3IDg4LjUgMTAuNjI1IDY2LjkwNyAxMC4yNzFjLTYuNDk0LS4xMDgtMTEuODIgMS44ODktMTUuODIyIDUuOTMtOC45NiA5LjA0OS04LjYzNiAyNS40MjItOC42MzEgMjUuNTg2YTEuNTk1IDEuNTk1IDAgMTEtMy4xOS4wODRjLS4wMi0uNzI3LS4zNTQtMTcuOTA5IDkuNTU0LTI3LjkxNkM1My40NTUgOS4yNzIgNTkuNTU5IDYuOTYgNjYuOTYgNy4wODFjMTMuODE0LjIyNyAyMi43MDYgNy4yNSAyNy43MzIgMTMuMTAxIDUuNDc5IDYuMzc3IDguMTY1IDEzLjQxMSA4LjM4NiAxNS43NTkuMTY1IDEuNzQ2LTEuMDg4IDIuMDk1LTEuMzQxIDIuMTQ3bC0uNTc2LjAxM2MtNi4zNzUtMS4wMjEtMTAuNDY1LS4zMTItMTIuMTU2IDIuMTA0LTMuNjM5IDUuMjAxIDMuNDA2IDE3LjgzNCA2LjQxNCAyMy4yMjkuNzY4IDEuMzc2IDEuMzIyIDIuMzcxIDEuNTc2IDIuOTg1Ljk4OCAyLjM5NiAyLjI3NyA0LjAwNiAzLjMxMiA1LjMuOTExIDEuMTM4IDEuNyAyLjEyNSAxLjk4MiAzLjI4My4xMzEuMjMgMS45OSAyLjk4IDEzLjAyMS43MDMgMi43NjUtLjU3IDQuNDIzLS4wODMgNC45MyAxLjQ1Ljk5NyAzLjAxNS00LjU5NyA2LjUzMi03LjY5NCA3Ljk3LTIuNzc1IDEuMjktNy4yMDQgMi4xMDYtMTEuMDM2IDIuMTA2em0tNC42OTYtNC4wMjFjLjM1LjM1MyAyLjEwMS45NjIgNS43MjcuODA2IDMuMjI0LS4xMzggNi42MjQtLjgzOSA4LjY2NC0xLjc4NiAyLjYwOS0xLjIxMiA0LjM1MS0yLjU2NyA1LjI1My0zLjQ5MmwtLjUuMDkyYy03LjA1MyAxLjQ1Ni0xMi4wNDIgMS4yNjItMTQuODI4LS41NzdhNi4xNjIgNi4xNjIgMCAwMS0uNTQtLjQwMWMtLjMwMi4xMTktLjU4MS4xOTctLjc4LjI1My0xLjU4LjQ0My0zLjIxNC45MDItMi45OTYgNS4xMDV6bS00NS41NjIgOC45MTVjLTEuNzUyIDAtMy41OTYtLjIzOS01LjQ3OS0uNzEtMS45NTEtLjQ4OC01LjI0LTEuOTU3LTUuMTktNC4zNy4wNTctMi43MDcgMy45OTQtMy41MTkgNS40NzYtMy44MjQgNS4zNTQtMS4xMDMgNS43MDMtMS41NDUgNy4zNzYtMy42Ny40ODgtLjYxOSAxLjA5NS0xLjM5IDEuOTIzLTIuMzE0IDEuMjI5LTEuMzc2IDIuNTcyLTIuMDczIDMuOTkyLTIuMDczLjk4OSAwIDEuOC4zMzUgMi4zMzYuNTU4IDEuNzA4LjcwOCAzLjEzMyAyLjQyIDMuNzE5IDQuNDY3LjUyOSAxLjg0Ny4yNzYgMy42MjUtLjcxIDUuMDA2LTMuMjM3IDQuNTMzLTcuODg2IDYuOTMtMTMuNDQzIDYuOTN6bS03LjIyMi00Ljk0M2MuNDgxLjM3MiAxLjQ0NS44NjkgMi41MTggMS4xMzcgMS42MzEuNDA4IDMuMjEzLjYxNSA0LjcwNS42MTUgNC41NDYgMCA4LjE5Ni0xLjg4MiAxMC44NDctNS41OTQuNTUzLS43NzQuMzg3LTEuNzU3LjIzOS0yLjI3NC0uMzEtMS4wODMtMS4wOC0yLjA2OC0xLjg3My0yLjM5Ny0uNDMtLjE3OC0uNzg3LS4zMTQtMS4xMTUtLjMxNC0uMTc2IDAtLjcxMiAwLTEuNjE0IDEuMDA5YTQxLjE0NiA0MS4xNDYgMCAwMC0xLjc5NCAyLjE2MmMtMi4wODQgMi42NDYtMy4wMzkgMy41NDQtOS4yMzkgNC44MjEtMS41MTMuMzEtMi4yODkuNjI2LTIuNjc0LjgzNXptMTIuMjY5LTcuMzZhMS41OTYgMS41OTYgMCAwMS0xLjU3NS0xLjM1NCA4LjIxOCA4LjIxOCAwIDAxLS4wOC0uNzk5Yy00LjA2NC0uMDc2LTcuOTg1LTEuODItMTAuOTYyLTQuOTI2LTMuNzY0LTMuOTI3LTUuNDc3LTkuMzY4LTQuNjk5LTE0LjkyNy44NDUtNi4wMzcuNTI5LTExLjM2Ni4zNTktMTQuMjI5LS4wNDctLjc5Ni0uMDgxLTEuMzcxLS4wNzktMS43NjkuMDAzLS41MDUuMDEzLTEuODQ0IDQuNDg5LTQuMTEzIDEuNTkyLS44MDcgNC43ODQtMi4yMTUgOC4yNzEtMi41NzYgNS43NzctLjU5NyA5LjU4NSAxLjk3NiAxMC43MjUgNy4yNDYgMy4wNzcgMTQuMjI4LjI0NCAyMC41MjEtMS44MjUgMjUuMTE3LS4zODUuODU2LS43NDkgMS42NjQtMS4wNCAyLjQ0N2wtLjI1Ny42OWMtMS4wOTMgMi45MzEtMi4wMzggNS40NjMtMS43NDggNy4zNTRhMS41OTUgMS41OTUgMCAwMS0xLjMzNSAxLjgxOWwtLjI0NC4wMnpNNDIuNDY0IDQyLjI2bC4wNjIgMS4xMzljLjE3NiAyLjk3NC41MDQgOC41MDgtLjM4NCAxNC44Ni0uNjQxIDQuNTg1Ljc1OSA5LjA2IDMuODQzIDEyLjI3NiAyLjQzNyAyLjU0MiA1LjY0NCAzLjk0NSA4Ljk0IDMuOTQ1aC4wNjhjLjM2OS0xLjU1NS45ODItMy4xOTcgMS42NDItNC45NjZsLjI1NS0uNjg2Yy4zMjktLjg4NC43MTQtMS43NCAxLjEyMi0yLjY0NiAxLjk5MS00LjQyNCA0LjQ3LTkuOTMxIDEuNjE1LTIzLjEzMi0uNTY1LTIuNjE1LTEuOTM2LTQuMTI4LTQuMTg5LTQuNjI3LTQuNjI4LTEuMDIyLTExLjUyNSAyLjQ1OS0xMi45NzQgMy44Mzd6bTkuNjMtLjY3N2MtLjA4LjU2NCAxLjAzMyAyLjA3IDIuNDg1IDIuMjcxIDEuNDQ5LjIwMyAyLjY4OS0uOTc1IDIuNzY4LTEuNTM5LjA3OS0uNTY0LTEuMDMzLTEuMTg2LTIuNDg1LTEuMzg4LTEuNDUxLS4yMDItMi42OTEuMDkyLTIuNzY4LjY1NnptMi44MTggMi44MjZsLS40MDctLjAyOGMtLjktLjEyNS0xLjgxLS42OTItMi40MzMtMS41MTgtLjIxOS0uMjktLjU3Ni0uODUyLS41MDUtMS4zNTQuMTAxLS43MzYuOTk5LTEuMTc3IDIuNC0xLjE3Ny4zMTMgMCAuNjM5LjAyMy45NjcuMDY5Ljc2Ni4xMDYgMS40NzcuMzI3IDIuMDAyLjYyLjkxLjUwOC45NzcgMS4wNzUuOTM2IDEuMzY4LS4xMTIuODEzLTEuNDA1IDIuMDItMi45NiAyLjAyem0tMi4yODktMi43MzJjLjA0NS4zNDguOTA3IDEuNDk2IDIuMDI5IDEuNjUxbC4yNjEuMDE4YzEuMDM2IDAgMS44MS0uODE1IDEuOTAxLTEuMDgyLS4wOTYtLjE4Mi0uNzYyLS42MzQtMi4wMjUtLjgxYTUuODIzIDUuODIzIDAgMDAtLjgyMS0uMDU5Yy0uODEyIDAtMS4yNDMuMTgzLTEuMzQ1LjI4MnptNDMuNjA1LTEuMjQ1Yy4wNzkuNTY0LTEuMDMzIDIuMDctMi40ODQgMi4yNzItMS40NS4yMDItMi42OTEtLjk3NS0yLjc3MS0xLjUzOS0uMDc2LS41NjQgMS4wMzYtMS4xODcgMi40ODYtMS4zODggMS40NS0uMjAzIDIuNjg5LjA5MiAyLjc2OS42NTV6bS0yLjgxOSAyLjU2Yy0xLjM5NiAwLTIuNjAxLTEuMDg2LTIuNy0xLjc5MS0uMTE1LS44NDYgMS4yNzgtMS40ODkgMi43MTItMS42ODguMzE2LS4wNDQuNjI5LS4wNjYuOTMtLjA2NiAxLjIzOCAwIDIuMDU4LjM2MyAyLjE0Ljk0OS4wNTMuMzc5LS4yMzguOTY0LS43MzkgMS40OTItLjMzMS4zNDctMS4wMjYuOTQ4LTEuOTczIDEuMDc5bC0uMzcuMDI1em0uOTQzLTMuMDEzYy0uMjc2IDAtLjU2NC4wMjEtLjg1Ni4wNjEtMS40NDEuMjAxLTIuMzAxLjc3OS0yLjI1OSAxLjA4OS4wNDguMzQxLjk2OCAxLjMzMiAyLjE3MyAxLjMzMmwuMjk3LS4wMjFjLjc4Ny0uMTA5IDEuMzc4LS42MjMgMS42Ni0uOTE5LjQ0My0uNDY1LjYxOS0uOTAzLjU5OC0xLjA1Mi0uMDI4LS4xOTgtLjU2LS40OS0xLjYxMy0uNDl6bTMuOTY1IDMyLjg0M2ExLjU5NCAxLjU5NCAwIDAxLTEuMzI0LTIuNDgzYzMuMzk4LTUuMDc1IDIuNzc2LTEwLjI1IDIuMTc1LTE1LjI1NS0uMjU3LTIuMTMyLS41MjEtNC4zMzctLjQ1My02LjQ1My4wNy0yLjE3Ny4zNDctMy45NzMuNjE0LTUuNzEuMzE3LTIuMDU4LjYxNy00LjAwMi40OTMtNi4zMWExLjU5NSAxLjU5NSAwIDExMy4xODYtLjE3MmMuMTQyIDIuNjM4LS4xOTcgNC44MzgtLjUyNSA2Ljk2Ny0uMjUzIDEuNjQzLS41MTUgMy4zNDItLjU3OCA1LjMyNy0uMDYxIDEuODc0LjE3OCAzLjg2NC40MzEgNS45Ny42NCA1LjMyMiAxLjM2NSAxMS4zNTQtMi42OTEgMTcuNDExYTEuNTk2IDEuNTk2IDAgMDEtMS4zMjguNzA4eiIvPjwvc3ZnPg==" alt="PostgreSQL"><div><b>PostgreSQL (paquet Fedora)</b>base et utilisateur <code>docflow</code> · écoute le réseau privé</div></div>
+<div class="tree"><span class="d">/opt/docflow/</span>
+├── commun.py, ms3_extraction.py
+├── <span class="d">models/</span>modele_enseigne.joblib
+├── <span class="d">venv/</span>   <span class="c"># requirements-ms3.txt</span>
+└── ms3.env <span class="c"># chmod 600 : mots de passe</span>
+<span class="d">/etc/systemd/system/</span>docflow-ms3.service
+<span class="d">/var/lib/pgsql/data/</span> <span class="c"># pg_hba.conf</span></div>
+    </div>
+  </div>
+  <div class="scroll-x">
+  <svg class="diagram dg" viewBox="0 0 1000 150" style="min-width:700px" aria-label="Flux réseau entre les deux nœuds">
+    <defs><path id="w1" d="M150 50 H850"/><path id="w2" d="M150 105 H850"/></defs>
+    <rect x="10" y="20" width="140" height="110" rx="18" fill="color-mix(in srgb, var(--sky) 14%, var(--surface))" stroke="var(--sky)" stroke-width="2"/>
+    <text class="t" x="80" y="68" text-anchor="middle">Mac</text><text class="m" x="80" y="88" text-anchor="middle">192.168.56.1</text>
+    <rect x="850" y="20" width="140" height="110" rx="18" fill="color-mix(in srgb, var(--mint) 14%, var(--surface))" stroke="var(--mint)" stroke-width="2"/>
+    <text class="t" x="920" y="68" text-anchor="middle">Fedora</text><text class="m" x="920" y="88" text-anchor="middle">192.168.56.10</text>
+    <use href="#w1" class="edge dash" stroke="var(--peach)"/><use href="#w2" class="edge dash" stroke="var(--grape)"/>
+    <text class="lbl" x="500" y="40" text-anchor="middle" fill="var(--peach)">MS3 → RabbitMQ 5672 (MS3 ouvre la connexion, reçoit extraction + erreurs)</text>
+    <text class="lbl" x="500" y="96" text-anchor="middle" fill="var(--grape)">API → PostgreSQL 5432 (INSERT, UPDATE PROCESSING, SELECT)</text>
+    <circle r="7" fill="var(--peach)"><animateMotion dur="2.6s" repeatCount="indefinite" keyPoints="1;0" keyTimes="0;1" calcMode="linear"><mpath href="#w1"/></animateMotion></circle>
+    <circle r="7" fill="var(--peach)" opacity=".6"><animateMotion dur="2.6s" begin="1.3s" repeatCount="indefinite"><mpath href="#w1"/></animateMotion></circle>
+    <circle r="7" fill="var(--grape)"><animateMotion dur="3s" begin=".5s" repeatCount="indefinite"><mpath href="#w2"/></animateMotion></circle>
+  </svg>
+  </div>
+  <div class="scroll-x">
+  <table class="ports">
+    <thead><tr><th>Port</th><th>Ouvert sur</th><th>Qui s'y connecte</th><th>Pourquoi ce réglage</th></tr></thead>
+    <tbody>
+      <tr><td>8000</td><td><code>127.0.0.1</code> du Mac</td><td>Navigateur, <code>curl</code>, <code>mesures.py</code></td><td>Interface et API visibles du Mac seul, pas du réseau du lieu.</td></tr>
+      <tr><td>5672</td><td><code>192.168.56.1</code></td><td>MS3 depuis Fedora ; MS1, MS2, API par le réseau Docker</td><td>Ouvert sur le réseau privé uniquement. Cette adresse n'existe que si la VM tourne.</td></tr>
+      <tr><td>15672</td><td><code>127.0.0.1</code> du Mac</td><td>Nous, pour la démo</td><td>Console RabbitMQ : voir les files se remplir et se vider.</td></tr>
+      <tr><td>5432</td><td>Fedora, filtré par <code>pg_hba.conf</code></td><td>API (Mac) et MS3 (local, <code>127.0.0.1</code>)</td><td>Seuls <code>192.168.56.0/24</code> et la VM elle-même sont acceptés, mot de passe <code>scram-sha-256</code>.</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="grid2">
+    <div class="callout soft-mint"><svg class="ico"><use href="#i-check"/></svg><div><b>Pourquoi MS3 et la base sur Fedora ?</b> MS3 ne reçoit que du texte léger : c'est le traitement distant le plus naturel. La base à côté de MS3 garde l'écriture locale. MS1 et MS2 restent près des fichiers lourds.</div></div>
+    <div class="callout soft-peach"><svg class="ico"><use href="#i-alert"/></svg><div><b>Ordre de démarrage :</b> VM d'abord, puis <code>docker compose up</code>. Sinon Docker refuse d'ouvrir <code>192.168.56.1:5672</code> (« can't assign requested address »).</div></div>
+  </div>
+</section>
+
+<!-- ============================================================ 04 -->
+<section class="sl" id="structure">
+  <div class="kicker soft-grape"><b>04</b> Structure du code</div>
+  <h2>Tout est <em>à la racine</em>, un fichier par rôle</h2>
+  <p class="lead">Pas de paquet ni de sous-dossiers de code : on ouvre un fichier, on lit un service entier. Couleur = endroit où le fichier s'exécute. Cliquer sur un fichier mène à sa fiche.</p>
+  <div class="legend"><span class="soft-sky"><i></i>Mac (conteneur)</span><span class="soft-mint"><i></i>Fedora (VM)</span><span class="soft-grape"><i></i>Mac et Fedora</span><span class="soft-lemon"><i></i>Hors ligne (outils)</span><span class="soft-peach"><i></i>Configuration, déploiement</span></div>
+  <div class="files">
+    <a class="file soft-grape" href="#f-commun"><span class="dotc"></span><span><b>commun.py</b><small>Files RabbitMQ et boucle de lecture partagée par tous les services</small></span><span class="ln">97</span></a>
+    <a class="file soft-sky" href="#f-api"><span class="dotc"></span><span><b>api.py</b><small>Dépôt, consultation, santé, page web (FastAPI)</small></span><span class="ln">111</span></a>
+    <a class="file soft-sky" href="#f-ms1"><span class="dotc"></span><span><b>ms1_pretraitement.py</b><small>PDF ou image → pages en gris, agrandies, redressées</small></span><span class="ln">87</span></a>
+    <a class="file soft-sky" href="#f-ms2"><span class="dotc"></span><span><b>ms2_ocr.py</b><small>Lit le texte avec Tesseract français</small></span><span class="ln">34</span></a>
+    <a class="file soft-mint" href="#f-ms3"><span class="dotc"></span><span><b>ms3_extraction.py</b><small>Enseigne, date, total, puis UPDATE en base ; gère les échecs</small></span><span class="ln">162</span></a>
+    <a class="file soft-sky" href="#f-index"><span class="dotc"></span><span><b>index.html</b><small>Rectangle glisser-déposer + tableau rafraîchi</small></span><span class="ln">81</span></a>
+    <a class="file soft-lemon" href="#f-entrainement"><span class="dotc"></span><span><b>entrainement.py</b><small>Annoter, OCR, découper, entraîner, évaluer, sauvegarder</small></span><span class="ln">98</span></a>
+    <a class="file soft-lemon" href="#f-mesures"><span class="dotc"></span><span><b>mesures.py</b><small>Dépose N tickets et mesure durées et débit</small></span><span class="ln">52</span></a>
+    <a class="file soft-mint" href="#f-schema"><span class="dotc"></span><span><b>schema.sql</b><small>La table <code>documents</code></small></span><span class="ln">17</span></a>
+    <a class="file soft-peach" href="#f-docker"><span class="dotc"></span><span><b>Dockerfile · docker-compose.yml</b><small>Image unique et services du Mac</small></span><span class="ln">83</span></a>
+    <a class="file soft-peach" href="#f-fedora"><span class="dotc"></span><span><b>fedora/installer.sh · docflow-ms3.service</b><small>Installe PostgreSQL et MS3 dans la VM</small></span><span class="ln">64</span></a>
+    <a class="file soft-peach" href="#f-reseau"><span class="dotc"></span><span><b>verifier_reseau.sh</b><small>Teste le réseau privé et les services</small></span><span class="ln">62</span></a>
+    <a class="file soft-peach" href="#f-config"><span class="dotc"></span><span><b>.env.example · requirements*.txt</b><small>Secrets et versions figées</small></span><span class="ln">26</span></a>
+    <a class="file soft-peach" href="#donnees"><span class="dotc"></span><span><b>data/ · models/ · storage/ · reports/</b><small>Données, jamais versionnées (sauf rapports)</small></span><span class="ln">—</span></a>
+  </div>
+  <h3>Qui importe qui</h3>
+  <div class="scroll-x">
+  <svg class="diagram dg" viewBox="0 0 1000 250" style="min-width:720px" aria-label="Graphe des imports">
+    <defs><marker id="ar2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" fill="var(--muted)"/></marker></defs>
+    <rect x="410" y="190" width="180" height="48" rx="14" fill="color-mix(in srgb, var(--grape) 14%, var(--surface))" stroke="var(--grape)" stroke-width="2"/><text class="t" x="500" y="219" text-anchor="middle">commun.py</text>
+    <rect class="box" x="40" y="100" width="150" height="44" rx="12" style="stroke:var(--sky)"/><text class="t" x="115" y="127" text-anchor="middle" style="font-size:13px">api.py</text>
+    <rect class="box" x="260" y="100" width="190" height="44" rx="12" style="stroke:var(--sky)"/><text class="t" x="355" y="127" text-anchor="middle" style="font-size:13px">ms1_pretraitement.py</text>
+    <rect class="box" x="520" y="100" width="150" height="44" rx="12" style="stroke:var(--sky)"/><text class="t" x="595" y="127" text-anchor="middle" style="font-size:13px">ms2_ocr.py</text>
+    <rect class="box" x="740" y="100" width="190" height="44" rx="12" style="stroke:var(--mint)"/><text class="t" x="835" y="127" text-anchor="middle" style="font-size:13px">ms3_extraction.py</text>
+    <rect x="390" y="10" width="220" height="44" rx="12" fill="color-mix(in srgb, var(--lemon) 16%, var(--surface))" stroke="var(--lemon)" stroke-width="2"/><text class="t" x="500" y="37" text-anchor="middle" style="font-size:13px">entrainement.py</text>
+    <g fill="none" stroke="var(--muted)" stroke-width="2" marker-end="url(#ar2)">
+      <path d="M115 144 C115 200, 300 214, 408 214"/><path d="M355 144 C355 180, 430 180, 460 188"/><path d="M595 144 C595 180, 560 180, 540 188"/><path d="M835 144 C835 200, 700 214, 592 214"/>
+    </g>
+    <g fill="none" stroke="var(--lemon)" stroke-width="2.5" stroke-dasharray="6 5" marker-end="url(#ar2)">
+      <path d="M430 54 C400 70, 370 80, 360 98"/><path d="M520 54 C560 70, 590 80, 595 98"/><path d="M600 40 C720 40, 820 60, 830 98"/>
+    </g>
+    <text class="lbl" x="660" y="30" fill="color-mix(in srgb, var(--lemon) 70%, var(--ink))">réutilise le code des services</text>
+    <text class="lbl" x="500" y="176" text-anchor="middle" fill="var(--muted)">ouvrir_canal · publier · lancer_service · attendre_rabbitmq</text>
+  </svg>
+  </div>
+  <div class="callout soft-lemon"><svg class="ico"><use href="#i-check"/></svg><div><b>Point fort à défendre :</b> <code>entrainement.py</code> importe <code>charger_pages</code>, <code>agrandir</code>, <code>redresser</code> (MS1), <code>lire_texte</code> (MS2) et <code>extraire</code>, <code>preparer_texte</code> (MS3). Le modèle est donc entraîné et évalué sur exactement le texte que la chaîne produira en production. Aucun écart entre l'entraînement et le service.</div></div>
+</section>
+
+<!-- ============================================================ 05 -->
+<section class="sl" id="scripts">
+  <div class="kicker soft-grape"><b>05</b> Chaque script, en détail</div>
+  <h2>Ce qu'il fait, <em>où il tourne, pourquoi</em></h2>
+
+  <!-- commun -->
+  <article class="card script soft-grape" id="f-commun">
+    <div class="top"><h3>commun.py</h3><span class="pill soft-grape">Mac + Fedora</span><span class="pill soft-grape">importé par api, ms1, ms2, ms3</span></div>
+    <p>Tout ce qui touche à RabbitMQ, écrit une seule fois. Un service n'a plus qu'à fournir une fonction <code>traiter(message)</code>.</p>
+    <div class="fns">
+      <div class="fn"><code>FILES</code><span>Les 4 files : <code>pretraitement</code>, <code>ocr</code>, <code>extraction</code>, <code>erreurs</code>. Échange par défaut de RabbitMQ : la clé de routage est le nom de la file.</span></div>
+      <div class="fn"><code>ouvrir_canal()</code><span>Connexion + déclaration des 4 files en <code>durable=True</code> : elles survivent à un redémarrage de RabbitMQ. Chaque service les déclare, donc l'ordre de démarrage n'importe pas.</span></div>
+      <div class="fn"><code>publier(canal, file, msg)</code><span>Message JSON en <code>delivery_mode=2</code> : persistant sur disque.</span></div>
+      <div class="fn"><code>lancer_service(nom, abonnements)</code><span>Boucle principale : <code>prefetch_count=1</code>, mesure de durée, envoi vers la file suivante, gestion d'erreur, acquittement après traitement (schéma ci-dessous).</span></div>
+      <div class="fn"><code>attendre_rabbitmq()</code><span>Au démarrage, réessaie 30 fois toutes les 2 s : quand tout démarre ensemble, RabbitMQ peut mettre quelques secondes à répondre.</span></div>
+    </div>
+    <div class="loop-wrap">
+      <div class="scroll-x">
+      <svg class="diagram dg" viewBox="0 0 620 300" style="min-width:520px" aria-label="Boucle de traitement d'un message">
+        <defs>
+          <marker id="ar3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" fill="var(--muted)"/></marker>
+          <path id="lp-ok" d="M70 60 H230 V140 H390 V60 H560 V250 H70 Z"/>
+        </defs>
+        <rect class="box" x="10" y="35" width="130" height="50" rx="14" style="stroke:var(--peach)"/><text class="t" x="75" y="58" text-anchor="middle" style="font-size:13px">message reçu</text><text class="m" x="75" y="75" text-anchor="middle">json.loads</text>
+        <rect class="box" x="170" y="115" width="130" height="50" rx="14" style="stroke:var(--grape)"/><text class="t" x="235" y="138" text-anchor="middle" style="font-size:13px">traiter(msg)</text><text class="m" x="235" y="155" text-anchor="middle">chrono lancé</text>
+        <rect class="box" x="330" y="35" width="130" height="50" rx="14" style="stroke:var(--mint)"/><text class="t" x="395" y="58" text-anchor="middle" style="font-size:13px">publier suite</text><text class="m" x="395" y="75" text-anchor="middle">+ durees[nom]</text>
+        <rect class="box" x="330" y="200" width="130" height="50" rx="14" style="stroke:var(--pink)"/><text class="t" x="395" y="223" text-anchor="middle" style="font-size:13px">→ erreurs</text><text class="m" x="395" y="240" text-anchor="middle">sauf si file=erreurs</text>
+        <rect x="500" y="115" width="110" height="50" rx="14" fill="var(--mint)"/><text class="t" x="555" y="138" text-anchor="middle" style="fill:#fff;font-size:13px">basic_ack</text><text class="m" x="555" y="155" text-anchor="middle" style="fill:#fff">toujours</text>
+        <g fill="none" stroke="var(--muted)" stroke-width="2" marker-end="url(#ar3)">
+          <path d="M140 60 C170 60, 200 80, 220 113"/>
+          <path d="M290 115 C300 90, 310 70, 328 62"/>
+          <path d="M290 165 C300 190, 310 215, 328 224"/>
+          <path d="M460 60 C490 60, 530 80, 548 113"/>
+          <path d="M460 225 C490 225, 530 200, 548 167"/>
+        </g>
+        <text class="lbl" x="300" y="104" fill="var(--mint)">ok</text><text class="lbl" x="290" y="196" fill="var(--pink)">exception</text>
+        <text class="lbl" x="10" y="290" fill="var(--muted)">un seul message à la fois (prefetch 1) · retiré de la file seulement à l'ack</text>
+        <circle r="8" fill="var(--grape)"><animateMotion dur="4s" repeatCount="indefinite" path="M75 60 C150 60, 190 90, 235 140 C290 100, 330 60, 395 60 C470 60, 530 90, 555 140"/></circle>
+        <circle r="8" fill="var(--pink)"><animateMotion dur="4s" begin="2s" repeatCount="indefinite" path="M75 60 C150 60, 190 90, 235 140 C290 180, 330 225, 395 225 C470 225, 530 190, 555 140"/></circle>
+      </svg>
+      </div>
+      <ul class="why soft-grape">
+        <li><span><b>Acquittement après traitement :</b> si un service meurt en plein travail, RabbitMQ redonne le message à un autre worker (ou au même, relancé).</span></li>
+        <li><span><b>prefetch = 1 :</b> avec 3 MS2, chacun prend un ticket à la fois ; la charge se répartit toute seule.</span></li>
+        <li><span><b>Pas d'erreur sur une erreur :</b> un échec dans la file <code>erreurs</code> n'est pas republié, pour éviter une boucle infinie.</span></li>
+        <li><span><b>RabbitMQ disparaît :</b> le programme s'arrête, Docker (<code>restart: unless-stopped</code>) ou systemd (<code>Restart=always</code>) le relance.</span></li>
+      </ul>
+    </div>
+  </article>
+
+  <!-- api -->
+  <article class="card script soft-sky" id="f-api">
+    <div class="top"><h3>api.py</h3><span class="pill soft-sky">Mac · conteneur api</span><span class="pill soft-sky">uvicorn :8000</span></div>
+    <div class="facts">
+      <div class="fact"><h4>Entrée</h4>Un fichier envoyé en <code>multipart/form-data</code> (champ <code>fichier</code>).</div>
+      <div class="fact"><h4>Sortie</h4>Fichier dans <code>storage/originaux/</code>, ligne en base, message dans <code>pretraitement</code>, réponse <code>202</code>.</div>
+      <div class="fact"><h4>Pourquoi sur le Mac</h4>Point d'entrée de l'utilisateur ; doit écrire le fichier là où MS1 le lira.</div>
+    </div>
+    <div class="fns">
+      <div class="fn"><code>POST /documents</code><span>Refuse vide (400), &gt; 10 Mo (413), format inconnu (415). Crée <code>DOC-</code> + 8 hexadécimaux, range le fichier, <code>INSERT</code> (PENDING), publie, puis passe en PROCESSING. Base ou RabbitMQ absent : 503.</span></div>
+      <div class="fn"><code>format_reel()</code><span>Lit les premiers octets (<code>%PDF</code>, <code>\x89PNG</code>, <code>\xff\xd8\xff</code>) plutôt que l'extension : un <code>.png</code> renommé en <code>.pdf</code> ne trompe pas MS1.</span></div>
+      <div class="fn"><code>GET /documents/{id}</code><span>Ligne complète de la table, 404 si inconnue.</span></div>
+      <div class="fn"><code>GET /documents</code><span>Les 20 derniers, pour le tableau de la page web.</span></div>
+      <div class="fn"><code>GET /health</code><span>Teste la base et RabbitMQ séparément : <code>"base": "injoignable"</code> veut dire VM éteinte ou PostgreSQL arrêté.</span></div>
+      <div class="fn"><code>GET /</code><span>Sert <code>index.html</code> : pas de serveur web en plus.</span></div>
+    </div>
+    <ul class="why soft-sky">
+      <li><span><b>Renommage en <code>DOC-…</code> :</b> le nom d'origine contient la réponse (enseigne, date, total) et parfois des infos personnelles. La chaîne ne le voit jamais.</span></li>
+      <li><span><b>202 Accepted :</b> l'OCR prend environ une seconde ; l'API ne bloque pas, le client interroge ensuite le statut.</span></li>
+    </ul>
+  </article>
+
+  <!-- ms1 -->
+  <article class="card script soft-sky" id="f-ms1">
+    <div class="top"><h3>ms1_pretraitement.py</h3><span class="pill soft-sky">Mac · conteneur ms1</span><span class="pill soft-peach">pretraitement → ocr</span></div>
+    <div class="facts">
+      <div class="fact"><h4>Entrée</h4><code>{document_id, fichier}</code></div>
+      <div class="fact"><h4>Sortie</h4><code>pages</code> : <code>pretraite/DOC-…/page_1.png</code>, une image par page.</div>
+      <div class="fact"><h4>Pourquoi sur le Mac</h4>Il manipule les fichiers lourds de <code>storage/</code> : aucun PDF ne traverse le réseau.</div>
+    </div>
+    <div class="fns">
+      <div class="fn"><code>charger_pages()</code><span>PDF → une image par page avec PyMuPDF, directement en gris, à 300 DPI (200 pour les tickets très longs, sinon la mémoire explose). Image → chargée et convertie en gris. Un PDF illisible lève « PDF illisible ou corrompu ».</span></div>
+      <div class="fn"><code>agrandir()</code><span>Image de moins de 1 000 px de large → ×4 en bicubique. Les captures Lidl font 412 px : Tesseract lit mal les petits caractères.</span></div>
+      <div class="fn"><code>redresser()</code><span>Essaie chaque angle de −10° à +10° sur une miniature 500 px et garde celui où la somme d'encre par ligne varie le plus.</span></div>
+    </div>
+    <div class="deskew">
+      <div><div class="paper"><div class="lines"><i style="width:80%"></i><i style="width:60%"></i><i style="width:90%"></i><i style="width:50%"></i><i style="width:75%"></i><i style="width:85%"></i><i style="width:40%"></i></div></div><div class="cap">ticket incliné → angle retenu</div></div>
+      <div><div class="hist"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="cap">encre par ligne : alternance nette = texte droit</div></div>
+    </div>
+    <p class="muted" style="font-size:14.5px">Droit, chaque ligne de texte donne un pic d'encre et chaque interligne un creux : la variance est maximale. Penché, l'encre se mélange entre les lignes et la courbe s'aplatit. Pas de niveaux de gris « artistiques » ni de binarisation : on évite tout traitement qui pourrait effacer un caractère.</p>
+  </article>
+
+  <!-- ms2 -->
+  <article class="card script soft-lemon" id="f-ms2">
+    <div class="top"><h3>ms2_ocr.py</h3><span class="pill soft-sky">Mac · conteneur ms2 (×N)</span><span class="pill soft-peach">ocr → extraction</span></div>
+    <div class="facts">
+      <div class="fact"><h4>Entrée</h4><code>{…, pages}</code></div>
+      <div class="fact"><h4>Sortie</h4><code>texte</code> : toutes les pages lues, jointes par un saut de ligne.</div>
+      <div class="fact"><h4>Pourquoi sur le Mac</h4>Il lit les pages préparées par MS1 dans le même <code>storage/</code>.</div>
+    </div>
+    <div class="fns">
+      <div class="fn"><code>lire_texte()</code><span><code>pytesseract.image_to_string(lang="fra", config="--psm 4")</code>. Le mode 4 suppose une seule colonne de texte de tailles variables : exactement un ticket.</span></div>
+    </div>
+    <ul class="why soft-lemon">
+      <li><span><b>C'est le goulot :</b> l'OCR prend l'essentiel du temps. Le Dockerfile fixe <code>OMP_THREAD_LIMIT=1</code> : un cœur par conteneur, et on parallélise en lançant plusieurs MS2 (<code>--scale ms2=3</code>) qui se partagent la file <code>ocr</code>.</span></li>
+      <li><span><b>MS2 ne comprend rien :</b> il ne cherche pas le total. Séparer « lire » et « comprendre » permet de changer de moteur OCR sans toucher à l'extraction.</span></li>
+    </ul>
+  </article>
+
+  <!-- ms3 -->
+  <article class="card script soft-mint" id="f-ms3">
+    <div class="top"><h3>ms3_extraction.py</h3><span class="pill soft-mint">Fedora · systemd docflow-ms3</span><span class="pill soft-peach">extraction + erreurs → base</span></div>
+    <div class="facts">
+      <div class="fact"><h4>Entrée</h4><code>{…, texte, durees}</code> depuis <code>extraction</code> ; <code>{document_id, erreur}</code> depuis <code>erreurs</code>.</div>
+      <div class="fact"><h4>Sortie</h4><code>UPDATE</code> de la ligne : COMPLETED avec les champs, ou FAILED avec la cause.</div>
+      <div class="fact"><h4>Pourquoi sur Fedora</h4>Traitement distant sur données légères, écriture locale dans PostgreSQL ; démontre conteneurs + VM.</div>
+    </div>
+    <div class="fns">
+      <div class="fn"><code>normaliser()</code><span>Majuscules sans accents : « Intermarché à payer » → « INTERMARCHE A PAYER ». Rend les règles insensibles aux accents de l'OCR.</span></div>
+      <div class="fn"><code>enseigne_par_regles()</code><span>L'enseigne dont le nom apparaît le plus, sinon <code>UNKNOWN</code>. Sert de comparaison et de secours si le modèle est absent.</span></div>
+      <div class="fn"><code>preparer_texte()</code><span>Texte normalisé, chiffres remplacés par 0 : le modèle ne doit pas apprendre un numéro de carte ou un montant.</span></div>
+      <div class="fn"><code>trouver_date()</code><span>Première date <code>JJ/MM/AAAA</code> (ou <code>-</code>, <code>.</code>, année sur 2 chiffres) qui existe vraiment et tombe entre 2015 et aujourd'hui.</span></div>
+      <div class="fn"><code>trouver_total()</code><span>Cherche les libellés par priorité, écarte les lignes pièges, prend le dernier montant de la ligne (ou celui de la ligne suivante).</span></div>
+      <div class="fn"><code>extraire()</code><span>Assemble les 3 champs, <code>EUR</code> seulement si un total existe, et note <code>methode_enseigne</code> (<code>modele</code> ou <code>regles</code>).</span></div>
+      <div class="fn"><code>enregistrer()</code> · <code>marquer_echec()</code><span><code>UPDATE … WHERE document_id</code> : rejouer le même message réécrit la même ligne, jamais de doublon.</span></div>
+    </div>
+    <div class="grid2">
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <h4>La règle du total, en action</h4>
+        <div class="receipt">
+          <div><span>CAFE MOULU</span><span>4,49</span></div>
+          <div class="trap"><span>SOUS-TOTAL</span><span>3,02</span></div>
+          <div class="trap"><span>PROMOTION</span><span>-0,50</span></div>
+          <div class="pick"><span>A PAYER</span><span>3,02</span></div>
+          <div class="trap"><span>TOTAL ELIGIBLE</span><span>3,96</span></div>
+          <div class="trap"><span>TOTAL TVA</span><span>0,16</span></div>
+        </div>
+        <p class="muted" style="font-size:13px">Exemple fictif, tiré du doctest de <code>trouver_total</code>.</p>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <h4>Ordre de priorité des libellés</h4>
+        <div class="prio"><span class="pill soft-mint">TOTAL A PAYER</span>›<span class="pill soft-mint">NET A PAYER</span>›<span class="pill soft-mint">MONTANT DU</span>›<span class="pill soft-mint">A PAYER</span>›<span class="pill soft-mint">TOTAL TTC</span>›<span class="pill soft-mint">TOTAL</span></div>
+        <h4>Lignes ignorées (pièges)</h4>
+        <div class="prio"><span class="pill soft-pink">SOUS-TOTAL</span><span class="pill soft-pink">SOUS TOTAL</span><span class="pill soft-pink">ELIGIBLE</span><span class="pill soft-pink">TOTAL TVA</span><span class="pill soft-pink">TOTAL HT</span><span class="pill soft-pink">PROMOTION</span></div>
+        <p style="font-size:14.5px">Le montant est lu en <code>Decimal</code>, jamais en <code>float</code> : 0,1 + 0,2 ne doit pas faire 0,30000000000000004 sur de l'argent. La base le stocke en <code>NUMERIC(10,2)</code>.</p>
+      </div>
+    </div>
+    <h4>Le modèle d'enseigne</h4>
+    <div class="scroll-x"><div class="flow">
+      <div class="fstep soft-sky"><b>Texte OCR</b>« Intermarché… 23,40 »</div><svg class="ico chev"><use href="#i-chev"/></svg>
+      <div class="fstep soft-grape"><b>preparer_texte</b>« INTERMARCHE… 00,00 »</div><svg class="ico chev"><use href="#i-chev"/></svg>
+      <div class="fstep soft-pink"><b>TF-IDF</b><code>char_wb</code>, morceaux de 2 à 4 lettres</div><svg class="ico chev"><use href="#i-chev"/></svg>
+      <div class="fstep soft-lemon"><b>Régression logistique</b>3 classes, <code>max_iter=1000</code></div><svg class="ico chev"><use href="#i-chev"/></svg>
+      <div class="fstep soft-mint"><b>Enseigne</b>CARREFOUR · LIDL · INTERMARCHE</div>
+    </div></div>
+    <ul class="why soft-mint">
+      <li><span><b>Pourquoi des morceaux de lettres et pas des mots ?</b> L'OCR déforme les mots (« INTERMARCH3 », « LlDL ») ; les fragments de 2 à 4 lettres résistent à ces fautes et captent aussi la mise en page (mentions légales, slogans).</span></li>
+      <li><span><b>Pourquoi ce modèle ?</b> 109 tickets d'entraînement : un modèle linéaire léger apprend vite (quelques secondes), s'explique facilement et tient dans un fichier <code>.joblib</code> chargé par MS3.</span></li>
+      <li><span><b>Ce qui est appris, ce qui ne l'est pas :</b> seule l'enseigne est apprise. Date et total restent des règles : elles font déjà 100 % sur le test, un modèle n'apporterait rien de mesurable.</span></li>
+    </ul>
+  </article>
+
+  <!-- index -->
+  <article class="card script soft-sky" id="f-index">
+    <div class="top"><h3>index.html</h3><span class="pill soft-sky">servie par l'API · tourne dans le navigateur</span></div>
+    <p>Un rectangle où l'on glisse les tickets (ou clic pour choisir), puis un tableau des 20 derniers documents rafraîchi chaque seconde par <code>GET /documents</code>. Statut coloré, cause d'échec au survol, durée de bout en bout calculée par <code>updated_at − created_at</code>. Pas de framework : HTML, CSS et quelques lignes de JavaScript, l'interface n'étant pas l'enjeu du projet.</p>
+  </article>
+
+  <!-- entrainement -->
+  <article class="card script soft-lemon" id="f-entrainement">
+    <div class="top"><h3>entrainement.py</h3><span class="pill soft-lemon">hors ligne · conteneur outils</span><span class="pill soft-lemon">≈ 20 s</span></div>
+    <div class="scroll-x"><div class="flow">
+      <div class="fstep soft-pink"><b>1. Annoter</b>le nom du fichier donne la réponse</div><svg class="ico chev"><use href="#i-chev"/></svg>
+      <div class="fstep soft-sky"><b>2. OCR</b>code de MS1 + MS2, en parallèle, cache <code>data/textes/</code></div><svg class="ico chev"><use href="#i-chev"/></svg>
+      <div class="fstep soft-grape"><b>3. Découper</b>80 / 20, stratifié, <code>random_state=42</code></div><svg class="ico chev"><use href="#i-chev"/></svg>
+      <div class="fstep soft-lemon"><b>4. Entraîner</b>sur les 80 %</div><svg class="ico chev"><use href="#i-chev"/></svg>
+      <div class="fstep soft-mint"><b>5. Évaluer</b>règles contre modèle sur les 20 %</div><svg class="ico chev"><use href="#i-chev"/></svg>
+      <div class="fstep soft-peach"><b>6. Sauver</b><code>models/</code> + <code>reports/evaluation.md</code></div>
+    </div></div>
+    <ul class="why soft-lemon">
+      <li><span><b>Annotation par le nom :</b> <code>&lt;entite&gt;_&lt;AAAA&gt;-&lt;JJ&gt;-&lt;MM&gt;_&lt;montant&gt;</code>, saisi à la main (attention, jour avant mois). Exemple fictif : <code>carrefour_2025-17-04_12.34.pdf</code>.</span></li>
+      <li><span><b>Cache OCR :</b> l'OCR de 137 tickets est le plus long ; relancer l'entraînement ne le refait pas. Supprimer <code>data/textes/</code> si MS1 ou MS2 change.</span></li>
+      <li><span><b>Stratifié et figé :</b> chaque enseigne est présente des deux côtés et le découpage est identique à chaque exécution, donc comparable.</span></li>
+      <li><span><b>Pourquoi dans Docker :</b> l'image contient déjà Tesseract français et les mêmes versions de bibliothèques que les services.</span></li>
+    </ul>
+  </article>
+
+  <!-- mesures -->
+  <article class="card script soft-lemon" id="f-mesures">
+    <div class="top"><h3>mesures.py</h3><span class="pill soft-lemon">hors ligne · conteneur outils</span><span class="pill soft-lemon">appli lancée</span></div>
+    <p>Dépose N tickets d'un coup (30 par défaut, répartis sur les enseignes) via <code>http://api:8000</code>, attend qu'ils soient tous COMPLETED ou FAILED, puis calcule la durée moyenne de bout en bout, la durée moyenne de MS1 et de MS2 (enregistrées par les services dans <code>durees</code>) et le débit en tickets par minute. Ajoute une ligne datée à <code>reports/mesures.md</code>. À lancer avec 1 puis 3 MS2 pour montrer le passage à l'échelle.</p>
+  </article>
+
+  <!-- schema -->
+  <article class="card script soft-mint" id="f-schema">
+    <div class="top"><h3>schema.sql</h3><span class="pill soft-mint">Fedora · PostgreSQL</span><span class="pill soft-mint">appliqué par installer.sh</span></div>
+    <p>Une seule table <code>documents</code> (détail en section 09). L'API crée la ligne, MS3 la complète. <code>CREATE TABLE IF NOT EXISTS</code> : on peut relancer l'installation sans rien casser. Un <code>CHECK</code> limite <code>status</code> aux quatre valeurs.</p>
+  </article>
+
+  <!-- docker -->
+  <article class="card script soft-peach" id="f-docker">
+    <div class="top"><h3>Dockerfile · docker-compose.yml</h3><span class="pill soft-peach">Mac</span></div>
+    <div class="grid2">
+      <ul class="why soft-peach">
+        <li><span><b>Une seule image</b> <code>python:3.12-slim</code> + <code>tesseract-ocr-fra</code> + <code>requirements.txt</code> + tous les <code>.py</code>. Chaque conteneur lance juste une commande différente : un seul build, des services identiques.</span></li>
+        <li><span><b>Ancre YAML <code>x-docflow</code></b> : réglages communs (image, variables, volume <code>storage</code>, attente de RabbitMQ sain) écrits une fois.</span></li>
+        <li><span><b><code>depends_on: service_healthy</code></b> : API, MS1 et MS2 démarrent quand <code>rabbitmq-diagnostics ping</code> répond.</span></li>
+      </ul>
+      <ul class="why soft-peach">
+        <li><span><b><code>DATABASE_URL</code></b> pointe vers <code>192.168.56.10:5432</code> ; <code>RABBITMQ_URL</code> vers le service <code>rabbitmq</code> du réseau Docker.</span></li>
+        <li><span><b>Profil <code>outils</code></b> : ne démarre jamais avec <code>up</code>, seulement par <code>docker compose run --rm outils …</code>.</span></li>
+        <li><span><b><code>hostname: docflow-rabbitmq</code></b> : RabbitMQ range ses données par nom d'hôte ; un nom fixe garde les messages entre deux démarrages.</span></li>
+      </ul>
+    </div>
+  </article>
+
+  <!-- fedora -->
+  <article class="card script soft-peach" id="f-fedora">
+    <div class="top"><h3>fedora/installer.sh · fedora/docflow-ms3.service</h3><span class="pill soft-mint">exécuté dans la VM, en sudo</span><span class="pill soft-peach">relançable sans risque</span></div>
+    <div class="grid3">
+      <div class="fact"><h4>1. PostgreSQL</h4><code>dnf install postgresql-server python3</code>, <code>initdb</code> si besoin, écoute sur toutes les interfaces, <code>pg_hba.conf</code> limité au réseau privé et à la VM.</div>
+      <div class="fact"><h4>2. Base</h4>Utilisateur <code>docflow</code> avec le mot de passe de <code>.env</code>, base <code>docflow</code>, puis <code>schema.sql</code>.</div>
+      <div class="fact"><h4>3. MS3</h4>Copie dans <code>/opt/docflow</code>, venv + <code>requirements-ms3.txt</code>, écrit <code>ms3.env</code> (600), installe et (re)démarre le service, affiche <code>active</code>.</div>
+    </div>
+    <ul class="why soft-peach">
+      <li><span><b>Pourquoi systemd et pas Docker sur Fedora ?</b> Montrer les deux techniques demandées par le cahier des charges : conteneurs côté Mac, virtualisation + service natif côté VM. systemd démarre MS3 avec la VM et le relance s'il s'arrête.</span></li>
+      <li><span><b><code>DynamicUser=yes</code> :</b> MS3 tourne sous un utilisateur temporaire sans privilèges, créé par systemd. <code>After=postgresql.service</code> : la base est prête avant lui.</span></li>
+      <li><span><b>Idempotent :</b> chaque étape vérifie avant d'agir (<code>grep -q</code>, <code>|| true</code>, <code>IF NOT EXISTS</code>), donc on le relance après chaque modification de MS3 ou du modèle.</span></li>
+    </ul>
+  </article>
+
+  <!-- réseau -->
+  <article class="card script soft-peach" id="f-reseau">
+    <div class="top"><h3>verifier_reseau.sh</h3><span class="pill soft-sky">Mac · VM démarrée</span></div>
+    <p>Sans option : adresse <code>192.168.56.1</code> présente, ping vers la VM, port SSH 22, et ping depuis un conteneur Docker (le vrai chemin de MS1 et MS2). Avec <code>--services</code> : RabbitMQ sur 5672, PostgreSQL sur 5432 (depuis le Mac et depuis un conteneur), puis <code>/health</code>. Code de sortie 0 si tout passe. Le commentaire d'en-tête mentionne encore <code>./scripts/</code> (chemin V1) : le script est à la racine en V2.</p>
+  </article>
+
+  <!-- config -->
+  <article class="card script soft-peach" id="f-config">
+    <div class="top"><h3>.env.example · requirements.txt · requirements-ms3.txt</h3><span class="pill soft-peach">configuration</span></div>
+    <ul class="why soft-peach">
+      <li><span><b><code>.env</code></b> (copié depuis <code>.env.example</code>, jamais sur Git) : <code>RABBITMQ_USER</code>, <code>RABBITMQ_PASSWORD</code>, <code>DB_PASSWORD</code>. Lu par Compose côté Mac et par <code>installer.sh</code> côté Fedora : un seul endroit pour les secrets.</span></li>
+      <li><span><b>Versions figées</b> (<code>==</code>) pour reproduire l'installation. <code>requirements-ms3.txt</code> ne contient que ce dont MS3 a besoin et la <b>même version de scikit-learn</b> que l'entraînement : sinon le <code>.joblib</code> risque de ne pas se recharger.</span></li>
+    </ul>
+  </article>
+</section>
+
+<!-- ============================================================ 06 -->
+<section class="sl" id="robustesse">
+  <div class="kicker soft-peach"><b>06</b> Statuts et pannes</div>
+  <h2>Ce qui se passe <em>quand ça casse</em></h2>
+  <div class="scroll-x">
+  <div class="states">
+    <i class="token"></i>
+    <div class="state soft-lemon">PENDING<small>INSERT par l'API</small></div>
+    <div class="sarrow"><span>message publié (API)</span></div>
+    <div class="state soft-sky">PROCESSING<small>dans la chaîne</small></div>
+    <div class="sarrow"><span>UPDATE par MS3</span></div>
+    <div class="fork">
+      <div class="state soft-mint">COMPLETED<small>file extraction</small></div>
+      <div class="state soft-pink">FAILED<small>file erreurs + cause</small></div>
+    </div>
+  </div>
+  </div>
+  <div class="scroll-x">
+  <table class="scen">
+    <tbody>
+      <tr><td>MS2 arrêté pendant un dépôt</td><td>Le message attend dans la file <code>ocr</code> (durable, persistant). Le ticket reste PROCESSING, puis passe COMPLETED dès que <code>docker compose start ms2</code>.</td><td class="ok">Aucune perte</td></tr>
+      <tr><td>Un service meurt en plein travail</td><td>Pas d'acquittement : RabbitMQ remet le message en file et le redonne au prochain worker.</td><td class="ok">Repris</td></tr>
+      <tr><td>Même message reçu deux fois</td><td>MS3 fait un <code>UPDATE</code> sur la clé <code>document_id</code> : même ligne réécrite.</td><td class="ok">Pas de doublon</td></tr>
+      <tr><td>PDF corrompu ou format piégé</td><td>MS1 lève une erreur → file <code>erreurs</code> → MS3 passe le ticket FAILED avec « ms1 : PDF illisible ou corrompu ». Le service, lui, continue.</td><td class="ok">Échec lisible</td></tr>
+      <tr><td>Format non supporté au dépôt</td><td>L'API refuse tout de suite : HTTP 415, rien n'est stocké.</td><td class="ok">Refus clair</td></tr>
+      <tr><td>RabbitMQ redémarre</td><td>Files et messages persistants restent sur le volume <code>rabbitmq</code> ; les services s'arrêtent puis sont relancés par Docker ou systemd.</td><td class="ok">Reprise auto</td></tr>
+      <tr><td>Base ou RabbitMQ absent au dépôt</td><td>L'API répond 503 « réessayez ».</td><td class="ok">Signalé</td></tr>
+      <tr><td>Base injoignable pendant l'écriture de MS3</td><td>L'erreur part dans <code>erreurs</code>, mais <code>marquer_echec</code> échoue aussi et n'est pas republié : le ticket reste PROCESSING. Pas de nouvelle tentative automatique en V2.</td><td class="ko">Limite connue</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<!-- ============================================================ 07 -->
+<section class="sl" id="technos">
+  <div class="kicker soft-mint"><b>07</b> Technologies</div>
+  <h2>Pourquoi celles-là, <em>où elles tournent</em>, ce qu'il faut</h2>
+  <div class="techs">
+    <div class="card tech"><div class="th"><div class="logo"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4Ij48bGluZWFyR3JhZGllbnQgaWQ9InB5dGhvbi1vcmlnaW5hbC1hIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjcwLjI1MiIgeTE9IjEyMzcuNDc2IiB4Mj0iMTcwLjY1OSIgeTI9IjExNTEuMDg5IiBncmFkaWVudFRyYW5zZm9ybT0ibWF0cml4KC41NjMgMCAwIC0uNTY4IC0yOS4yMTUgNzA3LjgxNykiPjxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iIzVBOUZENCIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzMwNjk5OCIvPjwvbGluZWFyR3JhZGllbnQ+PGxpbmVhckdyYWRpZW50IGlkPSJweXRob24tb3JpZ2luYWwtYiIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiIHgxPSIyMDkuNDc0IiB5MT0iMTA5OC44MTEiIHgyPSIxNzMuNjIiIHkyPSIxMTQ5LjUzNyIgZ3JhZGllbnRUcmFuc2Zvcm09Im1hdHJpeCguNTYzIDAgMCAtLjU2OCAtMjkuMjE1IDcwNy44MTcpIj48c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiNGRkQ0M0IiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNGRkU4NzMiLz48L2xpbmVhckdyYWRpZW50PjxwYXRoIGZpbGw9InVybCgjcHl0aG9uLW9yaWdpbmFsLWEpIiBkPSJNNjMuMzkxIDEuOTg4Yy00LjIyMi4wMi04LjI1Mi4zNzktMTEuOCAxLjAwNy0xMC40NSAxLjg0Ni0xMi4zNDYgNS43MS0xMi4zNDYgMTIuODM3djkuNDExaDI0LjY5M3YzLjEzN0gyOS45NzdjLTcuMTc2IDAtMTMuNDYgNC4zMTMtMTUuNDI2IDEyLjUyMS0yLjI2OCA5LjQwNS0yLjM2OCAxNS4yNzUgMCAyNS4wOTYgMS43NTUgNy4zMTEgNS45NDcgMTIuNTE5IDEzLjEyNCAxMi41MTloOC40OTFWNjcuMjM0YzAtOC4xNTEgNy4wNTEtMTUuMzQgMTUuNDI2LTE1LjM0aDI0LjY2NWM2Ljg2NiAwIDEyLjM0Ni01LjY1NCAxMi4zNDYtMTIuNTQ4VjE1LjgzM2MwLTYuNjkzLTUuNjQ2LTExLjcyLTEyLjM0Ni0xMi44MzctNC4yNDQtLjcwNi04LjY0NS0xLjAyNy0xMi44NjYtMS4wMDh6TTUwLjAzNyA5LjU1N2MyLjU1IDAgNC42MzQgMi4xMTcgNC42MzQgNC43MjEgMCAyLjU5My0yLjA4MyA0LjY5LTQuNjM0IDQuNjktMi41NiAwLTQuNjMzLTIuMDk3LTQuNjMzLTQuNjktLjAwMS0yLjYwNCAyLjA3My00LjcyMSA0LjYzMy00LjcyMXoiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDAgMTAuMjYpIi8+PHBhdGggZmlsbD0idXJsKCNweXRob24tb3JpZ2luYWwtYikiIGQ9Ik05MS42ODIgMjguMzh2MTAuOTY2YzAgOC41LTcuMjA4IDE1LjY1NS0xNS40MjYgMTUuNjU1SDUxLjU5MWMtNi43NTYgMC0xMi4zNDYgNS43ODMtMTIuMzQ2IDEyLjU0OXYyMy41MTVjMCA2LjY5MSA1LjgxOCAxMC42MjggMTIuMzQ2IDEyLjU0NyA3LjgxNiAyLjI5NyAxNS4zMTIgMi43MTMgMjQuNjY1IDAgNi4yMTYtMS44MDEgMTIuMzQ2LTUuNDIzIDEyLjM0Ni0xMi41NDd2LTkuNDEySDYzLjkzOHYtMy4xMzhoMzcuMDEyYzcuMTc2IDAgOS44NTItNS4wMDUgMTIuMzQ4LTEyLjUxOSAyLjU3OC03LjczNSAyLjQ2Ny0xNS4xNzQgMC0yNS4wOTYtMS43NzQtNy4xNDUtNS4xNjEtMTIuNTIxLTEyLjM0OC0xMi41MjFoLTkuMjY4ek03Ny44MDkgODcuOTI3YzIuNTYxIDAgNC42MzQgMi4wOTcgNC42MzQgNC42OTIgMCAyLjYwMi0yLjA3NCA0LjcxOS00LjYzNCA0LjcxOS0yLjU1IDAtNC42MzMtMi4xMTctNC42MzMtNC43MTkgMC0yLjU5NSAyLjA4My00LjY5MiA0LjYzMy00LjY5MnoiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDAgMTAuMjYpIi8+PHJhZGlhbEdyYWRpZW50IGlkPSJweXRob24tb3JpZ2luYWwtYyIgY3g9IjE4MjUuNjc4IiBjeT0iNDQ0LjQ1IiByPSIyNi43NDMiIGdyYWRpZW50VHJhbnNmb3JtPSJtYXRyaXgoMCAtLjI0IC0xLjA1NSAwIDUzMi45NzkgNTU3LjU3NikiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj48c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiNCOEI4QjgiIHN0b3Atb3BhY2l0eT0iLjQ5OCIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzdGN0Y3RiIgc3RvcC1vcGFjaXR5PSIwIi8+PC9yYWRpYWxHcmFkaWVudD48cGF0aCBvcGFjaXR5PSIuNDQ0IiBmaWxsPSJ1cmwoI3B5dGhvbi1vcmlnaW5hbC1jKSIgZD0iTTk3LjMwOSAxMTkuNTk3YzAgMy41NDMtMTQuODE2IDYuNDE2LTMzLjA5MSA2LjQxNi0xOC4yNzYgMC0zMy4wOTItMi44NzMtMzMuMDkyLTYuNDE2IDAtMy41NDQgMTQuODE1LTYuNDE3IDMzLjA5Mi02LjQxNyAxOC4yNzUgMCAzMy4wOTEgMi44NzIgMzMuMDkxIDYuNDE3eiIvPjwvc3ZnPgo=" alt=""></div><div><strong>Python 3.12</strong><small>Mac (image) · Fedora (venv)</small></div></div><dl>
+      <dt>Rôle</dt><dd>Langage unique des 4 programmes et de l'entraînement.</dd>
+      <dt>Avantages</dt><dd>Toutes les briques IA et image existent ; un seul langage à relire ; code partagé (<code>commun.py</code>) entre Mac et Fedora.</dd>
+      <dt>Prérequis</dt><dd>Fourni par l'image <code>python:3.12-slim</code> ; <code>python3</code> installé par <code>dnf</code> sur Fedora.</dd></dl></div>
+    <div class="card tech"><div class="th"><div class="logo"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4Ij48cGF0aCBkPSJNNTYuODEzIDEyNy41ODZjLTEuOTAzLS4yMjctMy44OTktLjUyLTQuNDM0LS42NTJhNDguMDc4IDQ4LjA3OCAwIDAwLTIuMzc1LS41IDM2LjA0MiAzNi4wNDIgMCAwMS0yLjcwMy0uNjMzYy00LjE0NS0xLjE4OC00LjQ0Mi0xLjI4NS03LjU2Ny0yLjU2My0yLjg3NS0xLjE3Mi04LjE3Mi0zLjkxLTkuOTg0LTUuMTU2LS40OTYtLjM0NC0uOTYtLjYyMS0xLjAzMS0uNjIxLS4wNyAwLTEuMjMtLjgxNi0yLjU3OC0xLjgxMy04LjU3LTYuMzQzLTE1LjAwNC0xNC4wNDMtMTkuNjUzLTIzLjUyNy0uOC0xLjYyOS0xLjQ1My0zLjA3NC0xLjQ1My0zLjIxIDAtLjEzNC0uMTQ0LS41MDUtLjMyLS44MTctLjM2My0uNjQ5LS44OC0yLjA0Ny0xLjI5Ny0zLjQ5MmEyMC4wNDcgMjAuMDQ3IDAgMDAtLjYyNS0xLjgxM2MtLjE5NS0uNDYtLjM1Mi0xLjAyLS4zNTItMS4yNDYgMC0uMjI3LS4xOTUtLjk2NS0uNDMzLTEuNjQ1LS4yMzgtLjY3NS0uNDMtMS40NzItLjQzLTEuNzcgMC0uMjk2LS4xODctMS4zMi0uNDE4LTIuMjc2Qy41OTggNzMuNDkyIDAgNjcuMzc5IDAgNjMuOTUzYzAtMy40MjIuNTk4LTkuNTM1IDEuMTYtMTEuODk0LjIzLS45NTcuNDE4LTIgLjQxOC0yLjMyIDAtLjMyMS4xNDUtLjk1LjMyLTEuNC4xOC0uNDQ4LjQxLTEuMjUzLjUxNi0xLjc4OC4xMS0uNTM1LjM2LTEuNDU3LjU2My0yLjA1NWwuNTktMS43MjZjLjQzMy0xLjI5My44MzUtMi4zODcgMS4wMjctMi44MTMuMTEtLjIzOC41MzktMS4yMS45NTctMi4xNi42NzYtMS41MzUgMi4xMjUtNC40MyAyLjk3Mi01Ljk0NS4zMDktLjU1NS40MjYtLjczOSAyLjA5OC0zLjM1MiAyLjY0OS00LjE0OCA3LjE3Ni05LjMwOSAxMS4zOS0xMi45ODggMS40ODUtMS4yOTcgNi40NDYtNS4wNjMgNi42NjktNS4wNjMuMDYyIDAgLjUzLS4yODEgMS4wNDMtLjYyNSAxLjM0Ny0uOTAyIDIuNjY4LTEuNjY4IDQuMzktMi41MzFhNTMuMDYgNTMuMDYgMCAwMDEuODM2LS45NTNjLjI4NS0uMTY0LjgyLS40MSAzLjU2Ny0xLjY0LjYwNS0uMjcgMS4yNTctLjUxNiAzLjEzNi0xLjE3My40MTQtLjE0NCAxLjI0Ni0uNDQ5IDEuODQtLjY3Mi41OTgtLjIyMiAxLjMwMS0uNDA2IDEuNTYzLS40MDYuMjU4IDAgLjkzNy0uMTggMS41MDgtLjQwMi41Ny0uMjIzIDEuNjA1LS40NzcgMi4zMDQtLjU2My42OTYtLjA4MiAxLjYyMS0uMjc3IDIuMDU1LS40My40My0uMTQ4IDEuNjEtLjM0IDIuNjIxLS40MjVhNzIuNTcyIDcyLjU3MiAwIDAwMy45NDEtLjQ2NWMyLjY4OC0uMzk0IDguNTMyLS4zOTQgMTEuMTkyIDBhNzUuMDIgNzUuMDIgMCAwMDMuNzgxLjQ0NWMuOTUzLjA3OSAyLjE2OC4yNzggMi43MDMuNDQyLjUzNS4xNiAxLjQ2MS4zNiAyLjA1NS40MzMuNTk0LjA3OSAxLjU5NC4zMjUgMi4yMjIuNTUxLjYzLjIzIDEuMzQ0LjQxNCAxLjU5LjQxNHMuNzU0LjEzNyAxLjEyNS4zMDljLjM3NS4xNjggMS4xNjguNDQ5IDEuNzY2LjYyNS41OTQuMTggMS42MTMuNTM1IDIuMjcuNzk3LjY1Mi4yNjEgMS41MjcuNjA1IDEuOTQ1Ljc2MS43Ny4yOSA2LjQ2IDMuMTM3IDcuMjM0IDMuNjIyIDYuMjgxIDMuOTE3IDkuNTEyIDYuNDc2IDEzLjg1NiAxMC45NjQgNS4yMzggNS40MTQgOC43MTUgMTAuNTcgMTIuMjU0IDE4LjE2LjI1LjUzNi42MzIgMS4zMjkuODUxIDEuNzU4LjIxNS40MzQuMzk1Ljk0Mi4zOTUgMS4xMyAwIC4xOS4xOC43Ni40MDIgMS4yNjkuNjAyIDEuMzgzIDEuMTE3IDIuOTU3IDEuMzYgNC4xNi4xMi41OS4zNDMgMS4zMi40OTUgMS42MjEuMTUzLjMuMzMyIDEuMDYzLjQwMyAxLjY4OC4wNy42MjQuMjc3IDEuNjQ4LjQ1MyAyLjI2OSAxLjAyIDMuNTMxIDEuNTI3IDEzLjkzNC45MSAxOC41MzUtLjE4MyAxLjM2Ny0uMzkgMy4wMi0uNDYgMy42NzItLjExOCAxLjExNy0uNzA4IDQuMDA0LTEuMjEyIDUuOTQ1bC0uNTIgMi4wNTVjLS45OCAzLjk1Ny0zLjQwMiA5LjU5NC02LjM1OSAxNC44MDktMS4xNzIgMi4wNy01LjEwMSA3LjY2OC01Ljg0MyA4LjMyNC0uMDY3LjA1OC0uMzk5LjQ1LS43MzUuODYzLS4zMzYuNDE4LTEuNDE0IDEuNTg2LTIuMzkgMi41OTQtNC4zMDEgNC40NDEtNy43NyA3LjE4Ny0xMy44NiAxMC45NjktLjcyMi40NDktNi44NDcgMy40NDEtNy45OTIgMy45MDYtLjU5NC4yMzgtMS41ODYuNjQtMi4yMDMuODktLjYxMy4yNDctMS4yOTcuNDU0LTEuNTEyLjQ1OC0uMjE1LjAwMy0uNzgxLjE5NS0xLjI1OC40MjUtLjQ3Ni4yMy0xLjA4Mi40MjItMS4zNTEuNDI2LS4yNjYuMDA0LTEuMDQzLjE5Mi0xLjcyNy40MTgtLjY4My4yMy0xLjYzMy40NzctMi4xMS41NS0uNDc2LjA3NS0xLjQ5NS4yNzgtMi4yNjkuNDUtLjc3My4xNzItMy4xMS41MDgtNS4xODcuNzQ2YTU5LjA2IDU5LjA2IDAgMDEtMTMuOTQ1LS4wMzF6bTQuNzAzLTEyLjVjLjMtLjIzNC42MDktLjcuNjkxLTEuMDI3LjE4LS43MjMgMjkuMjM0LTU4Ljk3IDI5Ljc4MS01OS43LjQ2MS0uNjE3LjUwNC0xLjYwNS4wODItMS45NTMtLjIyMi0uMTg3LTMuMDA0LS4yNDYtMTAuNDMtLjIzNC01LjU3LjAxMi0xMC4yNTMuMDE2LTEwLjQwNi4wMTItLjIyNi0uMDA4LS4yNzMtMy43My0uMjUtMTkuNjcyLjAxNi0xMC44MTctLjAzNS0xOS43NjYtLjExMy0xOS44OS0uMDc4LS4xMjYtLjM4My0uMjI3LS42OC0uMjI3LS40MTggMC0uNjEzLjE4LS44Ny44MDgtLjQ4NSAxLjE2OC0xLjgyNSAzLjgyLTguMzQ4IDE2LjQ4NWEzNTU0LjU2OSAzNTU0LjU2OSAwIDAwLTQuMDU1IDcuODljLTEuMTU2IDIuMjYyLTIuOTggNS44MTMtNC4wNDcgNy44OWE4NzUxLjI0OCA4NzUxLjI0OCAwIDAwLTguNTk4IDE2Ljc1OWMtNC45MzMgOS42MzYtNS41MyAxMC43ODUtNS43NDIgMTEuMDM5LS40MS40OTYtLjYzMyAxLjY0LS40MDIgMi4wNy4yMS4zOTQuNjI5LjQxIDExLjA0My4zOTQgNS45NTMtLjAwNyAxMC44NjMuMDI0IDEwLjkxNC4wNy4xMzcuMTQxLjA4NiAzNy4zMS0uMDU1IDM4LjE5Ni0uMDkzLjU4Mi0uMDMxLjg5LjIzNSAxLjE1Ni40Ni40NjEuNTg2LjQ1NyAxLjI1LS4wNjZ6bTAgMCIgZmlsbD0iIzA0OTY4OCIvPjwvc3ZnPgo=" alt=""></div><div><strong>FastAPI 0.163 + uvicorn</strong><small>Mac · conteneur api</small></div></div><dl>
+      <dt>Rôle</dt><dd>API HTTP de dépôt et de consultation, page web.</dd>
+      <dt>Avantages</dt><dd>Très peu de code par route, réponses JSON automatiques, documentation interactive <code>/docs</code> offerte, upload via <code>python-multipart</code>.</dd>
+      <dt>Alternative</dt><dd>Flask : aussi simple mais sans <code>/docs</code> ni typage des paramètres.</dd></dl></div>
+    <div class="card tech"><div class="th"><div class="logo"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4Ij48cGF0aCBmaWxsPSIjZmY2NjAwIiBkPSJNMTE5LjUxNyA1MS4xODhINzkuMjkxYTMuNjQxIDMuNjQxIDAgMCAxLTMuNjQtMy42NDJWNS42MkE1LjYwNSA1LjYwNSAwIDAgMCA3MC4wMjggMEg1NS42NmE1LjYwNiA1LjYwNiAwIDAgMC01LjYyNyA1LjYydjQxLjY0NmEzLjkxMyAzLjkxMyAwIDAgMS0zLjkyIDMuOTI1bC0xMy4xODguMDQ3Yy0yLjE3NiAwLTMuOTcyLTEuNzUtMy45MjYtMy45MjZsLjA5NC00MS42ODdBNS42MDYgNS42MDYgMCAwIDAgMjMuNDY3IDBIOS4xYTUuNjEgNS42MSAwIDAgMC01LjYyNiA1LjYyNVYxMjIuOTljMCAyLjczNyAyLjIyIDUuMDEgNS4wMSA1LjAxaDExMS4wMzNhNS4wMTQgNS4wMTQgMCAwIDAgNS4wMDgtNS4wMTFWNTYuMTk1YTQuOTc1IDQuOTc1IDAgMCAwLTUuMDA4LTUuMDA3ek0xMDAuNjYgOTUuMjQyYTYuNTQ1IDYuNTQ1IDAgMCAxLTYuNTI1IDYuNTI0SDgyLjc5MWE2LjU0NSA2LjU0NSAwIDAgMS02LjUyMy02LjUyNFY4My45YTYuNTQ1IDYuNTQ1IDAgMCAxIDYuNTIzLTYuNTI0aDExLjM0M2E2LjU0NSA2LjU0NSAwIDAgMSA2LjUyNSA2LjUyM3ptMCAwIi8+PC9zdmc+Cg==" alt=""></div><div><strong>RabbitMQ 3.13 + pika</strong><small>Mac · conteneur rabbitmq</small></div></div><dl>
+      <dt>Rôle</dt><dd>Faire passer les tâches d'une étape à l'autre, de façon asynchrone.</dd>
+      <dt>Plus-value</dt><dd>Découple les services ; files durables et messages persistants ; acquittement ; répartition entre plusieurs workers ; console web pour la démo.</dd>
+      <dt>Alternative</dt><dd>Kafka : pensé pour des flux énormes et rejouables, trop lourd ici. Appels HTTP directs : une panne de MS2 bloquerait toute la chaîne.</dd></dl></div>
+    <div class="card tech"><div class="th"><div class="logo"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4Ij48cGF0aCBkPSJNOTMuODA5IDkyLjExMmMuNzg1LTYuNTMzLjU1LTcuNDkyIDUuNDE2LTYuNDMzbDEuMjM1LjEwOGMzLjc0Mi4xNyA4LjYzNy0uNjAyIDExLjUxMy0xLjkzOCA2LjE5MS0yLjg3MyA5Ljg2MS03LjY2OCAzLjc1OC02LjQwOS0xMy45MjQgMi44NzMtMTQuODgxLTEuODQyLTE0Ljg4MS0xLjg0MiAxNC43MDMtMjEuODE1IDIwLjg0OS00OS41MDggMTUuNTQzLTU2LjI4Ny0xNC40Ny0xOC40ODktMzkuNTE3LTkuNzQ2LTM5LjkzNi05LjUybC0uMTM0LjAyNWMtMi43NTEtLjU3MS01LjgzLS45MTItOS4yODktLjk2OC02LjMwMS0uMTA0LTExLjA4MiAxLjY1Mi0xNC43MDkgNC40MDIgMCAwLTQ0LjY4My0xOC40MDktNDIuNjA0IDIzLjE1MS40NDIgOC44NDEgMTIuNjcyIDY2Ljg5OCAyNy4yNiA0OS4zNjIgNS4zMzItNi40MTIgMTAuNDg0LTExLjgzNCAxMC40ODQtMTEuODM0IDIuNTU4IDEuNjk5IDUuNjIyIDIuNTY3IDguODM0IDIuMjU1bC4yNDktLjIxMmMtLjA3OC43OTYtLjA0NCAxLjU3NS4wOTkgMi40OTctMy43NTcgNC4xOTktMi42NTMgNC45MzYtMTAuMTY2IDYuNDgyLTcuNjAyIDEuNTY2LTMuMTM2IDQuMzU1LS4yMjEgNS4wODQgMy41MzUuODg0IDExLjcxMiAyLjEzNiAxNy4yMzgtNS41OThsLS4yMi44ODJjMS40NzQgMS4xOCAxLjM3NSA4LjQ3NyAxLjU4MyAxMy42OS4yMDkgNS4yMTQuNTU4IDEwLjA3OSAxLjYyMSAxMi45NDggMS4wNjMgMi44NjggMi4zMTcgMTAuMjU2IDEyLjE5MSA4LjE0IDguMjUyLTEuNzY0IDE0LjU2MS00LjMwOSAxNS4xMzYtMjcuOTg1Ii8+PHBhdGggZD0iTTc1LjQ1OCAxMjUuMjU2Yy00LjM2NyAwLTcuMjExLTEuNjg5LTguOTM4LTMuMzItMi42MDctMi40Ni0zLjY0MS01LjYyOS00LjI1OS03LjUyMmwtLjI2Ny0uNzljLTEuMjQ0LTMuMzU4LTEuNjY2LTguMTkzLTEuOTE2LTE0LjQxOS0uMDM4LS45MzUtLjA2NC0xLjg5OC0uMDkzLTIuOTE5LS4wMjEtLjc0Ny0uMDQ3LTEuNjg0LS4wODUtMi42NjRhMTguOCAxOC44IDAgMDEtNC45NjIgMS41NjhjLTMuMDc5LjUyNi02LjM4OS4zNTYtOS44NC0uNTA3LTIuNDM1LS42MDktNC45NjUtMS44NzEtNi40MDctMy44Mi00LjIwMyAzLjY4MS04LjIxMiAzLjE4Mi0xMC4zOTYgMi40NTMtMy44NTMtMS4yODUtNy4zMDEtNC44OTYtMTAuNTQyLTExLjAzNy0yLjMwOS00LjM3NS00LjU0Mi0xMC4wNzUtNi42MzgtMTYuOTQzLTMuNjUtMTEuOTYtNS45NjktMjQuNTU3LTYuMTc1LTI4LjY5M0M0LjI5MiAyMy42OTggNy43NzcgMTQuNDQgMTUuMjk2IDkuMTI5IDI3LjE1Ny43NTEgNDUuMTI4IDUuNjc4IDUxLjY4IDcuOTE1YzQuNDAyLTIuNjUzIDkuNTgxLTMuOTQ0IDE1LjQzMy0zLjg1MSAzLjE0My4wNTEgNi4xMzYuMzI3IDguOTE2LjgyMyAyLjktLjkxMiA4LjYyOC0yLjIyMSAxNS4xODUtMi4xMzkgMTIuMDgxLjE0NCAyMi4wOTIgNC44NTIgMjguOTQ5IDEzLjYxNSA0Ljg5NCA2LjI1MiAyLjQ3NCAxOS4zODEuNTk3IDI2LjY1MS0yLjY0MiAxMC4yMjYtNy4yNzEgMjEuMTAyLTEyLjk1NyAzMC41NyAxLjU0NC4wMTEgMy43ODEtLjE3NCA2Ljk2MS0uODMxIDYuMjc0LTEuMjk1IDguMTA5IDIuMDY5IDguNjA3IDMuNTc1IDEuOTk1IDYuMDQyLTYuNjc3IDEwLjYwOC05LjM4MiAxMS44NjQtMy40NjYgMS42MDktOS4xMTcgMi41ODktMTMuNzQ1IDIuMzc3bC0uMjAyLS4wMTMtMS4yMTYtLjEwNy0uMTIgMS4wMTQtLjExNi45OTFjLS4zMTEgMTEuOTk5LTIuMDI1IDE5LjU5OC01LjU1MiAyNC42MTktMy42OTcgNS4yNjQtOC44MzUgNi43MzktMTMuMzYxIDcuNzA5LTEuNTQ0LjMzLTIuOTQ3LjQ3NC00LjIxOS40NzR6bS05LjE5LTQzLjY3MWMyLjgxOSAyLjI1NiAzLjA2NiA2LjUwMSAzLjI4NyAxNC40MzQuMDI4Ljk5LjA1NCAxLjkyNy4wODkgMi44MDIuMTA2IDIuNjUuMzU1IDguODU1IDEuMzI3IDExLjQ3Ny4xMzcuMzcxLjI2Ljc0Ny4zOSAxLjE0NiAxLjA4MyAzLjMxNiAxLjYyNiA0Ljk3OSA2LjMwOSAzLjk3OCAzLjkzMS0uODQzIDUuOTUyLTEuNTk5IDcuNTM0LTMuODUxIDIuMjk5LTMuMjc0IDMuNTg1LTkuODYgMy44MjEtMTkuNTc1bDQuNzgzLjExNi00Ljc1LS41Ny4xNC0xLjE4NmMuNDU1LTMuOTEuNzgzLTYuNzM0IDMuMzk2LTguNjAyIDIuMDk3LTEuNDk4IDQuNDg2LTEuMzUzIDYuMzg5LTEuMDEtMi4wOTEtMS41OC0yLjY2OS0zLjQzMy0yLjgyMy00LjE5M2wtLjM5OS0xLjk2NSAxLjEyMS0xLjY2M2M2LjQ1Ny05LjU4IDExLjc4MS0yMS4zNTQgMTQuNjA5LTMyLjMwNCAyLjkwNi0xMS4yNTEgMi4wMi0xNy4yMjYgMS4xMzQtMTguMzU2LTExLjcyOS0xNC45ODctMzIuMDY4LTguNzk5LTM0LjE5Mi04LjA5N2wtLjM1OS4xOTQtMS44LjMzNS0uOTIyLS4xOTFjLTIuNTQyLS41MjgtNS4zNjYtLjgyLTguMzkzLS44NjktNC43NTYtLjA4LTguNTkzIDEuMDQ0LTExLjczOSAzLjQzMWwtMi4xODMgMS42NTUtMi41MzMtMS4wNDNjLTUuNDEyLTIuMjEzLTIxLjMwOC02LjY2Mi0yOS42OTYtLjcyMS00LjY1NiAzLjI5OC02Ljc3NyA5Ljc2LTYuMzA1IDE5LjIwNy4xNTYgMy4xMTkgMi4yNzUgMTQuOTI2IDUuNzcxIDI2LjM3NyA0LjgzMSAxNS44MjUgOS4yMjEgMjEuMDgyIDExLjA1NCAyMS42OTMuMzIuMTA4IDEuMTUtLjUzNyAxLjk3Ni0xLjUyOWEyNzAuNzA4IDI3MC43MDggMCAwMTEwLjY5NC0xMi4wN2wyLjc3LTIuOTE1IDMuMzQ5IDIuMjI1YzEuMzUuODk3IDIuODM5IDEuNDA2IDQuMzY4IDEuNTAybDcuOTg3LTYuODEyLTEuMTU3IDExLjgwOGMtLjAyNi4yNjUtLjAzOS42MjYuMDY1IDEuMjk2bC4zNDggMi4yMzgtMS41MSAxLjY4OC0uMTc0LjE5NiA0LjM4OCAyLjAyNSAxLjgzNi0yLjMwMXoiLz48cGF0aCBmaWxsPSIjMzM2NzkxIiBkPSJNMTE1LjczMSA3Ny40NGMtMTMuOTI1IDIuODczLTE0Ljg4Mi0xLjg0Mi0xNC44ODItMS44NDIgMTQuNzAzLTIxLjgxNiAyMC44NDktNDkuNTEgMTUuNTQ1LTU2LjI4N0MxMDEuOTI0LjgyMyA3Ni44NzUgOS41NjYgNzYuNDU3IDkuNzkzbC0uMTM1LjAyNGMtMi43NTEtLjU3MS01LjgzLS45MTEtOS4yOTEtLjk2Ny02LjMwMS0uMTAzLTExLjA4IDEuNjUyLTE0LjcwNyA0LjQwMiAwIDAtNDQuNjg0LTE4LjQwOC00Mi42MDYgMjMuMTUxLjQ0MiA4Ljg0MiAxMi42NzIgNjYuODk5IDI3LjI2IDQ5LjM2MyA1LjMzMi02LjQxMiAxMC40ODMtMTEuODM0IDEwLjQ4My0xMS44MzQgMi41NTkgMS42OTkgNS42MjIgMi41NjcgOC44MzMgMi4yNTVsLjI1LS4yMTJjLS4wNzguNzk2LS4wNDIgMS41NzUuMSAyLjQ5Ny0zLjc1OCA0LjE5OS0yLjY1NCA0LjkzNi0xMC4xNjcgNi40ODItNy42MDIgMS41NjYtMy4xMzYgNC4zNTUtLjIyIDUuMDg0IDMuNTM0Ljg4NCAxMS43MTIgMi4xMzYgMTcuMjM3LTUuNTk4bC0uMjIxLjg4MmMxLjQ3MyAxLjE4IDIuNTA3IDcuNjcyIDIuMzM0IDEzLjU1Ny0uMTc0IDUuODg1LS4yOSA5LjkyNi44NzEgMTMuMDgyIDEuMTYgMy4xNTYgMi4zMTYgMTAuMjU2IDEyLjE5MiA4LjE0IDguMjUyLTEuNzY4IDEyLjUyOC02LjM1MSAxMy4xMjQtMTMuOTk1LjQyMi01LjQzNSAxLjM3Ny00LjYzMSAxLjQzOC05LjQ5bC43NjctMi4zYy44ODQtNy4zNjcuMTQtOS43NDMgNS4yMjUtOC42MzhsMS4yMzUuMTA4YzMuNzQyLjE3IDguNjM5LS42MDIgMTEuNTE0LTEuOTM4IDYuMTktMi44NzEgOS44NjEtNy42NjcgMy43NTgtNi40MDh6Ii8+PHBhdGggZmlsbD0iI2ZmZiIgZD0iTTc1Ljk1NyAxMjIuMzA3Yy04LjIzMiAwLTEwLjg0LTYuNTE5LTExLjkwNy05LjE4NS0xLjU2Mi0zLjkwNy0xLjg5OS0xOS4wNjktMS41NTEtMzEuNTAzYTEuNTkgMS41OSAwIDAxMS42NC0xLjU1IDEuNTk0IDEuNTk0IDAgMDExLjU1IDEuNjM5Yy0uNDAxIDE0LjM0MS4xNjggMjcuMzM3IDEuMzI0IDMwLjIyOSAxLjgwNCA0LjUwOSA0LjU0IDguNDUzIDEyLjI3NSA2Ljc5NiA3LjM0My0xLjU3NSAxMC4wOTMtNC4zNTkgMTEuMzE4LTExLjQ2Ljk0LTUuNDQ5IDIuNzk5LTIwLjk1MSAzLjAyOC0yNC4wMWExLjU5MyAxLjU5MyAwIDAxMS43MS0xLjQ3MiAxLjU5NyAxLjU5NyAwIDAxMS40NzIgMS43MWMtLjIzOSAzLjE4NS0yLjA4OSAxOC42NTctMy4wNjUgMjQuMzE1LTEuNDQ2IDguMzg3LTUuMTg1IDEyLjE5MS0xMy43OTQgMTQuMDM3LTEuNDYzLjMxMy0yLjc5Mi40NTMtNCAuNDU0ek0zMS4zMjEgOTAuNDY2YTYuNzEgNi43MSAwIDAxLTIuMTE2LS4zNWMtNS4zNDctMS43ODQtMTAuNDQtMTAuNDkyLTE1LjEzOC0yNS44ODUtMy41NzYtMTEuNzE3LTUuODQyLTIzLjk0Ny02LjA0MS0yNy45MjItLjU4OS0xMS43ODQgMi40NDUtMjAuMTIxIDkuMDItMjQuNzc4IDEzLjAwNy05LjIxNiAzNC44ODgtLjQ0IDM1LjgxMy0uMDYyYTEuNTk2IDEuNTk2IDAgMDEtMS4yMDcgMi45NTVjLS4yMTEtLjA4Ni0yMS4xOTMtOC40OTItMzIuNzY4LS4yODUtNS42MjIgMy45ODYtOC4yMDMgMTEuMzkyLTcuNjcyIDIyLjAxMS4xNjcgMy4zNDkgMi4yODQgMTUuMjg1IDUuOTA2IDI3LjE0OSA0LjE5NCAxMy43NDIgOC45NjcgMjIuNDEzIDEzLjA5NiAyMy43OS42NDguMjE2IDIuNjIuODczIDUuNDM5LTIuNTE3QTI0NS4yNzIgMjQ1LjI3MiAwIDAxNDUuODggNzMuMDQ2YTEuNTk2IDEuNTk2IDAgMDEyLjMwNCAyLjIwOGMtLjA0OC4wNS00Ljg0NyA1LjA2Ny0xMC4wNzcgMTEuMzU5LTIuNDc3IDIuOTc5LTQuODUxIDMuODUzLTYuNzg2IDMuODUzem02OS40MjktMTMuNDQ1YTEuNTk2IDEuNTk2IDAgMDEtMS4zMjItMi40ODdjMTQuODYzLTIyLjA1NSAyMC4wOC00OC43MDQgMTUuNjEyLTU0LjQxNC01LjYyNC03LjE4Ni0xMy41NjUtMTAuOTM5LTIzLjYwNC0xMS4xNTYtNy40MzMtLjE2LTEzLjM0MSAxLjczOC0xNC4zMDcgMi4wNjlsLS4yNDMuMDk5Yy0uOTcxLjMwNS0xLjcxNi0uMjI3LTEuOTk3LS44NDlhMS42IDEuNiAwIDAxLjYzMS0yLjAyNWMuMDQ2LS4wMjcuMTkyLS4wODkuNDI5LS4xNzZsLS4wMjEuMDA2LjAyMS0uMDA3YzEuNjQxLS42MDEgNy42MzktMi40IDE1LjA2OC0yLjMxNSAxMS4xMDguMTE4IDIwLjI4NCA0LjQwMSAyNi41MzQgMTIuMzg4IDIuOTU3IDMuNzc5IDIuOTY0IDEyLjQ4NS4wMTkgMjMuODg3LTMuMDAyIDExLjYyNS04LjY1MSAyNC4xMTgtMTUuNDk3IDM0LjI3Ny0uMzA2LjQ1Ny0uODEuNzAzLTEuMzIzLjcwM3ptLjc2IDEwLjIxYy0yLjUzOCAwLTQuODEzLS4zNTgtNi4xNzUtMS4xNzQtMS40LS44MzktMS42NjctMS45NzktMS43MDItMi41ODQtLjM4Mi02LjcxIDMuMzItNy44NzggNS4yMDgtOC40MTEtLjI2My0uMzk4LS42MzctLjg2Ni0xLjAyNC0xLjM0OS0xLjEwMS0xLjM3Ni0yLjYwOS0zLjI2LTMuNzcxLTYuMDc4LS4xODItLjQ0LS43NTItMS40NjMtMS40MTItMi42NDgtMy41NzktNi40MTgtMTEuMDI2LTE5Ljc3My02LjI0Mi0yNi42MTIgMi4yMTQtMy4xNjUgNi42MjMtNC40MTEgMTMuMTE5LTMuNzE2Qzk3LjYgMjguODM3IDg4LjUgMTAuNjI1IDY2LjkwNyAxMC4yNzFjLTYuNDk0LS4xMDgtMTEuODIgMS44ODktMTUuODIyIDUuOTMtOC45NiA5LjA0OS04LjYzNiAyNS40MjItOC42MzEgMjUuNTg2YTEuNTk1IDEuNTk1IDAgMTEtMy4xOS4wODRjLS4wMi0uNzI3LS4zNTQtMTcuOTA5IDkuNTU0LTI3LjkxNkM1My40NTUgOS4yNzIgNTkuNTU5IDYuOTYgNjYuOTYgNy4wODFjMTMuODE0LjIyNyAyMi43MDYgNy4yNSAyNy43MzIgMTMuMTAxIDUuNDc5IDYuMzc3IDguMTY1IDEzLjQxMSA4LjM4NiAxNS43NTkuMTY1IDEuNzQ2LTEuMDg4IDIuMDk1LTEuMzQxIDIuMTQ3bC0uNTc2LjAxM2MtNi4zNzUtMS4wMjEtMTAuNDY1LS4zMTItMTIuMTU2IDIuMTA0LTMuNjM5IDUuMjAxIDMuNDA2IDE3LjgzNCA2LjQxNCAyMy4yMjkuNzY4IDEuMzc2IDEuMzIyIDIuMzcxIDEuNTc2IDIuOTg1Ljk4OCAyLjM5NiAyLjI3NyA0LjAwNiAzLjMxMiA1LjMuOTExIDEuMTM4IDEuNyAyLjEyNSAxLjk4MiAzLjI4My4xMzEuMjMgMS45OSAyLjk4IDEzLjAyMS43MDMgMi43NjUtLjU3IDQuNDIzLS4wODMgNC45MyAxLjQ1Ljk5NyAzLjAxNS00LjU5NyA2LjUzMi03LjY5NCA3Ljk3LTIuNzc1IDEuMjktNy4yMDQgMi4xMDYtMTEuMDM2IDIuMTA2em0tNC42OTYtNC4wMjFjLjM1LjM1MyAyLjEwMS45NjIgNS43MjcuODA2IDMuMjI0LS4xMzggNi42MjQtLjgzOSA4LjY2NC0xLjc4NiAyLjYwOS0xLjIxMiA0LjM1MS0yLjU2NyA1LjI1My0zLjQ5MmwtLjUuMDkyYy03LjA1MyAxLjQ1Ni0xMi4wNDIgMS4yNjItMTQuODI4LS41NzdhNi4xNjIgNi4xNjIgMCAwMS0uNTQtLjQwMWMtLjMwMi4xMTktLjU4MS4xOTctLjc4LjI1My0xLjU4LjQ0My0zLjIxNC45MDItMi45OTYgNS4xMDV6bS00NS41NjIgOC45MTVjLTEuNzUyIDAtMy41OTYtLjIzOS01LjQ3OS0uNzEtMS45NTEtLjQ4OC01LjI0LTEuOTU3LTUuMTktNC4zNy4wNTctMi43MDcgMy45OTQtMy41MTkgNS40NzYtMy44MjQgNS4zNTQtMS4xMDMgNS43MDMtMS41NDUgNy4zNzYtMy42Ny40ODgtLjYxOSAxLjA5NS0xLjM5IDEuOTIzLTIuMzE0IDEuMjI5LTEuMzc2IDIuNTcyLTIuMDczIDMuOTkyLTIuMDczLjk4OSAwIDEuOC4zMzUgMi4zMzYuNTU4IDEuNzA4LjcwOCAzLjEzMyAyLjQyIDMuNzE5IDQuNDY3LjUyOSAxLjg0Ny4yNzYgMy42MjUtLjcxIDUuMDA2LTMuMjM3IDQuNTMzLTcuODg2IDYuOTMtMTMuNDQzIDYuOTN6bS03LjIyMi00Ljk0M2MuNDgxLjM3MiAxLjQ0NS44NjkgMi41MTggMS4xMzcgMS42MzEuNDA4IDMuMjEzLjYxNSA0LjcwNS42MTUgNC41NDYgMCA4LjE5Ni0xLjg4MiAxMC44NDctNS41OTQuNTUzLS43NzQuMzg3LTEuNzU3LjIzOS0yLjI3NC0uMzEtMS4wODMtMS4wOC0yLjA2OC0xLjg3My0yLjM5Ny0uNDMtLjE3OC0uNzg3LS4zMTQtMS4xMTUtLjMxNC0uMTc2IDAtLjcxMiAwLTEuNjE0IDEuMDA5YTQxLjE0NiA0MS4xNDYgMCAwMC0xLjc5NCAyLjE2MmMtMi4wODQgMi42NDYtMy4wMzkgMy41NDQtOS4yMzkgNC44MjEtMS41MTMuMzEtMi4yODkuNjI2LTIuNjc0LjgzNXptMTIuMjY5LTcuMzZhMS41OTYgMS41OTYgMCAwMS0xLjU3NS0xLjM1NCA4LjIxOCA4LjIxOCAwIDAxLS4wOC0uNzk5Yy00LjA2NC0uMDc2LTcuOTg1LTEuODItMTAuOTYyLTQuOTI2LTMuNzY0LTMuOTI3LTUuNDc3LTkuMzY4LTQuNjk5LTE0LjkyNy44NDUtNi4wMzcuNTI5LTExLjM2Ni4zNTktMTQuMjI5LS4wNDctLjc5Ni0uMDgxLTEuMzcxLS4wNzktMS43NjkuMDAzLS41MDUuMDEzLTEuODQ0IDQuNDg5LTQuMTEzIDEuNTkyLS44MDcgNC43ODQtMi4yMTUgOC4yNzEtMi41NzYgNS43NzctLjU5NyA5LjU4NSAxLjk3NiAxMC43MjUgNy4yNDYgMy4wNzcgMTQuMjI4LjI0NCAyMC41MjEtMS44MjUgMjUuMTE3LS4zODUuODU2LS43NDkgMS42NjQtMS4wNCAyLjQ0N2wtLjI1Ny42OWMtMS4wOTMgMi45MzEtMi4wMzggNS40NjMtMS43NDggNy4zNTRhMS41OTUgMS41OTUgMCAwMS0xLjMzNSAxLjgxOWwtLjI0NC4wMnpNNDIuNDY0IDQyLjI2bC4wNjIgMS4xMzljLjE3NiAyLjk3NC41MDQgOC41MDgtLjM4NCAxNC44Ni0uNjQxIDQuNTg1Ljc1OSA5LjA2IDMuODQzIDEyLjI3NiAyLjQzNyAyLjU0MiA1LjY0NCAzLjk0NSA4Ljk0IDMuOTQ1aC4wNjhjLjM2OS0xLjU1NS45ODItMy4xOTcgMS42NDItNC45NjZsLjI1NS0uNjg2Yy4zMjktLjg4NC43MTQtMS43NCAxLjEyMi0yLjY0NiAxLjk5MS00LjQyNCA0LjQ3LTkuOTMxIDEuNjE1LTIzLjEzMi0uNTY1LTIuNjE1LTEuOTM2LTQuMTI4LTQuMTg5LTQuNjI3LTQuNjI4LTEuMDIyLTExLjUyNSAyLjQ1OS0xMi45NzQgMy44Mzd6bTkuNjMtLjY3N2MtLjA4LjU2NCAxLjAzMyAyLjA3IDIuNDg1IDIuMjcxIDEuNDQ5LjIwMyAyLjY4OS0uOTc1IDIuNzY4LTEuNTM5LjA3OS0uNTY0LTEuMDMzLTEuMTg2LTIuNDg1LTEuMzg4LTEuNDUxLS4yMDItMi42OTEuMDkyLTIuNzY4LjY1NnptMi44MTggMi44MjZsLS40MDctLjAyOGMtLjktLjEyNS0xLjgxLS42OTItMi40MzMtMS41MTgtLjIxOS0uMjktLjU3Ni0uODUyLS41MDUtMS4zNTQuMTAxLS43MzYuOTk5LTEuMTc3IDIuNC0xLjE3Ny4zMTMgMCAuNjM5LjAyMy45NjcuMDY5Ljc2Ni4xMDYgMS40NzcuMzI3IDIuMDAyLjYyLjkxLjUwOC45NzcgMS4wNzUuOTM2IDEuMzY4LS4xMTIuODEzLTEuNDA1IDIuMDItMi45NiAyLjAyem0tMi4yODktMi43MzJjLjA0NS4zNDguOTA3IDEuNDk2IDIuMDI5IDEuNjUxbC4yNjEuMDE4YzEuMDM2IDAgMS44MS0uODE1IDEuOTAxLTEuMDgyLS4wOTYtLjE4Mi0uNzYyLS42MzQtMi4wMjUtLjgxYTUuODIzIDUuODIzIDAgMDAtLjgyMS0uMDU5Yy0uODEyIDAtMS4yNDMuMTgzLTEuMzQ1LjI4MnptNDMuNjA1LTEuMjQ1Yy4wNzkuNTY0LTEuMDMzIDIuMDctMi40ODQgMi4yNzItMS40NS4yMDItMi42OTEtLjk3NS0yLjc3MS0xLjUzOS0uMDc2LS41NjQgMS4wMzYtMS4xODcgMi40ODYtMS4zODggMS40NS0uMjAzIDIuNjg5LjA5MiAyLjc2OS42NTV6bS0yLjgxOSAyLjU2Yy0xLjM5NiAwLTIuNjAxLTEuMDg2LTIuNy0xLjc5MS0uMTE1LS44NDYgMS4yNzgtMS40ODkgMi43MTItMS42ODguMzE2LS4wNDQuNjI5LS4wNjYuOTMtLjA2NiAxLjIzOCAwIDIuMDU4LjM2MyAyLjE0Ljk0OS4wNTMuMzc5LS4yMzguOTY0LS43MzkgMS40OTItLjMzMS4zNDctMS4wMjYuOTQ4LTEuOTczIDEuMDc5bC0uMzcuMDI1em0uOTQzLTMuMDEzYy0uMjc2IDAtLjU2NC4wMjEtLjg1Ni4wNjEtMS40NDEuMjAxLTIuMzAxLjc3OS0yLjI1OSAxLjA4OS4wNDguMzQxLjk2OCAxLjMzMiAyLjE3MyAxLjMzMmwuMjk3LS4wMjFjLjc4Ny0uMTA5IDEuMzc4LS42MjMgMS42Ni0uOTE5LjQ0My0uNDY1LjYxOS0uOTAzLjU5OC0xLjA1Mi0uMDI4LS4xOTgtLjU2LS40OS0xLjYxMy0uNDl6bTMuOTY1IDMyLjg0M2ExLjU5NCAxLjU5NCAwIDAxLTEuMzI0LTIuNDgzYzMuMzk4LTUuMDc1IDIuNzc2LTEwLjI1IDIuMTc1LTE1LjI1NS0uMjU3LTIuMTMyLS41MjEtNC4zMzctLjQ1My02LjQ1My4wNy0yLjE3Ny4zNDctMy45NzMuNjE0LTUuNzEuMzE3LTIuMDU4LjYxNy00LjAwMi40OTMtNi4zMWExLjU5NSAxLjU5NSAwIDExMy4xODYtLjE3MmMuMTQyIDIuNjM4LS4xOTcgNC44MzgtLjUyNSA2Ljk2Ny0uMjUzIDEuNjQzLS41MTUgMy4zNDItLjU3OCA1LjMyNy0uMDYxIDEuODc0LjE3OCAzLjg2NC40MzEgNS45Ny42NCA1LjMyMiAxLjM2NSAxMS4zNTQtMi42OTEgMTcuNDExYTEuNTk2IDEuNTk2IDAgMDEtMS4zMjguNzA4eiIvPjwvc3ZnPg==" alt=""></div><div><strong>PostgreSQL + psycopg 3</strong><small>Fedora · paquet natif</small></div></div><dl>
+      <dt>Rôle</dt><dd>Garder statuts et résultats structurés.</dd>
+      <dt>Avantages</dt><dd>Types stricts (<code>DATE</code>, <code>NUMERIC</code>, <code>JSONB</code>), contraintes <code>CHECK</code>, accès réseau sécurisable par <code>pg_hba.conf</code>. psycopg passe les valeurs en paramètres : pas d'injection SQL.</dd>
+      <dt>Alternative</dt><dd>SQLite : un simple fichier, impossible à partager entre l'API (Mac) et MS3 (Fedora).</dd></dl></div>
+    <div class="card tech"><div class="th"><div class="logo"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4Ij48cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZmlsbD0iIzNBNEQ1NCIgZD0iTTczLjggNTAuOGgxMS4zdjExLjVoNS43YzIuNiAwIDUuMy0uNSA3LjgtMS4zIDEuMi0uNCAyLjYtMSAzLjgtMS43LTEuNi0yLjEtMi40LTQuNy0yLjYtNy4zLS4zLTMuNS40LTguMSAyLjgtMTAuOGwxLjItMS40IDEuNCAxLjFjMy42IDIuOSA2LjUgNi44IDcuMSAxMS40IDQuMy0xLjMgOS4zLTEgMTMuMSAxLjJsMS41LjktLjggMS42Yy0zLjIgNi4yLTkuOSA4LjItMTYuNCA3LjgtOS44IDI0LjMtMzEgMzUuOC01Ni44IDM1LjgtMTMuMyAwLTI1LjUtNS0zMi41LTE2LjhsLS4xLS4yLTEtMi4xYy0yLjQtNS4yLTMuMS0xMC45LTIuNi0xNi42bC4yLTEuN2g5LjZWNTAuOGgxMS4zVjM5LjZoMjIuNVYyOC4zaDEzLjV2MjIuNXoiLz48cGF0aCBmaWxsPSIjMDBBQURBIiBkPSJNMTEwLjQgNTUuMWMuOC01LjktMy42LTEwLjUtNi40LTEyLjctMy4xIDMuNi0zLjYgMTMuMiAxLjMgMTcuMi0yLjggMi40LTguNSA0LjctMTQuNSA0LjdIMTguNmMtLjYgNi4yLjUgMTEuOSAzIDE2LjhsLjggMS41Yy41LjkgMS4xIDEuNyAxLjcgMi42IDMgLjIgNS43LjMgOC4yLjIgNC45LS4xIDguOS0uNyAxMi0xLjcuNS0uMi45LjEgMS4xLjUuMi41LS4xLjktLjUgMS4xLS40LjEtLjguMy0xLjMuNC0yLjQuNy01IDEuMS04LjMgMS4zaC0uNmMtMS4zLjEtMi43LjEtNC4yLjEtMS42IDAtMy4xIDAtNC45LS4xIDYgNi44IDE1LjQgMTAuOCAyNy4yIDEwLjggMjUgMCA0Ni4yLTExLjEgNTUuNS0zNS45IDYuNy43IDEzLjEtMSAxNi02LjctNC41LTIuNy0xMC41LTEuOC0xMy45LS4xeiIvPjxwYXRoIGZpbGw9IiMyOEI4RUIiIGQ9Ik0xMTAuNCA1NS4xYy44LTUuOS0zLjYtMTAuNS02LjQtMTIuNy0zLjEgMy42LTMuNiAxMy4yIDEuMyAxNy4yLTIuOCAyLjQtOC41IDQuNy0xNC41IDQuN2gtNjhjLS4zIDkuNSAzLjIgMTYuNyA5LjUgMjEgNC45LS4xIDguOS0uNyAxMi0xLjcuNS0uMi45LjEgMS4xLjUuMi41LS4xLjktLjUgMS4xLS40LjEtLjguMy0xLjMuNC0yLjQuNy01LjIgMS4yLTguNSAxLjRsLS4xLS4xYzguNSA0LjQgMjAuOCA0LjMgMzUtMS4xIDE1LjgtNi4xIDMwLjYtMTcuNyA0MC45LTMwLjktLjIuMS0uNC4xLS41LjJ6Ii8+PHBhdGggZmlsbD0iIzAyOEJCOCIgZD0iTTE4LjcgNzEuOGMuNCAzLjMgMS40IDYuNCAyLjkgOS4zbC44IDEuNWMuNS45IDEuMSAxLjcgMS43IDIuNiAzIC4yIDUuNy4zIDguMi4yIDQuOS0uMSA4LjktLjcgMTItMS43LjUtLjIuOS4xIDEuMS41LjIuNS0uMS45LS41IDEuMS0uNC4xLS44LjMtMS4zLjQtMi40LjctNS4yIDEuMi04LjUgMS40aC0uNGMtMS4zLjEtMi43LjEtNC4xLjEtMS42IDAtMy4yIDAtNC45LS4xIDYgNi44IDE1LjUgMTAuOCAyNy4zIDEwLjggMjEuNCAwIDQwLTguMSA1MC44LTI2SDE4Ljd2LS4xeiIvPjxwYXRoIGZpbGw9IiMwMTlCQzYiIGQ9Ik0yMy41IDcxLjhjMS4zIDUuOCA0LjMgMTAuNCA4LjggMTMuNSA0LjktLjEgOC45LS43IDEyLTEuNy41LS4yLjkuMSAxLjEuNS4yLjUtLjEuOS0uNSAxLjEtLjQuMS0uOC4zLTEuMy40LTIuNC43LTUuMiAxLjItOC42IDEuNCA4LjUgNC40IDIwLjggNC4zIDM0LjktMS4xIDguNS0zLjMgMTYuOC04LjIgMjQuMi0xNC4xSDIzLjV6Ii8+PHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGZpbGw9IiMwMEFDRDMiIGQ9Ik0yOC40IDUyLjdoOS44djkuOGgtOS44di05Ljh6bS44LjhoLjh2OC4xaC0uOHYtOC4xem0xLjQgMGguOHY4LjFoLS44di04LjF6bTEuNSAwaC44djguMWgtLjh2LTguMXptMS41IDBoLjh2OC4xaC0uOHYtOC4xem0xLjUgMGguOHY4LjFoLS44di04LjF6bTEuNSAwaC44djguMWgtLjh2LTguMXptMy0xMmg5Ljh2OS44aC05Ljh2LTkuOHptLjkuOGguOHY4LjFoLS44di04LjF6bTEuNCAwaC44djguMWgtLjh2LTguMXptMS41IDBoLjh2OC4xaC0uOHYtOC4xem0xLjUgMGguOHY4LjFoLS44di04LjF6bTEuNCAwaC44djguMWgtLjh2LTguMXptMS41IDBoLjh2OC4xaC0uOHYtOC4xeiIvPjxwYXRoIGZpbGwtcnVsZT0iZXZlbm9kZCIgY2xpcC1ydWxlPSJldmVub2RkIiBmaWxsPSIjMjNDMkVFIiBkPSJNMzkuNiA1Mi43aDkuOHY5LjhoLTkuOHYtOS44em0uOS44aC44djguMWgtLjh2LTguMXptMS40IDBoLjh2OC4xaC0uOHYtOC4xem0xLjUgMGguOHY4LjFoLS44di04LjF6bTEuNSAwaC44djguMWgtLjh2LTguMXptMS40IDBoLjh2OC4xaC0uOHYtOC4xem0xLjUgMGguOHY4LjFoLS44di04LjF6Ii8+PHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGZpbGw9IiMwMEFDRDMiIGQ9Ik01MC45IDUyLjdoOS44djkuOGgtOS44di05Ljh6bS44LjhoLjh2OC4xaC0uOHYtOC4xem0xLjUgMGguOHY4LjFoLS44di04LjF6bTEuNSAwaC44djguMWgtLjh2LTguMXptMS40IDBoLjh2OC4xaC0uOHYtOC4xem0xLjUgMGguOHY4LjFoLS44di04LjF6bTEuNSAwaC44djguMWgtLjh2LTguMXoiLz48cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZmlsbD0iIzIzQzJFRSIgZD0iTTUwLjkgNDEuNWg5Ljh2OS44aC05Ljh2LTkuOHptLjguOGguOHY4LjFoLS44di04LjF6bTEuNSAwaC44djguMWgtLjh2LTguMXptMS41IDBoLjh2OC4xaC0uOHYtOC4xem0xLjQgMGguOHY4LjFoLS44di04LjF6bTEuNSAwaC44djguMWgtLjh2LTguMXptMS41IDBoLjh2OC4xaC0uOHYtOC4xem0zLjEgMTAuNEg3MnY5LjhoLTkuOHYtOS44em0uOC44aC44djguMUg2M3YtOC4xem0xLjUgMGguOHY4LjFoLS44di04LjF6bTEuNCAwaC44djguMWgtLjh2LTguMXptMS41IDBoLjh2OC4xaC0uOHYtOC4xem0xLjUgMGguOHY4LjFoLS44di04LjF6bTEuNSAwaC44djguMWgtLjh2LTguMXoiLz48cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZmlsbD0iIzAwQUNEMyIgZD0iTTYyLjIgNDEuNUg3MnY5LjhoLTkuOHYtOS44em0uOC44aC44djguMUg2M3YtOC4xem0xLjUgMGguOHY4LjFoLS44di04LjF6bTEuNCAwaC44djguMWgtLjh2LTguMXptMS41IDBoLjh2OC4xaC0uOHYtOC4xem0xLjUgMGguOHY4LjFoLS44di04LjF6bTEuNSAwaC44djguMWgtLjh2LTguMXoiLz48cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZmlsbD0iIzIzQzJFRSIgZD0iTTYyLjIgMzAuMkg3MlY0MGgtOS44di05Ljh6bS44LjhoLjh2OC4xSDYzVjMxem0xLjUgMGguOHY4LjFoLS44VjMxem0xLjQgMGguOHY4LjFoLS44VjMxem0xLjUgMGguOHY4LjFoLS44VjMxem0xLjUgMGguOHY4LjFoLS44VjMxem0xLjUgMGguOHY4LjFoLS44VjMxeiIvPjxwYXRoIGZpbGwtcnVsZT0iZXZlbm9kZCIgY2xpcC1ydWxlPSJldmVub2RkIiBmaWxsPSIjMDBBQ0QzIiBkPSJNNzMuNSA1Mi43aDkuOHY5LjhoLTkuOHYtOS44em0uOC44aC44djguMWgtLjh2LTguMXptMS40IDBoLjh2OC4xaC0uOHYtOC4xem0xLjUgMGguOHY4LjFoLS44di04LjF6bTEuNSAwaC44djguMWgtLjh2LTguMXptMS41IDBoLjh2OC4xaC0uOHYtOC4xem0xLjUgMGguOHY4LjFoLS44di04LjF6Ii8+PHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGZpbGw9IiNENEVFRjEiIGQ9Ik00OC44IDc4LjNjMS41IDAgMi43IDEuMiAyLjcgMi43IDAgMS41LTEuMiAyLjctMi43IDIuNy0xLjUgMC0yLjctMS4yLTIuNy0yLjcgMC0xLjUgMS4yLTIuNyAyLjctMi43Ii8+PHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGZpbGw9IiMzQTRENTQiIGQ9Ik00OC44IDc5LjFjLjIgMCAuNSAwIC43LjEtLjIuMS0uNC40LS40LjcgMCAuNC40LjguOC44LjMgMCAuNi0uMi43LS40LjEuMi4xLjUuMS43IDAgMS4xLS45IDEuOS0xLjkgMS45LTEuMSAwLTEuOS0uOS0xLjktMS45IDAtMSAuOC0xLjkgMS45LTEuOU0xLjEgNzIuOGgxMjUuNGMtMi43LS43LTguNi0xLjYtNy43LTUuMi01IDUuNy0xNi45IDQtMjAgMS4yLTMuNCA0LjktMjMgMy0yNC4zLS44LTQuMiA1LTE3LjMgNS0yMS41IDAtMS40IDMuOC0yMSA1LjctMjQuMy44LTMgMi44LTE1IDQuNS0yMC0xLjIgMS4xIDMuNS00LjkgNC41LTcuNiA1LjIiLz48cGF0aCBmaWxsPSIjQkZEQkUwIiBkPSJNNTYgOTcuOGMtNi43LTMuMi0xMC4zLTcuNS0xMi40LTEyLjItMi41LjctNS41IDEuMi04LjkgMS40LTEuMy4xLTIuNy4xLTQuMS4xLTEuNyAwLTMuNCAwLTUuMi0uMSA2IDYgMTMuNiAxMC43IDI3LjUgMTAuOEg1NnoiLz48cGF0aCBmaWxsPSIjRDRFRUYxIiBkPSJNNDYuMSA4OS45Yy0uOS0xLjMtMS44LTIuOC0yLjUtNC4zLTIuNS43LTUuNSAxLjItOC45IDEuNCAyLjMgMS4yIDUuNyAyLjQgMTEuNCAyLjl6Ii8+PC9zdmc+" alt=""></div><div><strong>Docker Desktop + Compose</strong><small>Mac</small></div></div><dl>
+      <dt>Rôle</dt><dd>Lancer RabbitMQ, API, MS1, MS2 et les outils en une commande.</dd>
+      <dt>Plus-value</dt><dd>Tesseract et toutes les bibliothèques installés pareil partout ; redémarrage automatique ; <code>--scale ms2=3</code> sans changer le code.</dd>
+      <dt>Prérequis</dt><dd>Docker Desktop lancé ; VM démarrée avant <code>up</code>.</dd></dl></div>
+    <div class="card tech"><div class="th"><div class="logo"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4Ij48cGF0aCBkPSJNMTI3LjgyIDY0LjAwNEMxMjcuODIgMjguNzU0IDk5LjI0Ni4xOCA2NCAuMTggMjguNzY2LjE4LjIwMyAyOC43My4xOCA2My45NTd2NDkuMzljLjAyIDcuOTk3IDYuNTA0IDE0LjQ3MyAxNC41MDggMTQuNDczaDQ5LjMzNWMzNS4yMzktLjAxNSA2My43OTctMjguNTc4IDYzLjc5Ny02My44MTYiIGZpbGw9IiMyOTQxNzIiLz48cGF0aCBkPSJNMzYuOTczIDY4LjEySDU5LjkxVjkxLjA2YzAgMTIuNjYtMTAuMjczIDIyLjkzNy0yMi45MzcgMjIuOTM3LTEyLjY2IDAtMjIuOTM0LTEwLjI3Ny0yMi45MzQtMjIuOTM3IDAtMTIuNjYgMTAuMjc0LTIyLjkzOCAyMi45MzQtMjIuOTM4em0wIDAiIGZpbGw9Im5vbmUiIHN0cm9rZS13aWR0aD0iMTQuMDAzMjc0IiBzdHJva2U9IiMzYzZlYjQiLz48cGF0aCBkPSJNODIuNzM4IDY4LjE2NEg1OS44MDFWNDUuMjMxYzAtMTIuNjYgMTAuMjc3LTIyLjkzOCAyMi45MzctMjIuOTM4IDEyLjY2IDAgMjIuOTM4IDEwLjI3NCAyMi45MzggMjIuOTM4IDAgMTIuNjYtMTAuMjc4IDIyLjkzMy0yMi45MzggMjIuOTMzem0wIDAiIGZpbGw9Im5vbmUiIHN0cm9rZS13aWR0aD0iMTQuMDAzMjc0IiBzdHJva2U9IiMzYzZlYjQiLz48cGF0aCBkPSJNNjYuOTI2IDYxLjEzN3YyOS44OWMwIDE2LjU0LTEzLjQxIDI5Ljk1My0yOS45NSAyOS45NTMtMi41MTEgMC00LjI5Ni0uMjg1LTYuNjE3LS44OS0zLjM5LS44ODctNi4xNTYtMy42NjQtNi4xNi02Ljg5NSAwLTMuOTA2IDIuODM2LTYuNzQ2IDcuMDc0LTYuNzQ2IDIuMDE2IDAgMi43NDcuMzg3IDUuNzA0LjM4NyA4LjcxOCAwIDE1Ljc5My03LjA2MyAxNS44MDgtMTUuNzg1Vjc3LjMxMmMwLTEuMjMtMS0yLjIzLTIuMjM0LTIuMjI2bC0xMC4zODctLjAwNGMtMy44NjcgMC02Ljk5Ni0zLjA4Ni02Ljk5Ni02Ljk2NSAwLTMuOTA2IDMuMTYtNi45OCA3LjA3LTYuOTgiIGZpbGw9IiNmZmYiLz48cGF0aCBkPSJNNTIuNzg1IDc1LjE0OFY0NS4yNjJjMC0xNi41NDMgMTMuNDEtMjkuOTUzIDI5Ljk1My0yOS45NTMgMi41MDggMCA0LjI5My4yOCA2LjYxNy44OSAzLjM4Ny44ODcgNi4xNTcgMy42NjQgNi4xNTcgNi44OTUgMCAzLjkwNi0yLjgzNiA2Ljc0Ni03LjA3IDYuNzQ2LTIuMDIgMC0yLjc1LS4zODctNS43MDQtLjM4Ny04LjcyMiAwLTE1Ljc5NyA3LjA2My0xNS44MTIgMTUuNzgxdjEzLjc0M2EyLjIzNSAyLjIzNSAwIDAwMi4yMzQgMi4yMjZsMTAuMzg3LjAwNGMzLjg3MSAwIDYuOTk2IDMuMDg2IDYuOTk2IDYuOTY1LjAwNCAzLjkwNi0zLjE2IDYuOTgtNy4wNyA2Ljk4IiBmaWxsPSIjZmZmIi8+PHBhdGggZD0iTTExNi44MDkgMTE2Ljc3M3YtMi42NTJsLTEuMjExIDIuNzgxLTEuMTgtMi43OHYyLjY1MWgtLjY4di00LjE4N2guNzExbDEuMTY4IDIuNjc2IDEuMTQ5LTIuNjc2aC43MjJ2NC4xODd6bS00Ljk1NC0zLjQ4NHYzLjQ4NGgtLjcxdi0zLjQ4NGgtMS4xOTJ2LS43MDNoMy4wOXYuNzAzIiBmaWxsPSIjM2M2ZWI0Ii8+PC9zdmc+Cg==" alt=""></div><div><strong>VirtualBox 7.2 + Fedora 45 + systemd</strong><small>Mac (hyperviseur) · VM</small></div></div><dl>
+      <dt>Rôle</dt><dd>Un second nœud, avec son propre système et sa propre IP.</dd>
+      <dt>Plus-value</dt><dd>Vrais échanges réseau entre deux systèmes ; réseau hôte uniquement indépendant du Wi-Fi ; Fedora ARM64 tourne nativement sur Apple Silicon.</dd>
+      <dt>Limite</dt><dd>Même machine physique : pas de tolérance à une panne du Mac.</dd></dl></div>
+    <div class="card tech"><div class="th"><div class="logo txt" style="--c:#3A4A9A">T5</div><div><strong>Tesseract + pytesseract</strong><small>Mac · conteneur ms2</small></div></div><dl>
+      <dt>Rôle</dt><dd>Reconnaissance des caractères, modèle français.</dd>
+      <dt>Avantages</dt><dd>Libre, gratuit, hors ligne (aucun ticket envoyé à un service cloud), installé par un paquet Debian.</dd>
+      <dt>Réglage</dt><dd><code>--psm 4</code> pour une colonne ; un thread par conteneur.</dd></dl></div>
+    <div class="card tech"><div class="th"><div class="logo"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4Ij48cGF0aCBmaWxsPSIjNERBQkNGIiBkPSJtNTUuMDEyIDI2LjAwNi0yMS4zOC0xMC43ODlMMTAuMTU0IDI2LjkzbDIxLjk2OSAxMS4wMjdabTkuODA4IDQuOTUxTDg3LjI0MSA0Mi4yOCA2My45ODIgNTMuOTU1bC0yMi0xMS4wNDNabTI5Ljk0OC0xNS41ODEgMjMuMDM3IDExLjU1Mkw5Ny4yIDM3LjI3MiA3NC43MzUgMjUuOTM4Wk04NC44NTMgMTAuNCA2NC4xMTMgMCA0My41OTggMTAuMjQgNjQuOTcgMjEuMDE0Wk02OC42NCA5OS43MDJWMTI4bDI1LjEyMi0xMi41MzctLjAyMy0yOC4zMVpNOTMuNzI3IDc3LjI3bC0uMDI4LTI4LjAxMi0yNS4wNiAxMi40NThWODkuNzRabTMwLjE1OC01LjI0NnYyOC40MWwtMjEuNDMgMTAuNjktLjAxNy0yOC4yNzl6bTAtOS45MzVWMzQuMjVsLTIxLjQ3IDEwLjY3My4wMTYgMjguMDY4eiIvPjxwYXRoIGZpbGw9IiM0Yzc1Y2YiIGQ9Im01OS43NyA2MS43MTYtMTYuOTE4LTguNTEyVjg5Ljk3cy0yMC43LTQ0LjAzMy0yMi42MTItNDcuOTljLS4yNDYtLjUxMy0xLjI2My0xLjA3LTEuNTIyLTEuMjA5LTMuNzMxLTEuOTQ3LTE0LjYwMy03LjQ1LTE0LjYwMy03LjQ1djY0Ljk3N2wxNS4wNCA4LjA2M1Y3Mi4zODJzMjAuNDc4IDM5LjM0NiAyMC42ODkgMzkuNzhjLjIxNC40MjkgMi4yNTcgNC41NyA0LjQ1OSA2LjAyOCAyLjkyIDEuOTM5IDE1LjQ1OCA5LjQ3NyAxNS40NTggOS40Nzd6IiAvPjwvc3ZnPgo=" alt=""></div><div><strong>PyMuPDF · Pillow · NumPy</strong><small>Mac · conteneur ms1</small></div></div><dl>
+      <dt>Rôle</dt><dd>Rendre les PDF en images, convertir, agrandir, faire pivoter ; calcul du redressement.</dd>
+      <dt>Avantages</dt><dd>PyMuPDF rend un PDF sans programme externe (pas de Poppler). Pillow suffit pour les opérations simples ; NumPy fait la somme d'encre par ligne. OpenCV, plus lourd, n'est plus nécessaire en V2.</dd></dl></div>
+    <div class="card tech"><div class="th"><div class="logo"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4Ij48cGF0aCBmaWxsPSIjZjg5OTM5IiBkPSJNOTguMTggODguMTNjMTUuNjMtMTUuNjIgMTguMjMtMzguMzYgNS44LTUwLjc4LTEyLjQzLTEyLjQyLTM1LjE3LTkuODItNTAuOCA1LjgtMTUuNjMgMTUuNjItMTEuMTEgNDUuNDgtNS44IDUwLjc4IDQuMjkgNC4yOSAzNS4xNyA5LjgyIDUwLjgtNS44WiIvPjxwYXRoIGZpbGw9IiMzNDk5Y2QiIGQ9Ik0zNC4wNCA2NS41NmMtOS4wNy05LjA2LTIyLjI3LTEwLjU3LTI5LjQ4LTMuMzctNy4yMSA3LjIxLTUuNyAyMC40IDMuMzcgMjkuNDYgOS4wNyA5LjA3IDI2LjQgNi40NCAyOS40OCAzLjM3IDIuNDktMi40OSA1LjcxLTIwLjQtMy4zNy0yOS40NloiLz48cGF0aCBmaWxsPSIjMDEwMTAxIiBkPSJNMTIzLjgyIDg1LjY4Yy0uNTggMC0uODctLjM1LS44Ny0xLjA2IDAtLjUzLjM1LTEuNjkgMS4wNC0zLjQ2IDEuMDEtMi41OSAxLjUyLTQuNDUgMS41Mi01LjU4IDAtLjY4LS4yLTEuMjUtLjYtMS43LS40LS40NS0uOS0uNjgtMS41LS42OC0uODggMC0xLjg5LjQxLTMuMDMgMS4yNC0xLjE0LjgzLTIuNjcgMi4zMi00LjYgNC40OC4yOC0xLjQuODgtMy4zMiAxLjc4LTUuNzZsLTQuMzEuODNjLS45OCAyLjEyLTEuNjkgNC4wMy0yLjEzIDUuNzMtLjIyLjgzLS4zOCAxLjY5LS40OSAyLjU2LTEuMzUgMS4zMS0yLjIzIDIuMS0yLjYxIDIuMzktLjM5LjI5LS44LjQzLTEuMjIuNDMtLjM5IDAtLjctLjE1LS45My0uNDQtLjIzLS4yOS0uMzQtLjY5LS4zNC0xLjE4IDAtLjUzLjEtMS4xNC4zLTEuODNzLjY0LTEuOTkgMS4zMy0zLjlsMS42NC00LjUyLTEuNjEuMDdjLTEuNDYgMi43OC0zLjE3IDQuMjgtNS4xMyA0LjQ5LjUzLTEuMzguOC0yLjQ0LjgtMy4xOCAwLS45NC0uNDYtMS40MS0xLjM4LTEuNDEtMS4wOSAwLTEuOTQuNTEtMi41NSAxLjU0LS42MiAxLjAzLS45MyAyLS45MyAyLjkxcy41MSAxLjU1IDEuNTIgMmMtLjY2Ljk3LTEuNCAxLjg4LTIuMiAyLjc0LS45NS45NC0xLjY5IDEuNjYtMi4yMyAyLjEzLS41NS40OS0xLjA2LjczLTEuNTIuNzMtLjcyIDAtMS4wOC0uNTEtMS4wOC0xLjUycy40LTIuNzUgMS4yLTUuMzVsMS41Ni01LjE4aC0uOTlsLTMuNjEgMmMtLjU5LTEuMzUtMS42Mi0yLjAzLTMuMDktMi4wMy0xLjE3IDAtMi41MS41LTQuMDMgMS40OS0xLjUyLjk5LTIuNzcgMi4yOC0zLjc0IDMuODktLjc1IDEuMjQtMS4yMSAyLjU0LTEuMzggMy44OC0xLjM2IDEuMzYtMi4zOCAyLjI0LTMuMDYgMi42NS0uNzEuNDItMS40NS42My0yLjIzLjYzLTEuOTkgMC0zLjIyLTEuMTUtMy42OS0zLjQ1IDUuMTktMS41MiA3Ljc4LTMuNSA3Ljc4LTUuOTQgMC0uOTItLjMzLTEuNjYtLjk5LTIuMjMtLjY2LS41Ny0xLjU0LS44NS0yLjYzLS44NS0yLjExIDAtNC4wMyAxLjAxLTUuNzYgMy4wMy0xLjU3IDEuODMtMi40MiAzLjg2LTIuNTcgNi4wOS0xLjQzIDEuNDEtMi41MSAyLjM0LTMuMjEgMi43OS0uNzIuNDYtMS40LjY5LTIuMDMuNjlzLTEuMTMtLjMtMS41LS45Yy0uMzgtLjYtLjU3LTEuNDEtLjU3LTIuNDQgMC0uNDYuMDUtMS4zLjE0LTIuNTMgMi4zNi0yLjU2IDQuMDktNC45NiA1LjItNy4yMSAxLjExLTIuMjUgMS42Ni00LjU4IDEuNjYtNi45OCAwLS44NS0uMTEtMS41Mi0uMzMtMi4wMi0uMjItLjUtLjUtLjc1LS44NC0uNzUtLjA3IDAtLjE4LjAyLS4zMi4wN2wtNC40OSAxLjY2Yy0xLjUzIDIuOTItMi44NCA2LjExLTMuOTEgOS41OC0xLjA3IDMuNDYtMS42MSA2LjQzLTEuNjEgOC45IDAgMS42NS4zOCAyLjk2IDEuMTYgMy45NC43Ny45OCAxLjc5IDEuNDcgMy4wNSAxLjQ3IDEuMSAwIDIuMjUtLjM1IDMuNDYtMS4wNSAxLjIxLS43IDIuNjEtMS43OSA0LjIyLTMuMjZzMC0uMDIgMC0uMDJjLjE5IDEuMTEuNjUgMi4wNCAxLjM3IDIuOC45OSAxLjAyIDIuMjggMS41NCAzLjg4IDEuNTQgMS40NCAwIDIuNzUtLjM1IDMuOTQtMS4wNSAxLjE1LS42NyAyLjQ0LTEuNzIgMy44OC0zLjExLjEyIDEuMDQuNDYgMS45NCAxLjAzIDIuNzEuNzMuOTcgMS42MSAxLjQ2IDIuNjQgMS40NnMyLjA5LS40IDMuMDktMS4yYzEtLjggMi4wOC0yLjA1IDMuMjYtMy43My0uMTEgMy4yOS43NyA0LjkzIDIuNjMgNC45My43NCAwIDEuNTItLjI3IDIuMzMtLjgxczIuMTYtMS43MSA0LjA1LTMuNWMxLjY0LTEuNjIgMi44NC0zLjE0IDMuNjEtNC41NiAxLjA0LS4xOCAxLjk5LS40OSAyLjg2LS45NC0xLjc4IDIuNzktMi42NyA1LjAyLTIuNjcgNi42OCAwIC45LjI1IDEuNjUuNzQgMi4yNS40OS42IDEuMS45MSAxLjgyLjkxIDEuNTcgMCAzLjgtMS40MSA2LjY4LTQuMiAwIC4yMi0uMDIuNDMtLjAyLjY1IDAgLjc4LjA3IDEuOTYuMTkgMy41NWwzLjkxLS45MmMwLTEuMDYuMDItMS45LjA1LTIuNTMuMDYtLjg0LjE4LTEuNzYuMzUtMi43Ni4xMS0uNTkuMzgtMS4xNS44MS0xLjY4bC45OS0xLjE1Yy4zNi0uNDIuNzEtLjggMS4wMi0xLjEzLjM3LS4zOS43LS43Mi45OS0uOTkuMzMtLjI5LjYyLS41My44Ny0uNjkuMjctLjE2LjQ5LS4yNS42NS0uMjUuMjkgMCAuNDQuMTkuNDQuNTdzLS4yOCAxLjI2LS44MyAyLjY1Yy0xLjA0IDIuNTktMS41NiA0LjUyLTEuNTYgNS43OCAwIC45My4yNCAxLjY3LjczIDIuMjMuNDguNTUgMS4xMi44MyAxLjkxLjgzIDEuOTQgMCA0LjI4LTEuNDQgNy00LjMxVjgyLjNjLTEuOTMgMi4yNy0zLjMyIDMuNDEtNC4xOCAzLjQxWm0tNjUuMjYtOC4yOWMuOC0zLjkxIDEuNjItNi45NCAyLjQ1LTkuMTEuODMtMi4xNyAxLjQ3LTMuMjYgMS45LTMuMjYuMiAwIC4zNy4xMy41LjQuMTMuMjYuMTkuNjIuMTkgMS4wNSAwIDEuNDktLjQ2IDMuMjYtMS40IDUuMzMtLjkzIDIuMDYtMi4xNSAzLjkzLTMuNjQgNS41OVptMTEuNzktLjk4Yy43MS0xLjE5IDEuNDUtMS43OCAyLjIzLTEuNzguODIgMCAxLjI0LjU3IDEuMjQgMS43IDAgMi4yOS0xLjUxIDMuODUtNC41MyA0LjcgMC0xLjkuMzUtMy40NCAxLjA2LTQuNjJabTE3LjQ4IDUuODVjLTEuMDQgMi4wMS0yLjE2IDMuMDEtMy4zMyAzLjAxLS40OCAwLS44OC0uMi0xLjE5LS41OS0uMzEtLjM5LS40Ny0uOTEtLjQ3LTEuNTUgMC0xLjY4LjUzLTMuNTMgMS41OC01LjUzIDEuMDUtMiAyLjE3LTMgMy4zNS0zIC40OSAwIC44OS4xOCAxLjE4LjU2LjI5LjM3LjQ0Ljg5LjQ0IDEuNTUgMCAxLjctLjUyIDMuNTUtMS41NiA1LjU2WiIvPjxwYXRoIGZpbGw9IiNmZmYiIGQ9Ik03NS40NiA2NC44OGMuMTUuMjEuMjIuNDguMjIuOHMtLjA5LjYxLS4yNy44OC0uNDQuNDktLjc5LjY0Yy0uMzQuMTUtLjczLjIzLTEuMTYuMjMtLjcyIDAtMS4yNi0uMTUtMS42NC0uNDVzLS42Mi0uNzQtLjcyLTEuMzNsLjkzLS4xNWMuMDUuMzcuMi42Ni40My44NS4yNC4yLjU3LjMgMSAuM3MuNzUtLjA5Ljk2LS4yNmMuMjEtLjE3LjMxLS4zOC4zMS0uNjIgMC0uMjEtLjA5LS4zOC0uMjgtLjUtLjEzLS4wOC0uNDUtLjE5LS45Ni0uMzItLjY5LS4xNy0xLjE2LS4zMi0xLjQzLS40NXMtLjQ3LS4zLS42LS41My0uMjEtLjQ3LS4yMS0uNzRjMC0uMjUuMDYtLjQ3LjE3LS42OC4xMS0uMjEuMjctLjM4LjQ2LS41Mi4xNS0uMTEuMzQtLjIuNTktLjI3LjI1LS4wNy41Mi0uMTEuODEtLjExLjQzIDAgLjgxLjA2IDEuMTQuMTkuMzMuMTIuNTcuMjkuNzMuNTEuMTYuMjEuMjYuNS4zMi44NmwtLjkyLjEyYy0uMDQtLjI4LS4xNi0uNTEtLjM2LS42Ny0uMi0uMTYtLjQ4LS4yNC0uODUtLjI0LS40MyAwLS43NC4wNy0uOTIuMjEtLjE4LjE0LS4yOC4zMS0uMjguNSAwIC4xMi4wNC4yMy4xMS4zMy4wOC4xLjIuMTguMzYuMjUuMDkuMDMuMzcuMTEuODMuMjQuNjYuMTggMS4xMi4zMiAxLjM5LjQzLjI2LjExLjQ3LjI4LjYyLjQ5Wm00LjQ3IDEuNDRjLS4yNS4yMy0uNTUuMzQtLjkyLjM0LS40NiAwLS44My0uMTctMS4xMS0uNXMtLjQzLS44OC0uNDMtMS42Mi4xNS0xLjI3LjQ0LTEuNi42OC0uNTEgMS4xNS0uNTFjLjMxIDAgLjU4LjA5LjguMjguMjIuMTkuMzcuNDcuNDYuODRsLjkxLS4xNGMtLjExLS41Ni0uMzUtLjk5LS43My0xLjI5LS4zOC0uMy0uODctLjQ1LTEuNDctLjQ1LS40OCAwLS45MS4xMS0xLjMyLjM0LS40LjIyLS43MS41Ni0uOSAxLjAxLS4yLjQ1LS4zLjk3LS4zIDEuNTcgMCAuOTIuMjMgMS42My42OSAyLjEyLjQ2LjQ5IDEuMDcuNzQgMS44Mi43NC42IDAgMS4xMS0uMTggMS41My0uNTQuNDEtLjM2LjY3LS44Ni43Ny0xLjQ5bC0uOTItLjEyYy0uMDcuNDctLjIyLjgxLS40NyAxLjA0Wm0yLjE5Ljk4aC45NHYtNS41MmgtLjk0djUuNTJabTAtNi41NWguOTR2LTEuMDhoLS45NHYxLjA4Wm02LjczIDEuMDJoLTEuMjFsLTIuMjIgMi4yNXYtNC4zNWgtLjk0djcuNjJoLjk0VjY1LjFsLjY2LS42MyAxLjgzIDIuODJoMS4xNmwtMi4zMy0zLjQ3IDIuMTEtMi4wNVptLjk2LTEuMDJoLjk0di0xLjA4aC0uOTR2MS4wOFptMCA2LjU1aC45NHYtNS41MmgtLjk0djUuNTJabTQuNDEtLjg0Yy0uMTcuMDItLjMxLjA0LS40MS4wNC0uMTQgMC0uMjUtLjAyLS4zMi0uMDdzLS4xMy0uMTEtLjE2LS4xOGMtLjAzLS4wOC0uMDUtLjI1LS4wNS0uNTF2LTMuMjNoLjk0di0uNzNoLS45NHYtMS45M2wtLjkzLjU2djEuMzdoLS42OXYuNzNoLjY5djMuMThjMCAuNTYuMDQuOTMuMTEgMS4xLjA4LjE4LjIxLjMyLjM5LjQyLjE5LjExLjQ1LjE2Ljc5LjE2LjIxIDAgLjQ0LS4wMy43MS0uMDhsLS4xNC0uODNaIi8+PC9zdmc+DQo=" alt=""></div><div><strong>scikit-learn 1.9.1 + joblib</strong><small>outils (entraînement) · Fedora (prédiction)</small></div></div><dl>
+      <dt>Rôle</dt><dd>TF-IDF + régression logistique pour l'enseigne ; <code>joblib</code> sauvegarde le pipeline entier.</dd>
+      <dt>Avantages</dt><dd>Adapté à un petit corpus, rapide, explicable ; pas de GPU ; un seul fichier à copier sur la VM.</dd>
+      <dt>Prérequis</dt><dd>Même version à l'entraînement et sur Fedora.</dd></dl></div>
+    <div class="card tech"><div class="th"><div class="logo txt" style="--c:var(--peach)">⌘</div><div><strong>Bash, SSH, scp</strong><small>Mac → VM</small></div></div><dl>
+      <dt>Rôle</dt><dd>Copier la partie Fedora et lancer <code>installer.sh</code> ; vérifier le réseau.</dd>
+      <dt>Avantages</dt><dd>Rien à installer en plus ; tout le déploiement Fedora tient dans un script lisible.</dd></dl></div>
+  </div>
+  <h3>Prérequis pour faire tourner le projet</h3>
+  <div class="prereq">
+    <div class="card"><div class="bubble soft-sky"><svg class="ico"><use href="#i-box"/></svg></div><b>Sur le Mac</b><span class="muted">Mac Apple Silicon, Docker Desktop, VirtualBox 7.2, un terminal avec <code>ssh</code>, <code>scp</code>, <code>curl</code>.</span></div>
+    <div class="card"><div class="bubble soft-mint"><svg class="ico"><use href="#i-net"/></svg></div><b>La VM <code>docflow-vm</code></b><span class="muted">Fedora 45 aarch64, utilisateur <code>dfadmin</code> avec sudo, carte 2 sur <code>HostNetwork</code>, IP fixe <code>192.168.56.10</code> (voir <code>docs/installation_vm_fedora.md</code>).</span></div>
+    <div class="card"><div class="bubble soft-pink"><svg class="ico"><use href="#i-lock"/></svg></div><b>Les données</b><span class="muted"><code>.env</code> rempli ; tickets nommés selon la convention dans <code>data/raw/</code> pour entraîner. Sans modèle, MS3 utilise les règles.</span></div>
+  </div>
+</section>
+
+<!-- ============================================================ 08 -->
+<section class="sl" id="lancer">
+  <div class="kicker soft-lemon"><b>08</b> Lancer l'application</div>
+  <h2>Installer une fois, <em>démarrer en deux commandes</em></h2>
+  <div class="grid2" style="align-items:start">
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <h3>Première installation</h3>
+      <div class="steps">
+        <div class="st soft-pink"><span class="n">1</span><div class="body"><p>Créer les mots de passe, puis les changer dans <code>.env</code>.</p><div class="cmd"><span>cp .env.example .env</span><button class="copy" type="button">Copier</button></div></div></div>
+        <div class="st soft-sky"><span class="n">2</span><div class="body"><p>VirtualBox → <code>docflow-vm</code> → Démarrer, puis vérifier le réseau (4 OK).</p><div class="cmd"><span>./verifier_reseau.sh</span><button class="copy" type="button">Copier</button></div></div></div>
+        <div class="st soft-peach"><span class="n">3</span><div class="body"><p>Construire l'image et lancer la partie Mac.</p><div class="cmd"><span>docker compose up -d --build</span><button class="copy" type="button">Copier</button></div></div></div>
+        <div class="st soft-lemon"><span class="n">4</span><div class="body"><p>Entraîner le modèle d'enseigne (≈ 20 s).</p><div class="cmd"><span>docker compose run --rm outils python entrainement.py</span><button class="copy" type="button">Copier</button></div></div></div>
+        <div class="st soft-grape"><span class="n">5</span><div class="body"><p>Copier la partie Fedora dans la VM.</p><div class="cmd"><span>ssh dfadmin@192.168.56.10 mkdir -p docflow</span><button class="copy" type="button">Copier</button></div><div class="cmd"><span>scp -r .env commun.py ms3_extraction.py schema.sql requirements-ms3.txt fedora models dfadmin@192.168.56.10:docflow/</span><button class="copy" type="button">Copier</button></div></div></div>
+        <div class="st soft-mint"><span class="n">6</span><div class="body"><p>Installer PostgreSQL et MS3 (mot de passe sudo demandé). Dernière ligne attendue : <code>active</code>. Refaire 5 et 6 après toute modification de MS3 ou du modèle.</p><div class="cmd"><span>ssh -t dfadmin@192.168.56.10 sudo bash docflow/fedora/installer.sh</span><button class="copy" type="button">Copier</button></div></div></div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <h3>À chaque session</h3>
+      <div class="steps">
+        <div class="st soft-mint"><span class="n">1</span><div class="body"><p>Démarrer la VM : PostgreSQL et MS3 démarrent avec elle.</p></div></div>
+        <div class="st soft-sky"><span class="n">2</span><div class="body"><p>Démarrer Docker Desktop, puis :</p><div class="cmd"><span>docker compose up -d</span><button class="copy" type="button">Copier</button></div></div></div>
+        <div class="st soft-pink"><span class="n">3</span><div class="body"><p>Ouvrir <code>http://localhost:8000</code> et glisser des tickets. Vérifier la santé :</p><div class="cmd"><span>curl http://localhost:8000/health</span><button class="copy" type="button">Copier</button></div></div></div>
+      </div>
+      <h3>Démonstration</h3>
+      <div class="steps">
+        <div class="st soft-peach"><span class="n">a</span><div class="body"><p>Voir les files : <code>http://localhost:15672</code> (utilisateur <code>docflow</code>).</p></div></div>
+        <div class="st soft-sky"><span class="n">b</span><div class="body"><p>Voir MS1 et MS2 travailler :</p><div class="cmd"><span>docker compose logs -f ms1 ms2</span><button class="copy" type="button">Copier</button></div></div></div>
+        <div class="st soft-mint"><span class="n">c</span><div class="body"><p>Voir MS3 travailler sur Fedora :</p><div class="cmd"><span>ssh -t dfadmin@192.168.56.10 sudo journalctl -u docflow-ms3 -f</span><button class="copy" type="button">Copier</button></div></div></div>
+        <div class="st soft-pink"><span class="n">d</span><div class="body"><p>Panne : arrêter MS2, déposer, relancer.</p><div class="cmd"><span>docker compose stop ms2</span><button class="copy" type="button">Copier</button></div><div class="cmd"><span>docker compose start ms2</span><button class="copy" type="button">Copier</button></div></div></div>
+        <div class="st soft-lemon"><span class="n">e</span><div class="body"><p>Plus de lecteurs OCR, puis mesurer :</p><div class="cmd"><span>docker compose up -d --scale ms2=3</span><button class="copy" type="button">Copier</button></div><div class="cmd"><span>docker compose run --rm outils python mesures.py 30</span><button class="copy" type="button">Copier</button></div></div></div>
+      </div>
+      <h3>Arrêter</h3>
+      <div class="cmd"><span>docker compose down</span><button class="copy" type="button">Copier</button></div>
+      <p class="muted" style="font-size:14px">Puis éteindre la VM depuis VirtualBox.</p>
+    </div>
+  </div>
+  <h3>Dépannage</h3>
+  <div class="scroll-x">
+  <table class="trouble"><tbody>
+    <tr><td>bind: can't assign requested address 192.168.56.1</td><td>VM pas démarrée : la lancer, puis <code>docker compose up -d</code>.</td></tr>
+    <tr><td>/health → "base": "injoignable"</td><td>VM éteinte ou PostgreSQL arrêté : <code>ssh -t dfadmin@192.168.56.10 systemctl status postgresql</code>.</td></tr>
+    <tr><td>Tickets bloqués en PROCESSING</td><td>Lire le journal de MS3 (démo c) ; regarder quelle file garde des messages dans la console RabbitMQ.</td></tr>
+    <tr><td>REMOTE HOST IDENTIFICATION HAS CHANGED</td><td>VM réinstallée : voir la section Dépannage de <code>docs/installation_vm_fedora.md</code>.</td></tr>
+  </tbody></table>
+  </div>
+</section>
+
+<!-- ============================================================ 09 -->
+<section class="sl" id="donnees">
+  <div class="kicker soft-sky"><b>09</b> Les données</div>
+  <h2>Ce qui est stocké, <em>où, et ce qui part sur Git</em></h2>
+  <div class="grid2" style="align-items:start">
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <h3>Table <code>documents</code> (Fedora)</h3>
+      <div class="scroll-x"><table class="cols"><tbody>
+        <tr><td>document_id</td><td>TEXT PK</td><td><code>DOC-1A2B3C4D</code>, créé par l'API</td></tr>
+        <tr><td>status</td><td>TEXT CHECK</td><td>PENDING, PROCESSING, COMPLETED, FAILED</td></tr>
+        <tr><td>entity</td><td>TEXT</td><td>CARREFOUR, LIDL, INTERMARCHE ou UNKNOWN</td></tr>
+        <tr><td>date</td><td>DATE</td><td>Date du ticket, vide si introuvable</td></tr>
+        <tr><td>total_amount</td><td>NUMERIC(10,2)</td><td>Jamais de float pour de l'argent</td></tr>
+        <tr><td>currency</td><td>TEXT</td><td><code>EUR</code> seulement si un total existe</td></tr>
+        <tr><td>methode_enseigne</td><td>TEXT</td><td><code>modele</code> ou <code>regles</code></td></tr>
+        <tr><td>durees</td><td>JSONB</td><td><code>{"ms1": 140, "ms2": 1070}</code> en ms</td></tr>
+        <tr><td>erreur</td><td>TEXT</td><td>Cause lisible d'un FAILED</td></tr>
+        <tr><td>created_at · updated_at</td><td>TIMESTAMPTZ</td><td>Leur différence = durée de bout en bout</td></tr>
+      </tbody></table></div>
+      <div class="callout soft-mint"><svg class="ico"><use href="#i-check"/></svg><div><b>Une valeur introuvable reste vide.</b> On n'invente jamais une date ou un total : <code>None</code> en Python, <code>NULL</code> en base.</div></div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <h3>Dossiers du Mac</h3>
+<div class="tree"><span class="d">data/raw/</span>{carrefour,lidl,intermarche}/  <span class="c"># tickets privés</span>
+<span class="d">data/textes/</span>                        <span class="c"># cache OCR de l'entraînement</span>
+<span class="d">storage/originaux/</span>DOC-….pdf          <span class="c"># fichiers déposés</span>
+<span class="d">storage/pretraite/</span>DOC-…/page_1.png   <span class="c"># sorties de MS1</span>
+<span class="d">models/</span>modele_enseigne.joblib       <span class="c"># copié ensuite sur Fedora</span>
+<span class="d">reports/</span>evaluation.md · mesures.md  <span class="c"># versionnés</span></div>
+      <div class="grid2">
+        <div class="callout soft-pink" style="flex-direction:column;gap:6px"><b>Jamais sur Git</b><span><code>data/**</code> (sauf README et .gitkeep), <code>storage/</code>, <code>models/</code>, <code>.env</code>, et par sécurité tout <code>*.pdf</code>, <code>*.png</code>, <code>*.jpg</code>.</span></div>
+        <div class="callout soft-mint" style="flex-direction:column;gap:6px"><b>Sur Git</b><span>Le code, la config sans secret (<code>.env.example</code>), les rapports, la doc, le cahier des charges.</span></div>
+      </div>
+      <h3>Corpus</h3>
+      <div class="bars">
+        <div class="brow"><span>Carrefour · 81</span><div class="bar soft-sky full" style="--v:100%"><i></i><em>PDF avec texte, 1 ou 2 pages</em></div><div></div></div>
+        <div class="brow"><span>Lidl · 40</span><div class="bar soft-pink full" style="--v:49.4%"><i></i><em>PNG 412 px</em></div><div></div></div>
+        <div class="brow"><span>Intermarché · 16</span><div class="bar soft-lemon" style="--v:19.8%"><i></i><em>PDF image, sans texte</em></div><div></div></div>
+      </div>
+      <p class="muted" style="font-size:14px">137 tickets au total. Le format très différent d'une enseigne à l'autre explique les trois traitements de MS1 (rendu PDF, agrandissement ×4, redressement).</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ 10 -->
+<section class="sl" id="resultats">
+  <div class="kicker soft-mint"><b>10</b> Résultats de la V2</div>
+  <h2>Le modèle corrige <em>exactement</em> ce que les règles ratent</h2>
+  <p class="lead">Source : <code>reports/evaluation.md</code>, produit par <code>entrainement.py</code>. 109 tickets d'entraînement, 28 tickets de test jamais vus (17 Carrefour, 8 Lidl, 3 Intermarché).</p>
+  <div class="grid2" style="align-items:start">
+    <div class="card bars" style="padding:20px">
+      <div class="legend"><span class="soft-lemon"><i></i>Règles</span><span class="soft-mint"><i></i>Modèle</span></div>
+      <div class="brow"><span>Enseigne · tous</span><div class="bar soft-lemon" style="--v:89%"><i></i><em>89 %</em></div><div class="bar soft-mint" style="--v:100%"><i></i><em>100 %</em></div></div>
+      <div class="brow"><span>Enseigne · Intermarché</span><div class="bar soft-lemon" style="--v:1%"><i></i><em>0 %</em></div><div class="bar soft-mint" style="--v:100%"><i></i><em>100 %</em></div></div>
+      <div class="brow"><span>Date (règle)</span><div class="bar soft-lemon" style="--v:100%"><i></i><em>100 %</em></div><div></div></div>
+      <div class="brow"><span>Total (règle)</span><div class="bar soft-lemon" style="--v:100%"><i></i><em>100 %</em></div><div></div></div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div class="callout soft-mint"><svg class="ico"><use href="#i-brain"/></svg><div><b>Pourquoi les règles ratent Intermarché :</b> le nom est dans un logo stylisé que l'OCR ne lit pas. Le mot « INTERMARCHE » n'apparaît pas dans le texte, mais le reste de la mise en page suffit au modèle.</div></div>
+      <div class="callout soft-lemon"><svg class="ico"><use href="#i-alert"/></svg><div><b>À dire avec prudence :</b> 28 tickets, dont 3 Intermarché. Un ticket vaut 3,6 points au global et 33 points pour Intermarché. C'est une tendance, pas une garantie.</div></div>
+      <div class="callout soft-sky"><svg class="ico"><use href="#i-clock"/></svg><div><b>Mesures de temps V2 :</b> pas encore de <code>reports/mesures.md</code> sur la branche. Lancer <code>mesures.py</code> avec 1 puis 3 MS2 avant la soutenance. En V1, l'OCR pesait environ 87 % du temps et 3 MS2 donnaient un débit ×2,9.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ 11 -->
+<section class="sl" id="questions">
+  <div class="kicker soft-pink"><b>11</b> Questions probables</div>
+  <h2>Préparer les <em>questions du jury</em></h2>
+  <div class="faq">
+    <details open><summary>Est-ce vraiment distribué si tout tourne sur un seul Mac ?</summary><div class="ans">Oui au sens logique : deux systèmes d'exploitation, deux adresses IP, des échanges TCP/IP réels (AMQP et SQL) sur un réseau privé. <b>Non</b> au sens physique : si le Mac s'éteint, tout s'arrête. On ne prétend pas à une tolérance aux pannes matérielles.</div></details>
+    <details><summary>Pourquoi RabbitMQ plutôt que des appels HTTP entre services ?</summary><div class="ans">Avec HTTP, l'API attendrait MS1, qui attendrait MS2… et une panne de MS2 ferait échouer le dépôt. Avec une file, chaque étape avance à son rythme, les messages attendent pendant une panne, et plusieurs MS2 se partagent la charge sans configuration.</div></details>
+    <details><summary>Pourquoi seulement 4 files et pas un exchange topic comme en V1 ?</summary><div class="ans">La chaîne est linéaire : chaque message n'a qu'un destinataire. L'échange par défaut (clé = nom de la file) suffit et se lit en une ligne. Le topic de la V1 servait au journal qui écoutait tous les événements ; en V2, les durées sont stockées directement avec le résultat.</div></details>
+    <details><summary>Pourquoi MS3 sur Fedora, et pas MS2 ?</summary><div class="ans">MS2 lit des images stockées sur le Mac : le déplacer imposerait de transférer chaque image. MS3 ne reçoit que du texte (quelques Ko) et écrit dans la base : il est le candidat naturel au traitement distant, et la base reste locale à son seul écrivain métier.</div></details>
+    <details><summary>Qu'est-ce qui est vraiment de l'IA ?</summary><div class="ans">Deux choses : l'OCR Tesseract (réseau de neurones LSTM pré-entraîné) et notre <b>modèle d'enseigne</b> entraîné sur nos tickets (TF-IDF + régression logistique). La date et le total sont des règles, et on le dit : elles atteignent déjà 100 % sur le test.</div></details>
+    <details><summary>Comment évitez-vous que le modèle « triche » ?</summary><div class="ans">Le nom de fichier (qui contient la réponse) est remplacé par <code>DOC-…</code> au dépôt ; les chiffres sont masqués avant le modèle ; les 28 tickets de test ne servent jamais à l'entraînement ; le découpage est figé (<code>random_state=42</code>).</div></details>
+    <details><summary>Et si un message arrive deux fois ?</summary><div class="ans">MS3 fait un <code>UPDATE</code> par <code>document_id</code>, clé primaire : la même ligne est réécrite avec les mêmes valeurs. Pas de doublon possible.</div></details>
+    <details><summary>Que se passe-t-il pour une enseigne inconnue ?</summary><div class="ans">Avec les règles : <code>UNKNOWN</code>. Avec le modèle V2 : il choisit toujours l'une des 3 enseignes connues, sans seuil de confiance. C'est une limite connue ; la V1 utilisait un seuil (0,55) et retombait sur les règles.</div></details>
+    <details><summary>Pourquoi avoir simplifié la V1 ?</summary><div class="ans">La V1 répondait à tout le cahier des charges mais faisait environ 5 000 lignes, difficile à expliquer en entier. La V2 garde les mêmes garanties essentielles (files persistantes, ack après traitement, idempotence, distribution Mac/Fedora, modèle entraîné) en environ 900 lignes. Elle abandonne les tentatives automatiques, le journal d'événements et les contrats Pydantic.</div></details>
+  </div>
+</section>
+
+</main>
+</div>
+
+<script>
+(function(){
+  // copier une commande
+  document.querySelectorAll('.copy').forEach(b=>b.addEventListener('click',()=>{
+    const t=b.previousElementSibling.textContent;
+    const done=()=>{b.textContent='Copié';setTimeout(()=>b.textContent='Copier',1400)};
+    try{navigator.clipboard.writeText(t).then(done,()=>sel(b.previousElementSibling))}catch(e){sel(b.previousElementSibling)}
+  }));
+  function sel(el){const r=document.createRange();r.selectNodeContents(el);const s=getSelection();s.removeAllRanges();s.addRange(r)}
+
+  // sommaire actif
+  const links=[...document.querySelectorAll('.toc a')];
+  const secs=links.map(a=>document.querySelector(a.getAttribute('href')));
+  function active(){
+    let i=0;const y=innerHeight*0.3;
+    secs.forEach((s,j)=>{if(s&&s.getBoundingClientRect().top<y)i=j});
+    links.forEach((a,j)=>a.classList.toggle('on',j===i));return i;
+  }
+  addEventListener('scroll',active,{passive:true});active();
+
+  // flèches gauche / droite : section précédente / suivante
+  addEventListener('keydown',e=>{
+    if(e.target.closest('input,textarea,summary'))return;
+    if(e.key!=='ArrowRight'&&e.key!=='ArrowLeft')return;
+    e.preventDefault();
+    const i=active()+(e.key==='ArrowRight'?1:-1);
+    const s=secs[Math.max(0,Math.min(secs.length-1,i))];
+    s.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
+  });
+})();
+</script>
+
+</body>
+</html>

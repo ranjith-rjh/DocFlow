@@ -1,0 +1,6 @@
+# VM Fedora (MS3 seulement). Même version de scikit-learn que pour l'entraînement,
+# sinon le modèle sauvegardé pourrait ne pas se recharger.
+pika==1.4.4
+psycopg[binary]==3.3.9
+scikit-learn==1.9.1
+joblib==1.6.0

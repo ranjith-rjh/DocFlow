@@ -1,0 +1,13 @@
+# Image Docker du Mac (API, MS1, MS2, outils) — versions testées
+fastapi==0.163.1
+uvicorn==0.54.0
+python-multipart==0.0.34
+pika==1.4.4
+psycopg[binary]==3.3.9
+pymupdf==2.1
+pillow==13.0.0
+numpy==2.5.5
+pytesseract==0.3.13
+scikit-learn==1.9.1
+joblib==1.6.0
+requests

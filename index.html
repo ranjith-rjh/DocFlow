@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DocFlow AI</title>
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 860px; margin: 40px auto; padding: 0 16px;
+         color: #1f2937; background: #f9fafb; }
+  h1 { margin-bottom: 4px; }
+  p.sous-titre { color: #6b7280; margin-top: 0; }
+  #zone { border: 2px dashed #9ca3af; border-radius: 12px; padding: 48px 16px; text-align: center;
+          background: white; cursor: pointer; color: #4b5563; }
+  #zone.survol { border-color: #2563eb; background: #eff6ff; }
+  #message { color: #b91c1c; min-height: 1.5em; }
+  table { width: 100%; border-collapse: collapse; background: white; margin-top: 8px; }
+  th, td { padding: 10px; border-bottom: 1px solid #e5e7eb; text-align: left; font-size: 14px; }
+  th { background: #f3f4f6; }
+  .COMPLETED { color: #15803d; font-weight: 600; }
+  .FAILED { color: #b91c1c; font-weight: 600; }
+  .PENDING, .PROCESSING { color: #b45309; }
+</style>
+</head>
+<body>
+  <h1>DocFlow AI</h1>
+  <p class="sous-titre">Déposez un ticket de caisse : enseigne, date et total sont extraits automatiquement.</p>
+
+  <div id="zone">Glissez vos tickets ici, ou cliquez pour choisir<br><small>PDF, PNG ou JPEG</small></div>
+  <input type="file" id="choix" multiple hidden>
+  <p id="message"></p>
+
+  <table>
+    <thead><tr><th>Document</th><th>Statut</th><th>Enseigne</th><th>Date</th><th>Total</th><th>Durée</th></tr></thead>
+    <tbody id="lignes"></tbody>
+  </table>
+
+<script>
+const zone = document.getElementById("zone");
+const choix = document.getElementById("choix");
+
+// 1. Envoyer les fichiers à l'API
+async function envoyer(fichiers) {
+  for (const fichier of fichiers) {
+    const formulaire = new FormData();
+    formulaire.append("fichier", fichier);
+    const reponse = await fetch("/documents", { method: "POST", body: formulaire });
+    if (!reponse.ok) {
+      document.getElementById("message").textContent = fichier.name + " : " + (await reponse.json()).detail;
+    }
+  }
+  rafraichir();
+}
+
+zone.onclick = () => choix.click();
+choix.onchange = () => envoyer(choix.files);
+zone.ondragover = (e) => { e.preventDefault(); zone.classList.add("survol"); };
+zone.ondragleave = () => zone.classList.remove("survol");
+zone.ondrop = (e) => { e.preventDefault(); zone.classList.remove("survol"); envoyer(e.dataTransfer.files); };
+
+// 2. Afficher les derniers documents, mis à jour chaque seconde
+async function rafraichir() {
+  const documents = await (await fetch("/documents")).json();
+  document.getElementById("lignes").innerHTML = documents.map((d) => {
+    const duree = d.status === "COMPLETED" ? ((new Date(d.updated_at) - new Date(d.created_at)) / 1000).toFixed(1) + " s" : "";
+    const total = d.total_amount ? Number(d.total_amount).toFixed(2).replace(".", ",") + " €" : "";
+    return `<tr>
+      <td>${d.document_id}</td>
+      <td class="${d.status}" title="${d.erreur || ""}">${d.status}</td>
+      <td>${d.entity || ""}</td>
+      <td>${d.date || ""}</td>
+      <td>${total}</td>
+      <td>${duree}</td>
+    </tr>`;
+  }).join("");
+}
+
+rafraichir();
+setInterval(rafraichir, 1000);
+</script>
+</body>
+</html>

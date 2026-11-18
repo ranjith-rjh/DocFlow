@@ -1,0 +1,67 @@
+# Côté Mac (nœud A) : RabbitMQ, API, MS1, MS2.
+# MS3 et PostgreSQL tournent sur la VM Fedora (nœud B, 192.168.56.10).
+#
+#   docker compose up -d --build      démarrer
+#   docker compose logs -f ms1 ms2    voir les services travailler
+#   docker compose down               arrêter
+
+x-docflow: &docflow
+  build: .
+  image: docflow:2
+  restart: unless-stopped
+  environment:
+    RABBITMQ_URL: amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq:5672/
+    DATABASE_URL: postgresql://docflow:${DB_PASSWORD}@${FEDORA_IP:-192.168.56.10}:5432/docflow
+    STOCKAGE: /app/storage
+  volumes:
+    - ./storage:/app/storage   # fichiers déposés et images préparées
+  depends_on:
+    rabbitmq:
+      condition: service_healthy
+
+services:
+  rabbitmq:
+    image: rabbitmq:3.13-management
+    hostname: docflow-rabbitmq
+    restart: unless-stopped
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
+    ports:
+      - "${RABBITMQ_IP:-192.168.56.1}:5672:5672"  # ouvert sur le réseau privé, pour MS3
+      - "127.0.0.1:15672:15672"                    # console web : http://localhost:15672
+    volumes:
+      - rabbitmq:/var/lib/rabbitmq
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 5s
+      retries: 20
+
+  api:
+    <<: *docflow
+    command: uvicorn api:app --host 0.0.0.0 --port 8000
+    ports:
+      - "127.0.0.1:8000:8000"                      # http://localhost:8000
+
+  ms1:
+    <<: *docflow
+    command: python ms1_pretraitement.py
+
+  ms2:
+    <<: *docflow
+    command: python ms2_ocr.py
+
+  # Pour lancer l'entraînement et les mesures : docker compose run --rm outils python ...
+  outils:
+    image: docflow:2
+    profiles: [outils]
+    environment:
+      API_URL: http://api:8000
+    volumes:
+      - ./data:/app/data
+      - ./models:/app/models
+      - ./reports:/app/reports
+      - ./storage:/app/storage
+
+volumes:
+  rabbitmq:
